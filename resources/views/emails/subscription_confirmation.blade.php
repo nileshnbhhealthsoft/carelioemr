@@ -62,6 +62,14 @@
                         <td style="font-family:monospace; font-size:11px; color:#2563eb; text-align:right; font-weight:700;">{{ $subscription->openemr_site_url ?? url('/tenant/' . ($subscription->tenant_slug ?? '')) }}</td>
                     </tr>
                     <tr>
+                        <td style="color:#64748b; font-weight:500;">Practice Admin Login:</td>
+                        <td style="font-family:monospace; font-size:12px; color:#0f172a; text-align:right; font-weight:700;">admin / pass</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#64748b; font-weight:500;">Clinician / Doctor Login:</td>
+                        <td style="font-family:monospace; font-size:12px; color:#0f172a; text-align:right; font-weight:700;">{{ \Illuminate\Support\Str::slug($subscription->doctor_name, '_') ?: 'doctor' }} / ClinicPass123!</td>
+                    </tr>
+                    <tr>
                         <td style="color:#64748b; font-weight:500;">Stripe Intent Reference:</td>
                         <td style="font-family:monospace; font-size:11px; color:#475569; text-align:right;">{{ $subscription->stripe_payment_intent_id ?? 'pi_3P98aF123bc45' }}</td>
                     </tr>
