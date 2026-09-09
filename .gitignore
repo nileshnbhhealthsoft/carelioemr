@@ -34,9 +34,9 @@ storage/framework/views/*
 !storage/framework/views/.gitignore
 !storage/logs/.gitignore
 
-# OpenEMR dynamic tenant site directories (keep baseline)
-openemr/sites/site_*
-openemr/sites/site-*
+# OpenEMR standalone codebase & public junction
+openemr/
+openemr
 public/openemr
 public/openemr/
 
