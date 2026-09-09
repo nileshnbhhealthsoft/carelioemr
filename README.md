@@ -36,9 +36,8 @@ Welcome to the **CarelioEMR** source codebase. This repository contains the comp
 ---
 
 ### Step 2: Install Dependencies & Setup Environment
-1. Navigate to the backend directory:
+1. Install Composer dependencies:
    ```bash
-   cd backend
    composer install
    ```
 
@@ -48,7 +47,7 @@ Welcome to the **CarelioEMR** source codebase. This repository contains the comp
    php artisan key:generate
    ```
 
-3. Ensure your `backend/.env` file contains your database credentials:
+3. Ensure your `.env` file contains your database credentials:
    ```env
    APP_NAME="CarelioEMR API"
    APP_ENV=local
@@ -71,7 +70,7 @@ Welcome to the **CarelioEMR** source codebase. This repository contains the comp
 ---
 
 ### Step 3: Clear Cache & Launch Server
-Run the following Artisan commands inside the `backend` directory:
+Run the following Artisan commands:
 
 ```bash
 php artisan config:clear

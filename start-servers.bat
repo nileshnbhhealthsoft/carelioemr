@@ -5,7 +5,7 @@ echo ==========================================
 echo.
 
 echo Starting Laravel Application Server (port 8000)...
-start "CarelioEMR Laravel Server" /D "%~dp0backend" cmd /k "php artisan serve --host=127.0.0.1 --port=8000"
+start "CarelioEMR Laravel Server" /D "%~dp0" cmd /k "php artisan serve --host=127.0.0.1 --port=8000"
 
 timeout /t 2 /nobreak >nul
 

@@ -1,47 +1,41 @@
 # Dependencies
 node_modules/
-backend/vendor/
+vendor/
 
 # Environment files (Sensitive Credentials)
 .env
 .env.backup
 .env.production
 *.env
-backend/.env
-backend/.env.backup
-backend/.env.production
 !.env.example
-!backend/.env.example
 
 # Large archive files & zips (GitHub rejects >100MB)
 *.zip
 *.tar.gz
 *.rar
 *.7z
-backend/openemr-8.3.0 (1)/
+openemr-8.3.0 (1)/
 
-# Build outputs
-dist/
-dist-ssr/
-backend/public/build/
-backend/public/hot/
-backend/public/storage/
+# Build outputs & symlinks
+public/build/
+public/hot/
+public/storage/
 
 # Laravel Storage & Cache
-backend/storage/*.key
-backend/storage/logs/*.log
-backend/storage/framework/cache/data/*
-backend/storage/framework/sessions/*
-backend/storage/framework/testing/*
-backend/storage/framework/views/*
-!backend/storage/framework/cache/.gitignore
-!backend/storage/framework/sessions/.gitignore
-!backend/storage/framework/testing/.gitignore
-!backend/storage/framework/views/.gitignore
-!backend/storage/logs/.gitignore
+storage/*.key
+storage/logs/*.log
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+!storage/framework/cache/.gitignore
+!storage/framework/sessions/.gitignore
+!storage/framework/testing/.gitignore
+!storage/framework/views/.gitignore
+!storage/logs/.gitignore
 
 # OpenEMR dynamic tenant site directories (keep baseline)
-backend/openemr/sites/site_*
+openemr/sites/site_*
 
 # Logs and Debugging
 *.log
@@ -66,4 +60,3 @@ Thumbs.db
 Homestead.json
 Homestead.yaml
 auth.json
-
