@@ -62,19 +62,25 @@ Welcome to the **CarelioEMR** source codebase. This repository contains the comp
    DB_USERNAME=root
    DB_PASSWORD=
 
-   # Dynamic Admin Credentials (Optional overrides)
-   ADMIN_NAME="CarelioEMR Super Admin"
-   ADMIN_EMAIL="admin@carelioemr.com"
-   ADMIN_PASSWORD="admin123"
+   # Session Driver
+   SESSION_DRIVER=database
+   SESSION_LIFETIME=120
    ```
 
 ---
 
 ### Step 3: Run Database Migrations & Seeders
-Run the database seeders to dynamically create the Administrator account (`admin@carelioemr.com`) and demo subscriber records:
+Run the database seeders to populate initial records:
 ```bash
 php artisan db:seed
 ```
+
+#### Create / Reset Admin User (Zero Hardcoding):
+You can securely create or update an administrator account at any time without storing plaintext passwords in `.env`:
+```bash
+php artisan admin:create
+```
+*(Prompts interactively for Email and Password, or pass options: `php artisan admin:create --email=admin@carelioemr.com --password=admin123`)*
 
 ---
 
