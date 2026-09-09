@@ -198,7 +198,7 @@ class OpenEmrProvisioningService
                 'primary_logo_width' => 'w-50',
                 'logo_position' => 'flex-column',
                 'show_tagline_on_login' => '1',
-                'login_tagline_text' => 'The most popular open-source Electronic Health Record and Medical Practice Management solution.',
+                'login_tagline_text' => 'CarelioEMR - Advanced Clinical & Medical Practice Management EHR',
                 'show_labels_on_login_form' => '1',
                 'language_menu_login' => '1',
                 'language_menu_showall' => '1',
