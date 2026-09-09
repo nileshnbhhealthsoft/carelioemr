@@ -105,6 +105,46 @@ start-servers.bat
 
 ---
 
+## 🌐 Production Deployment Steps (Ubuntu / Nginx / Apache)
+
+When deploying to a live VPS (Ubuntu / Debian / AWS EC2):
+
+1. **Clone repository & Set permissions**:
+   ```bash
+   cd /var/www/
+   git clone https://github.com/nileshnbhhealthsoft/carelioemr.git
+   cd carelioemr
+   sudo chown -R www-data:www-data storage bootstrap/cache
+   sudo chmod -R 775 storage bootstrap/cache
+   ```
+
+2. **Install Dependencies & Configure `.env`**:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   Set `APP_ENV=production`, `APP_DEBUG=false`, and `APP_URL=https://your-domain.com`.
+
+3. **Import Database & Seed**:
+   ```bash
+   mysql -u root -p auraemr < auraemr_database_dump.sql
+   php artisan admin:create
+   ```
+
+4. **Cache Configurations**:
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   ```
+
+5. **Web Server Root**:
+   Point your Nginx / Apache DocumentRoot to the `public/` directory:
+   `/var/www/carelioemr/public`
+
+---
+
 ## 🔑 Default Credentials & Live URLs
 
 * **SaaS Landing Page**: `http://localhost:8000/`
