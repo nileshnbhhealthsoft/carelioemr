@@ -3,27 +3,18 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Subscription;
-use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the auraemr database with Admin user & Paid Subscribers.
+     * Seed the database with Admin user & Paid Subscribers.
      */
     public function run(): void
     {
-        // 1. Seed Admin User in users table
-        User::updateOrCreate(
-            ['email' => 'admin@auraemr.com'],
-            [
-                'name' => 'AuraEMR Super Admin',
-                'password' => Hash::make('admin123'),
-                'email_verified_at' => now(),
-            ]
-        );
+        // 1. Seed Dynamic Admin User
+        $this->call(AdminUserSeeder::class);
 
         // 2. Seed Paid Subscribers in subscriptions table
         $subscribers = [

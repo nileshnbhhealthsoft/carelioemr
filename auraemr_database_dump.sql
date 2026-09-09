@@ -18,7 +18,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_email_unique` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES ('1', 'AuraEMR Super Admin', 'admin@auraemr.com', '2026-09-04 11:47:20', '$2y$12$hptcaf3wylKOCVGG8md7he8Z3kfXAnkQnm7.C6iYOdLn32292AyqS', NULL, '2026-09-04 11:47:20', '2026-09-04 11:47:20');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES ('1', 'CarelioEMR Super Admin', 'admin@carelioemr.com', '2026-09-04 11:47:20', '$2y$12$XZqTcheh3UqRgB2/1ontz.iI9LKFTPHkQ0cah9YRoxQQKpVIbAk/6', NULL, '2026-09-04 11:47:20', '2026-09-04 11:47:20');
 
 DROP TABLE IF EXISTS `subscriptions`;
 CREATE TABLE `subscriptions` (

@@ -62,14 +62,23 @@ Welcome to the **CarelioEMR** source codebase. This repository contains the comp
    DB_USERNAME=root
    DB_PASSWORD=
 
-   # Session Driver
-   SESSION_DRIVER=database
-   SESSION_LIFETIME=120
+   # Dynamic Admin Credentials (Optional overrides)
+   ADMIN_NAME="CarelioEMR Super Admin"
+   ADMIN_EMAIL="admin@carelioemr.com"
+   ADMIN_PASSWORD="admin123"
    ```
 
 ---
 
-### Step 3: Clear Cache & Launch Server
+### Step 3: Run Database Migrations & Seeders
+Run the database seeders to dynamically create the Administrator account (`admin@carelioemr.com`) and demo subscriber records:
+```bash
+php artisan db:seed
+```
+
+---
+
+### Step 4: Clear Cache & Launch Server
 Run the following Artisan commands:
 
 ```bash
@@ -82,7 +91,7 @@ The application will now be fully live on: **`http://localhost:8000/`**
 
 ---
 
-### Step 4: One-Click Startup (Windows)
+### Step 5: One-Click Startup (Windows)
 For quick local development on Windows, double-click:
 ```cmd
 start-servers.bat
