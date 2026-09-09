@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AuraEMR Workstation — {{ $subscription->doctor_name ?? 'Dr. Subscriber' }}</title>
+<title>CarelioEMR Workstation — {{ $subscription->doctor_name ?? 'Dr. Subscriber' }}</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
@@ -53,7 +53,7 @@ tailwind.config = {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
         </svg>
       </div>
-      <h1 class="text-2xl font-black text-white">AuraEMR <span class="text-blue-400">Cloud</span></h1>
+      <h1 class="text-2xl font-black text-white">CarelioEMR <span class="text-blue-400">Cloud</span></h1>
       <p class="text-slate-400 text-sm mt-1 font-medium">Electronic Medical Records — Tenant Workstation</p>
       <div class="flex items-center justify-center gap-2 mt-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
@@ -107,7 +107,7 @@ tailwind.config = {
           <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
           256-bit TLS Encrypted
         </span>
-        <span>DB: <span class="font-mono text-slate-400">{{ $subscription->openemr_database ?? 'openemr_tenant' }}</span></span>
+        <span>DB: <span class="font-mono text-slate-400">{{ $subscription->openemr_database ?? 'carelio_tenant' }}</span></span>
       </div>
     </div>
 
@@ -129,7 +129,7 @@ tailwind.config = {
         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
       </div>
       <div>
-        <span class="font-black text-white text-sm">Aura<span class="text-blue-400">EMR</span></span>
+        <span class="font-black text-white text-sm">Carelio<span class="text-blue-400">EMR</span></span>
         <span class="ml-2 text-[10px] bg-blue-900/60 text-blue-300 border border-blue-700/50 px-1.5 py-0.5 rounded font-bold uppercase">Workstation v8.3.0</span>
       </div>
 
@@ -141,12 +141,12 @@ tailwind.config = {
     </div>
 
     <div class="flex items-center gap-3">
-      {{-- Direct Link to Real OpenEMR Engine on Port 8001 --}}
+      {{-- Direct Link to Real CarelioEMR Engine --}}
       <a href="http://localhost:8001/interface/login/login.php?site={{ $tenant_slug }}" target="_blank" rel="noopener noreferrer"
         class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-bold transition-all"
-        title="Open raw OpenEMR instance on port 8001">
+        title="Open raw CarelioEMR instance on port 8001">
         <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
-        <span>OpenEMR v8.3 Engine</span>
+        <span>CarelioEMR Engine</span>
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
       </a>
 
@@ -239,7 +239,7 @@ tailwind.config = {
       <div class="mt-auto p-3">
         <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 text-[10px] space-y-1.5">
           <div class="text-slate-400 font-semibold">Tenant Database</div>
-          <div class="font-mono text-emerald-400 truncate">{{ $subscription->openemr_database ?? 'openemr_tenant' }}</div>
+          <div class="font-mono text-emerald-400 truncate">{{ $subscription->openemr_database ?? 'carelio_tenant' }}</div>
           <div class="flex items-center gap-1 text-emerald-400 font-semibold">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>
             <span>MySQL 9.6 • Port 3307</span>
@@ -757,7 +757,7 @@ Lungs: Clear to auscultation bilaterally. No wheezing or rales.</textarea>
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-xl font-black text-white">Patient Registry &amp; Medical Records</h2>
-            <p class="text-slate-400 text-xs mt-0.5">Isolated MySQL Database: {{ $subscription->openemr_database ?? 'openemr_tenant' }}</p>
+            <p class="text-slate-400 text-xs mt-0.5">Isolated MySQL Database: {{ $subscription->openemr_database ?? 'carelio_tenant' }}</p>
           </div>
           <button onclick="openNewPatientModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-md shadow-blue-600/30">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -913,7 +913,7 @@ Lungs: Clear to auscultation bilaterally. No wheezing or rales.</textarea>
           </div>
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-center">
             <div class="text-2xl font-black text-blue-400">$80.00</div>
-            <div class="text-xs text-slate-400 mt-1">AuraEMR SaaS Monthly</div>
+            <div class="text-xs text-slate-400 mt-1">CarelioEMR SaaS Monthly</div>
           </div>
         </div>
       </div>
@@ -983,7 +983,7 @@ Lungs: Clear to auscultation bilaterally. No wheezing or rales.</textarea>
 <script>
 const VALID_USER = '{{ Str::slug($subscription->doctor_name ?? "dr_subscriber", "_") }}';
 const VALID_PASS = 'ClinicPass123!';
-const TENANT_STORAGE_KEY = 'auraemr_logged_in_{{ $tenant_slug }}';
+const TENANT_STORAGE_KEY = 'carelioemr_logged_in_{{ $tenant_slug }}';
 
 // Check if user was already logged in this session
 if (sessionStorage.getItem(TENANT_STORAGE_KEY) === 'true') {
@@ -1013,7 +1013,7 @@ function doLogin() {
     err.classList.add('hidden');
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('emrDashboard').classList.remove('hidden');
-    showToast('Welcome to AuraEMR', 'Signed into isolated workstation for {{ $subscription->doctor_name ?? "Doctor" }}');
+    showToast('Welcome to CarelioEMR', 'Signed into isolated workstation for {{ $subscription->doctor_name ?? "Doctor" }}');
   } else {
     err.classList.remove('hidden');
   }
@@ -1059,7 +1059,7 @@ function selectPatientForChart(name, age, condition) {
 }
 
 function saveSoapNote() {
-  showToast('SOAP Note Signed & Saved', 'Medical encounter record committed to isolated database {{ $subscription->openemr_database ?? "openemr_tenant" }}.');
+  showToast('SOAP Note Signed & Saved', 'Medical encounter record committed to isolated database {{ $subscription->openemr_database ?? "carelio_tenant" }}.');
 }
 
 function dispatchSoapToPrescription() {

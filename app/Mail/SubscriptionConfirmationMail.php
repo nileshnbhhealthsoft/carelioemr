@@ -31,7 +31,7 @@ class SubscriptionConfirmationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'AuraEMR Subscription Confirmation - ' . $this->subscription->doctor_name,
+            subject: 'CarelioEMR Subscription Confirmation - ' . $this->subscription->doctor_name,
         );
     }
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'AuraEMR - Cloud EMR & EHR Healthcare Platform ($80/month)')
+@section('title', 'CarelioEMR - Cloud EMR & EHR Healthcare Platform ($80/month)')
 
 @section('content')
 
@@ -8,7 +8,7 @@
 <div class="bg-slate-900 text-white px-4 py-2 text-xs font-semibold flex flex-col sm:flex-row items-center justify-between gap-2">
     <div class="flex items-center space-x-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>AuraEMR Cloud Healthcare Platform • 24/7 Global Infrastructure</span>
+        <span>CarelioEMR Cloud Healthcare Platform • 24/7 Global Infrastructure</span>
     </div>
     <a href="{{ url('/admin/login') }}" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap">
         Admin Portal &rarr;
@@ -27,7 +27,7 @@
             <div class="flex flex-col justify-center">
                 <div class="flex items-center space-x-2">
                     <span class="text-xl font-black tracking-tight text-slate-900 leading-none">
-                        Aura<span class="text-blue-600">EMR</span>
+                        Carelio<span class="text-blue-600">EMR</span>
                     </span>
                     <span class="text-[10px] uppercase font-extrabold tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 shrink-0">
                         Cloud
@@ -120,7 +120,7 @@
             <!-- Right Hero Image Preview -->
             <div class="lg:col-span-5 relative">
                 <div class="relative rounded-3xl overflow-hidden border border-slate-200 shadow-2xl bg-white p-3">
-                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80" alt="Doctor using AuraEMR software" class="w-full h-80 sm:h-96 object-cover rounded-2xl">
+                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80" alt="Doctor using CarelioEMR software" class="w-full h-80 sm:h-96 object-cover rounded-2xl">
                     <div class="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl flex items-center justify-between">
                         <div>
                             <div class="text-xs font-bold text-slate-900">Dr. Sarah Johnson</div>
@@ -240,7 +240,7 @@
             </div>
 
             <div class="text-center space-y-4 pt-2">
-                <h3 class="text-2xl font-black text-slate-900">AuraEMR Cloud Monthly Subscription</h3>
+                <h3 class="text-2xl font-black text-slate-900">CarelioEMR Cloud Monthly Subscription</h3>
                 <div class="flex items-baseline justify-center space-x-1">
                     <span class="text-5xl font-black text-blue-600">$80</span>
                     <span class="text-sm font-bold text-slate-500">/ month</span>
@@ -288,7 +288,7 @@
 <footer class="bg-slate-900 text-white py-12 border-t border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-slate-400">
         <div>
-            &copy; 2026 AuraEMR Cloud Healthcare Suite. All rights reserved.<br>
+            &copy; 2026 CarelioEMR Cloud Healthcare Suite. All rights reserved.<br>
             HIPAA, GDPR, ABDM, DHA &amp; OECS Compliant Infrastructure.
         </div>
 
@@ -305,7 +305,7 @@
         
         <div class="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
-                <h3 class="text-lg font-bold text-slate-900">AuraEMR Stripe Subscription Checkout</h3>
+                <h3 class="text-lg font-bold text-slate-900">CarelioEMR Stripe Subscription Checkout</h3>
                 <p class="text-xs text-slate-500 mt-0.5">Plan Rate: $80.00 / month</p>
             </div>
             <button onclick="closeCheckoutModal()" class="p-2 text-slate-400 hover:text-slate-800 rounded-lg">
@@ -418,7 +418,7 @@
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({ payment_intent_id: result.paymentIntent.id, doctor_name: doctorName, email: email })
                     });
-                    alert('Subscription Confirmed! OpenEMR Tenant Site Provisioned & Email Sent.');
+                    alert('Subscription Confirmed! CarelioEMR Tenant Site Provisioned & Email Sent.');
                     closeCheckoutModal();
                     window.location.reload();
                 }

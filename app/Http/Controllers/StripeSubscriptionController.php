@@ -32,7 +32,11 @@ class StripeSubscriptionController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $email = $request->email;
+        $user = User::where('email', $email)->first();
+        if (!$user && in_array(strtolower($email), ['admin@carelioemr.com', 'admin@auraemr.com'])) {
+            $user = User::whereIn('email', ['admin@carelioemr.com', 'admin@auraemr.com'])->first();
+        }
 
         if ($user && Hash::check($request->password, $user->password)) {
             return response()->json([
@@ -43,7 +47,7 @@ class StripeSubscriptionController extends Controller
                     'name' => $user->name,
                     'email' => $user->email,
                 ],
-                'token' => 'auraemr_admin_token_' . md5($user->email . time())
+                'token' => 'carelioemr_admin_token_' . md5($user->email . time())
             ]);
         }
 
@@ -90,7 +94,7 @@ class StripeSubscriptionController extends Controller
                 'currency' => $currency,
                 'customer' => $customer->id,
                 'receipt_email' => $request->email,
-                'description' => "AuraEMR Monthly Subscription ($80/mo) - {$request->doctor_name}",
+                'description' => "CarelioEMR Monthly Subscription ($80/mo) - {$request->doctor_name}",
                 'metadata' => [
                     'subscriber_name' => $request->doctor_name,
                     'practice_type' => $request->practice_type ?? 'General Practice',
@@ -219,7 +223,7 @@ class StripeSubscriptionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Payment confirmed and OpenEMR tenant provisioned successfully!',
+                'message' => 'Payment confirmed and CarelioEMR tenant provisioned successfully!',
                 'subscriber' => $subscription,
                 'openemr_site_url' => $subscription->openemr_site_url,
                 'tenant_slug' => $subscription->tenant_slug,

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Portal Login - AuraEMR')
+@section('title', 'Admin Portal Login - CarelioEMR')
 
 @section('content')
 
@@ -15,21 +15,10 @@
                 <i data-lucide="activity" class="w-7 h-7 stroke-[2.5]"></i>
             </div>
             <div>
-                <h2 class="text-2xl font-black text-slate-900">AuraEMR Admin Portal</h2>
+                <h2 class="text-2xl font-black text-slate-900">CarelioEMR Admin Portal</h2>
                 <p class="text-xs text-slate-500 font-semibold mt-0.5">
                     Authorized Management &amp; Subscriber Console
                 </p>
-            </div>
-        </div>
-
-        <div class="p-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-xs space-y-1">
-            <div class="flex items-center space-x-1.5 text-blue-700 font-bold">
-                <i data-lucide="shield-check" class="w-4 h-4 text-blue-600"></i>
-                <span>Administrator Credentials:</span>
-            </div>
-            <div class="text-slate-700 text-[11px] font-mono pl-5">
-                Email: <strong class="text-slate-900">admin@auraemr.com</strong><br>
-                Password: <strong class="text-slate-900">admin123</strong>
             </div>
         </div>
 
@@ -46,7 +35,7 @@
                 <label class="text-xs font-bold text-slate-700 block mb-1.5">Admin Email</label>
                 <div class="relative">
                     <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-                    <input type="email" name="email" required value="admin@auraemr.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 font-semibold focus:border-blue-600 focus:outline-none">
+                    <input type="email" name="email" required placeholder="admin@carelioemr.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 font-semibold focus:border-blue-600 focus:outline-none">
                 </div>
             </div>
 
@@ -54,7 +43,7 @@
                 <label class="text-xs font-bold text-slate-700 block mb-1.5">Password</label>
                 <div class="relative">
                     <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-                    <input type="password" name="password" required value="admin123" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 font-semibold focus:border-blue-600 focus:outline-none">
+                    <input type="password" name="password" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 font-semibold focus:border-blue-600 focus:outline-none">
                 </div>
             </div>
 

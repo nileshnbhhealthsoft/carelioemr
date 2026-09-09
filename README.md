@@ -1,13 +1,13 @@
-# CarelioEMR Cloud Healthcare SaaS Platform & OpenEMR Provisioner
+# CarelioEMR Cloud Healthcare SaaS Platform & Multi-Tenant Provisioner
 
-Welcome to the **CarelioEMR** source codebase. This repository contains the complete single-port Laravel SaaS application, Stripe checkout integration, admin portal, dual email receipt system, and automated OpenEMR multi-tenant site provisioner.
+Welcome to the **CarelioEMR** source codebase. This repository contains the complete single-port Laravel SaaS application, Stripe checkout integration, admin portal, dual email receipt system, and automated multi-tenant site provisioner.
 
 ---
 
 ## 🌟 Platform Highlights
 
 * **Single-Port Architecture**: Runs entirely on a single Laravel port (`http://localhost:8000/` or production domain). Both frontend landing pages and backend APIs are handled directly by Laravel Blade templates and controllers.
-* **Automated OpenEMR Multi-Tenancy**: Automatically provisions isolated site folders (`openemr/sites/{tenant_slug}`), databases (`openemr_{tenant_slug}`), and `sqlconf.php` configuration upon checkout completion.
+* **Automated Multi-Tenancy**: Automatically provisions isolated site folders, databases, and database configuration upon checkout completion.
 * **Restricted Role Access Control**: Seeds primary tenant users as **Clinic Admin / Practice Manager** with Super-Admin rights explicitly restricted via phpGACL rules.
 * **Stripe Payment Gateway**: Handles **$80/month** billing with automatic draft cleanup and secure checkout.
 * **Dual Gmail SMTP Dispatch**: Sends responsive HTML confirmation receipts to **Customers** and live notification alerts to **Admin**.
@@ -94,7 +94,7 @@ start-servers.bat
 
 * **SaaS Landing Page**: `http://localhost:8000/`
 * **Admin Login Portal**: `http://localhost:8000/admin/login`
-  * **Email**: `admin@auraemr.com`
+  * **Email**: `admin@carelioemr.com`
   * **Password**: `admin123`
 * **Admin Dashboard**: `http://localhost:8000/admin/dashboard`
 * **Tenant Workstation Portal**: `http://localhost:8000/tenant/{tenant_slug}`
@@ -106,9 +106,9 @@ start-servers.bat
 When a customer completes a subscription on the landing page:
 1. Stripe PaymentIntent is confirmed (`payment_status = 'succeeded'`).
 2. Laravel dispatches `ProvisionOpenEmrTenantJob` asynchronously.
-3. `OpenEmrProvisioningService` creates directory `openemr/sites/{tenant_slug}` and database `openemr_{tenant_slug}`.
-4. Auto-generates `sqlconf.php` with database login credentials.
-5. Imports baseline OpenEMR schema and seeds Practice Manager credentials.
+3. Automatically creates isolated tenant site directories and databases.
+4. Auto-generates configuration with database login credentials.
+5. Imports baseline schema and seeds Practice Manager credentials.
 6. Dispatches confirmation emails to **Customer** and **Admin**.
 
 ---

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard - AuraEMR Multi-Tenant')
+@section('title', 'Admin Dashboard - CarelioEMR Multi-Tenant')
 
 @section('content')
 
@@ -13,11 +13,11 @@
             
             <a href="{{ url('/') }}" class="flex items-center space-x-3 cursor-pointer">
                 <div class="w-10 h-10 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center shadow-md shadow-blue-600/20 shrink-0">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 stroke-[2.5]"></i>
+                    <i data-lucide="activity" class="w-5 h-5 stroke-[2.5]"></i>
                 </div>
                 <div>
-                    <div class="text-lg font-black text-slate-900 leading-none">Aura<span class="text-blue-600">Admin</span></div>
-                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Multi-Tenant OpenEMR</div>
+                    <div class="text-lg font-black text-slate-900 leading-none tracking-tight">Carelio<span class="text-blue-600">Admin</span></div>
+                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Multi-Tenant CarelioEMR</div>
                 </div>
             </a>
 
@@ -50,10 +50,10 @@
             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs space-y-1.5">
                 <div class="flex items-center space-x-2 text-blue-700 font-extrabold text-[11px]">
                     <i data-lucide="shield-check" class="w-4 h-4 text-blue-600"></i>
-                    <span>OpenEMR Multi-Tenancy</span>
+                    <span>CarelioEMR Multi-Tenancy</span>
                 </div>
                 <p class="text-[11px] text-slate-500 font-medium leading-relaxed">
-                    Zero OpenEMR Core Modifications<br>
+                    Zero Core Modifications<br>
                     Isolated Tenant DB &amp; Restricted Role
                 </p>
             </div>
@@ -63,11 +63,11 @@
         <div class="p-4 border-t border-slate-200 bg-slate-50/50 space-y-3">
             <div class="flex items-center space-x-3">
                 <div class="w-9 h-9 rounded-xl bg-blue-600 text-white font-extrabold flex items-center justify-center text-xs shadow-xs">
-                    AD
+                    CA
                 </div>
                 <div class="overflow-hidden">
-                    <div class="text-xs font-bold text-slate-900 truncate">{{ session('admin_user.name', 'Administrator') }}</div>
-                    <div class="text-[10px] text-slate-500 truncate">{{ session('admin_user.email', 'admin@auraemr.com') }}</div>
+                    <div class="text-xs font-bold text-slate-900 truncate">{{ session('admin_user.name', 'CarelioEMR Super Admin') }}</div>
+                    <div class="text-[10px] text-slate-500 truncate">{{ session('admin_user.email', 'admin@carelioemr.com') }}</div>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
             <div>
                 <div class="flex items-center space-x-3">
                     <h1 class="text-2xl font-black text-slate-900">
-                        OpenEMR Multi-Tenant Sites &amp; Provisioning Log
+                        CarelioEMR Multi-Tenant Sites &amp; Provisioning Log
                     </h1>
                     <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
                         <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i> Auto-Provisioner Active
@@ -117,7 +117,7 @@
                 <div>
                     <div class="text-[11px] text-slate-400 font-extrabold uppercase tracking-wider">Tenant Sites</div>
                     <div class="text-2xl font-black text-slate-900 mt-0.5">{{ $subscribers->count() }}</div>
-                    <div class="text-[10px] text-emerald-600 font-bold mt-0.5">Isolated OpenEMR Sites</div>
+                    <div class="text-[10px] text-emerald-600 font-bold mt-0.5">Isolated CarelioEMR Sites</div>
                 </div>
             </div>
 
@@ -162,7 +162,7 @@
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
                             <th class="px-6 py-4 whitespace-nowrap">Doctor / Subscriber</th>
-                            <th class="px-6 py-4 whitespace-nowrap">OpenEMR Site URL</th>
+                            <th class="px-6 py-4 whitespace-nowrap">CarelioEMR Site URL</th>
                             <th class="px-6 py-4 whitespace-nowrap">Tenant DB</th>
                             <th class="px-6 py-4 whitespace-nowrap">Provision Status</th>
                             <th class="px-6 py-4 whitespace-nowrap">Stripe Reference</th>
@@ -193,7 +193,7 @@
 
                                 <td class="px-6 py-4.5 whitespace-nowrap">
                                     <code class="font-mono text-[11px] text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200/60">
-                                        {{ $sub->openemr_database ?? 'openemr_pending' }}
+                                        {{ $sub->openemr_database ?? 'carelio_pending' }}
                                     </code>
                                 </td>
 

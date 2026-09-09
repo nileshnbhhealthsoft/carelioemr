@@ -26,7 +26,11 @@ Route::post('/admin/login', function (Request $request) {
         'password' => 'required|string',
     ]);
 
-    $user = User::where('email', $request->email)->first();
+    $email = $request->email;
+    $user = User::where('email', $email)->first();
+    if (!$user && in_array(strtolower($email), ['admin@carelioemr.com', 'admin@auraemr.com'])) {
+        $user = User::whereIn('email', ['admin@carelioemr.com', 'admin@auraemr.com'])->first();
+    }
 
     if ($user && Hash::check($request->password, $user->password)) {
         session([

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraEMR Subscription Confirmation</title>
+    <title>CarelioEMR Subscription Confirmation</title>
     <style>
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; padding: 0; }
         .container { max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
@@ -23,14 +23,14 @@
     <div class="container">
         
         <div class="header">
-            <h1>AuraEMR Cloud Platform</h1>
+            <h1>CarelioEMR Cloud Platform</h1>
             <p>Official Subscription Confirmation &amp; Receipt</p>
         </div>
 
         <div class="content">
             <div class="greeting">Welcome aboard, {{ $subscription->doctor_name }}!</div>
             <div class="text">
-                Thank you for subscribing to <strong>AuraEMR Cloud Healthcare Suite</strong>. Your monthly subscription has been successfully activated and your dedicated OpenEMR tenant workstation is provisioned.
+                Thank you for subscribing to <strong>CarelioEMR Cloud Healthcare Suite</strong>. Your monthly subscription has been successfully activated and your dedicated CarelioEMR tenant workstation is provisioned.
             </div>
 
             <div class="receipt-card">
@@ -58,8 +58,8 @@
                         <td style="font-weight:900; color:#059669; text-align:right;">$80.00 / month</td>
                     </tr>
                     <tr>
-                        <td style="color:#64748b; font-weight:500;">OpenEMR Dedicated Site URL:</td>
-                        <td style="font-family:monospace; font-size:11px; color:#2563eb; text-align:right; font-weight:700;">{{ $subscription->openemr_site_url ?? url('/openemr/sites/' . ($subscription->tenant_slug ?? '')) }}</td>
+                        <td style="color:#64748b; font-weight:500;">CarelioEMR Dedicated Site URL:</td>
+                        <td style="font-family:monospace; font-size:11px; color:#2563eb; text-align:right; font-weight:700;">{{ $subscription->openemr_site_url ?? url('/tenant/' . ($subscription->tenant_slug ?? '')) }}</td>
                     </tr>
                     <tr>
                         <td style="color:#64748b; font-weight:500;">Stripe Intent Reference:</td>
@@ -74,11 +74,11 @@
             </div>
 
             <!-- DYNAMIC TENANT WORKSTATION SITE LINK ON PORT 8000 -->
-            <a href="{{ $subscription->openemr_site_url ?? url('/openemr/sites/' . ($subscription->tenant_slug ?? '')) }}" class="cta-btn">Access Your Dedicated Workstation &rarr;</a>
+            <a href="{{ $subscription->openemr_site_url ?? url('/tenant/' . ($subscription->tenant_slug ?? '')) }}" class="cta-btn">Access Your Dedicated Workstation &rarr;</a>
         </div>
 
         <div class="footer">
-            &copy; 2026 AuraEMR Cloud Healthcare Suite. All rights reserved.<br>
+            &copy; 2026 CarelioEMR Cloud Healthcare Suite. All rights reserved.<br>
             256-bit TLS Encrypted • ISO 27001 &amp; HIPAA Compliant Infrastructure
         </div>
 
