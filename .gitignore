@@ -34,9 +34,11 @@ storage/framework/views/*
 !storage/framework/views/.gitignore
 !storage/logs/.gitignore
 
-# OpenEMR standalone codebase & public junction
-openemr/
-openemr
+# OpenEMR dynamic tenant sites, caches & public junction
+openemr/sites/site_*
+openemr/sites/site-*
+openemr/.webpack-cache/
+openemr/node_modules/
 public/openemr
 public/openemr/
 
