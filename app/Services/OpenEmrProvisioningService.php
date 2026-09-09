@@ -18,9 +18,9 @@ class OpenEmrProvisioningService
      */
     public function provisionTenant(Subscription $subscription): bool
     {
-        $cleanSlug = Str::slug($subscription->doctor_name, '_');
-        $tenantSlug = 'site_' . ($cleanSlug ?: 'tenant') . '_' . $subscription->id;
-        $dbName = 'openemr_' . $tenantSlug;
+        $cleanSlug = Str::slug($subscription->doctor_name, '-');
+        $tenantSlug = 'site-' . ($cleanSlug ?: 'tenant') . '-' . $subscription->id;
+        $dbName = 'openemr_' . str_replace('-', '_', $tenantSlug);
         $openEmrBasePath = base_path('openemr');
         $sitePath = $openEmrBasePath . '/sites/' . $tenantSlug;
         // OpenEMR Login Screen URL matching demo.openemr.io
@@ -137,13 +137,13 @@ class OpenEmrProvisioningService
             "\$dbase = '{$dbName}';\n" .
             "\$site_id = '{$tenantSlug}';\n" .
             "\$config = 1;\n\n" .
-            "\$sqlconf = array(\n" .
-            "    'host' => \$host,\n" .
-            "    'port' => \$port,\n" .
-            "    'login' => \$login,\n" .
-            "    'pass' => \$pass,\n" .
-            "    'dbase' => \$dbase\n" .
-            ");\n";
+            "\$sqlconf = array();\n" .
+            "global \$sqlconf;\n" .
+            "\$sqlconf['host'] = \$host;\n" .
+            "\$sqlconf['port'] = \$port;\n" .
+            "\$sqlconf['login'] = \$login;\n" .
+            "\$sqlconf['pass'] = \$pass;\n" .
+            "\$sqlconf['dbase'] = \$dbase;\n";
 
         File::put($sitePath . '/sqlconf.php', $sqlConfContent);
     }

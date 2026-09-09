@@ -36,6 +36,9 @@ storage/framework/views/*
 
 # OpenEMR dynamic tenant site directories (keep baseline)
 openemr/sites/site_*
+openemr/sites/site-*
+public/openemr
+public/openemr/
 
 # Logs and Debugging
 *.log
