@@ -42,6 +42,17 @@ openemr/node_modules/
 public/openemr
 public/openemr/
 
+# OEMR dynamic tenant sites, caches & public junction
+oemr/sites/site_*
+oemr/sites/site-*
+oemr/.webpack-cache/
+oemr/node_modules/
+public/oemr
+public/oemr/
+
+# OpenEMR tenant database backups
+storage/app/openemr_backups/
+
 # Logs and Debugging
 *.log
 npm-debug.log*

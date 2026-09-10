@@ -3,32 +3,72 @@
 namespace App\Services;
 
 use App\Models\Subscription;
+use App\Services\OpenEmr\OpenEmrCanonicalAclSeeder;
+use App\Services\OpenEmr\OpenEmrCanonicalGlobalsLoader;
+use App\Services\OpenEmr\OpenEmrTenantAuditService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use PDO;
-use Exception;
+use RuntimeException;
+use Throwable;
 
 class OpenEmrProvisioningService
 {
+    public function __construct(
+        protected OpenEmrCanonicalGlobalsLoader $globalsLoader,
+        protected OpenEmrCanonicalAclSeeder $aclSeeder,
+        protected OpenEmrTenantAuditService $auditService
+    ) {}
+
     /**
-     * Provision isolated Multi-Tenant OpenEMR Instance 100% dynamically
+     * Get path to OpenEMR base directory safely across CLI and web contexts
+     */
+    public function getOpenEmrBasePath(): string
+    {
+        try {
+            if (function_exists('base_path') && app()->has('path.base')) {
+                return base_path('oemr');
+            }
+        } catch (Throwable $e) {}
+        return 'E:/xampp/htdocs/1page/oemr';
+    }
+
+    /**
+     * Establish a PDO connection to a target tenant database
+     */
+    protected function getTenantPdo(string $dbName): PDO
+    {
+        $driver = config('database.default', 'mysql');
+        $host = config("database.connections.{$driver}.host", '127.0.0.1');
+        $port = config("database.connections.{$driver}.port", '3307');
+        $user = config("database.connections.{$driver}.username", 'root');
+        $pass = config("database.connections.{$driver}.password", 'root');
+
+        $pdo = new PDO("mysql:host={$host};port={$port};dbname={$dbName};charset=utf8mb4", $user, $pass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ]);
+
+        return $pdo;
+    }
+
+    /**
+     * Provision isolated Multi-Tenant OpenEMR Instance 100% canonically
      */
     public function provisionTenant(Subscription $subscription): bool
     {
         $cleanSlug = Str::slug($subscription->doctor_name, '-');
         $tenantSlug = 'site-' . ($cleanSlug ?: 'tenant') . '-' . $subscription->id;
         $dbName = 'openemr_' . str_replace('-', '_', $tenantSlug);
-        $openEmrBasePath = base_path('openemr');
+        $openEmrBasePath = $this->getOpenEmrBasePath();
         $sitePath = $openEmrBasePath . '/sites/' . $tenantSlug;
-        // OpenEMR Login Screen URL matching demo.openemr.io
-        $siteUrl = config('app.url', 'http://localhost:8000') . '/openemr/interface/login/login.php?site=' . $tenantSlug;
+        $siteUrl = config('app.url', 'http://localhost:8000') . '/oemr/interface/login/login.php?site=' . $tenantSlug;
 
-        Log::info("Starting Dynamic OpenEMR Tenant Provisioning for Subscription #{$subscription->id} ({$tenantSlug})");
+        Log::info("Starting Canonical OpenEMR Tenant Provisioning for Subscription #{$subscription->id} ({$tenantSlug})");
 
-        // Update status dynamically
+        // Update status to provisioning
         $subscription->update([
             'tenant_slug' => $tenantSlug,
             'openemr_database' => $dbName,
@@ -38,30 +78,49 @@ class OpenEmrProvisioningService
         ]);
 
         try {
-            // 1. Create Isolated Tenant Directory dynamically
+            // Stage 1: Create isolated tenant site directory with strict path guards
             $this->createTenantDirectory($openEmrBasePath, $sitePath);
 
-            // 2. Create Isolated Tenant Database dynamically
+            // Stage 2: Create isolated tenant database
             $this->createTenantDatabase($dbName);
 
-            // 3. Generate Tenant sqlconf.php dynamically
+            // Stage 3: Generate Tenant sqlconf.php
             $this->generateSqlConf($sitePath, $dbName, $tenantSlug);
 
-            // 4. Import Full Clean OpenEMR Baseline Schema & Execute Real ACL Restrictions
-            $this->importBaselineSchemaAndSeedAcl($dbName, $subscription);
+            // Stage 4: Import baseline openemr/sql/database.sql
+            $this->importDatabaseSql($dbName);
 
-            // Mark completed dynamically
+            // Stage 5: Apply canonical OpenEMR version information (Installer::add_version_info() behavior)
+            $this->applyCanonicalVersion($dbName);
+
+            // Stage 6: Seed canonical globals dynamically using OpenEmrCanonicalGlobalsLoader
+            $this->seedCanonicalGlobals($dbName, $sitePath, $tenantSlug);
+
+            // Stage 7 & 8: Initialize canonical ACL/phpGACL baseline & official service accounts
+            $this->seedCanonicalAcl($sitePath, $tenantSlug, $dbName);
+
+            // Stage 9: Apply tenant-specific overrides (clinic name, phone, etc.)
+            $this->applyTenantOverrides($dbName, $subscription);
+
+            // Stage 10: Create tenant first Admin user & map to canonical Admin ACL group
+            $this->createFirstAdminUserAndMapAcl($dbName, $subscription);
+
+            // Stage 11: Run health checks
+            $this->verifyTenantHealth($subscription);
+
+            // Stage 12: Mark completed
             $subscription->update([
                 'provision_status' => 'completed',
+                'provision_error' => null,
             ]);
 
-            Log::info("Successfully Provisioned OpenEMR Tenant for #{$subscription->id} at {$siteUrl}");
+            Log::info("Successfully Provisioned Canonical OpenEMR Tenant for #{$subscription->id} at {$siteUrl}");
             return true;
 
-        } catch (Exception $e) {
-            Log::error("OpenEMR Tenant Provisioning Failed for #{$subscription->id}: " . $e->getMessage());
+        } catch (Throwable $e) {
+            Log::error("Canonical OpenEMR Tenant Provisioning Failed for #{$subscription->id}: " . $e->getMessage());
 
-            // Rollback dynamically on failure
+            // Rollback dynamically on failure with strict safety guards
             $this->rollbackProvisioning($sitePath, $dbName);
 
             $subscription->update([
@@ -74,10 +133,17 @@ class OpenEmrProvisioningService
     }
 
     /**
-     * Copy default site template directory dynamically
+     * Copy default site template directory dynamically with path guards
      */
     protected function createTenantDirectory(string $openEmrBasePath, string $sitePath): void
     {
+        $normalizedSites = str_replace('\\', '/', realpath($openEmrBasePath . '/sites') ?: ($openEmrBasePath . '/sites'));
+        $normalizedSitePath = str_replace('\\', '/', $sitePath);
+
+        if (!str_starts_with($normalizedSitePath, $normalizedSites . '/site-')) {
+            throw new RuntimeException("Security violation: Target site directory outside sites/ container: {$sitePath}");
+        }
+
         if (File::exists($sitePath)) {
             File::deleteDirectory($sitePath);
         }
@@ -94,17 +160,20 @@ class OpenEmrProvisioningService
             File::makeDirectory($sitePath . '/letter_templates', 0755, true, true);
         }
 
-        // Ensure critical config.php exists in tenant directory
         if (!File::exists($sitePath . '/config.php') && File::exists($templatePath . '/config.php')) {
             File::copy($templatePath . '/config.php', $sitePath . '/config.php');
         }
     }
 
     /**
-     * Create isolated database for tenant dynamically based on database connection driver
+     * Create isolated database for tenant dynamically with safety guard
      */
     protected function createTenantDatabase(string $dbName): void
     {
+        if (!str_starts_with($dbName, 'openemr_site_')) {
+            throw new RuntimeException("Security violation: Target database must start with 'openemr_site_': {$dbName}");
+        }
+
         $driver = config('database.default', 'mysql');
 
         if ($driver === 'mysql') {
@@ -149,117 +218,190 @@ class OpenEmrProvisioningService
     }
 
     /**
-     * Import Full Baseline OpenEMR SQL Dump & Seed Real Restrictive phpGACL ACL Permissions
+     * Import baseline openemr/sql/database.sql schema
      */
-    protected function importBaselineSchemaAndSeedAcl(string $dbName, Subscription $subscription): void
+    protected function importDatabaseSql(string $dbName): void
     {
         $driver = config('database.default', 'mysql');
+        if ($driver !== 'mysql') {
+            return;
+        }
 
-        if ($driver === 'mysql') {
-            $host = config('database.connections.mysql.host', '127.0.0.1');
-            $port = config('database.connections.mysql.port', '3307');
-            $user = config('database.connections.mysql.username', 'root');
-            $pass = config('database.connections.mysql.password', 'root');
+        $host = config('database.connections.mysql.host', '127.0.0.1');
+        $port = config('database.connections.mysql.port', '3307');
+        $user = config('database.connections.mysql.username', 'root');
+        $pass = config('database.connections.mysql.password', 'root');
 
-            $pdo = new PDO("mysql:host={$host};port={$port};dbname={$dbName}", $user, $pass, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            ]);
+        $sqlFile = $this->getOpenEmrBasePath() . '/sql/database.sql';
+        if (!File::exists($sqlFile)) {
+            throw new RuntimeException("Canonical OpenEMR database.sql not found: {$sqlFile}");
+        }
 
-            try {
-                $pdo->exec("SET GLOBAL max_allowed_packet = 1073741824");
-            } catch (Exception $e) {}
+        $mysqlExe = 'C:\\Program Files\\MySQL\\MySQL Server 9.6\\bin\\mysql.exe';
+        if (File::exists($mysqlExe)) {
+            $passArg = $pass !== '' ? "-p{$pass}" : '';
+            $cmd = "cmd.exe /c \"\"{$mysqlExe}\" -h {$host} -P {$port} -u {$user} {$passArg} {$dbName} < \"{$sqlFile}\"\"";
+            exec($cmd, $output, $returnCode);
+            if ($returnCode !== 0) {
+                throw new RuntimeException("MySQL CLI execution of database.sql failed with exit code {$returnCode}");
+            }
+        } else {
+            $pdo = $this->getTenantPdo($dbName);
+            $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
+            $rawSql = File::get($sqlFile);
+            $pdo->setAttribute(PDO::MYSQL_ATTR_MULTI_STATEMENTS, true);
+            $pdo->exec($rawSql);
+            $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+        }
+    }
 
-            $tableCount = (int) $pdo->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{$dbName}'")->fetchColumn();
+    /**
+     * Apply canonical OpenEMR version information from openemr/version.php
+     * Exactly reproducing Installer::add_version_info()
+     */
+    protected function applyCanonicalVersion(string $dbName): void
+    {
+        $versionFile = $this->getOpenEmrBasePath() . '/version.php';
+        if (!File::exists($versionFile)) {
+            throw new RuntimeException("Canonical OpenEMR version.php not found at {$versionFile}");
+        }
 
-            if ($tableCount < 10) {
-                $sqlFile = base_path('openemr/sql/database.sql');
-                if (File::exists($sqlFile)) {
-                    $mysqlExe = 'C:\\Program Files\\MySQL\\MySQL Server 9.6\\bin\\mysql.exe';
-                    if (File::exists($mysqlExe)) {
-                        $passArg = $pass !== '' ? "-p{$pass}" : '';
-                        $cmd = "cmd.exe /c \"\"{$mysqlExe}\" -h {$host} -P {$port} -u {$user} {$passArg} {$dbName} < \"{$sqlFile}\"\"";
-                        shell_exec($cmd);
-                    } else {
-                        // Fallback PDO execution
-                        $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-                        $rawSql = File::get($sqlFile);
-                        $pdo->setAttribute(PDO::MYSQL_ATTR_MULTI_STATEMENTS, true);
-                        try {
-                            $pdo->exec($rawSql);
-                        } catch (Exception $ex) {}
-                        $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
-                    }
-                }
+        // Include canonical version definitions
+        include $versionFile;
+
+        $pdo = $this->getTenantPdo($dbName);
+        $stmtVer = $pdo->prepare("UPDATE version SET v_major = ?, v_minor = ?, v_patch = ?, v_realpatch = ?, v_tag = ?, v_database = ?, v_acl = ?");
+        $stmtVer->execute([$v_major, $v_minor, $v_patch, $v_realpatch, $v_tag, $v_database, $v_acl]);
+
+        Log::info("Canonical OpenEMR version {$v_major}.{$v_minor}.{$v_patch} (rev {$v_database}, acl {$v_acl}) applied to {$dbName}");
+    }
+
+    /**
+     * Seed canonical globals dynamically using OpenEmrCanonicalGlobalsLoader
+     */
+    protected function seedCanonicalGlobals(string $dbName, string $sitePath, string $tenantSlug): void
+    {
+        $canonicalInfo = $this->globalsLoader->loadCanonicalGlobals();
+        $pdo = $this->getTenantPdo($dbName);
+
+        $stmtGlob = $pdo->prepare("INSERT INTO globals (gl_name, gl_index, gl_value) VALUES (?, 0, ?) ON DUPLICATE KEY UPDATE gl_name = gl_name");
+
+        foreach ($canonicalInfo['canonical_globals'] as $key => $meta) {
+            $value = $meta['default'];
+
+            // Dynamically resolve environment and path-dependent globals
+            if ($key === 'OE_SITE_DIR') {
+                $value = $sitePath;
+            } elseif ($key === 'documents_path') {
+                $value = $sitePath . '/documents';
+            } elseif ($key === 'edi_history_path') {
+                $value = $sitePath . '/edi';
+            } elseif ($key === 'temporary_files_dir') {
+                $value = $sitePath . '/documents/temp';
+            } elseif ($key === 'site_id') {
+                $value = $tenantSlug;
+            } elseif ($key === 'installation_id' && empty($value)) {
+                $value = (string) Str::uuid();
+            } elseif ($key === 'system_uuid' && empty($value)) {
+                $value = (string) Str::uuid();
+            } elseif ($key === 'openemr_unique_installation_id' && empty($value)) {
+                $value = hash('sha256', $sitePath . microtime());
             }
 
-            // 1. Configure Demo OpenEMR Appearance Globals (identical to demo.openemr.io)
-            $demoGlobals = [
-                'show_primary_logo' => '1',
-                'primary_logo_width' => 'w-50',
-                'logo_position' => 'flex-column',
-                'show_tagline_on_login' => '1',
-                'login_tagline_text' => 'CarelioEMR - Advanced Clinical & Medical Practice Management EHR',
-                'show_labels_on_login_form' => '1',
-                'language_menu_login' => '1',
-                'language_menu_showall' => '1',
-                'display_acknowledgements_on_login' => '1',
-                'login_page_layout' => 'login/layouts/vertical_band.html.twig',
-                'css_header' => 'style_light.css',
-                'timeout' => '14400',
-                'portal_timeout' => '1800',
-                'calendar_view_type' => 'day',
-                'calendar_interval' => '15',
-                'schedule_start' => '8',
-                'schedule_end' => '18',
-            ];
-            $stmtGlob = $pdo->prepare("REPLACE INTO globals (gl_name, gl_value) VALUES (?, ?)");
-            foreach ($demoGlobals as $gk => $gv) {
-                $stmtGlob->execute([$gk, $gv]);
-            }
+            $stmtGlob->execute([$key, $value]);
+        }
 
-            // 2. Configure Great Clinic facility (#99FFFF) as in demo.openemr.io
-            $pdo->exec("UPDATE facility SET name = 'Great Clinic', color = '#99FFFF' WHERE id = 3");
-            $pdo->exec("UPDATE facility SET name = 'Great Clinic', color = '#99FFFF' WHERE primary_business_entity = 1");
+        Log::info("Seeded {$canonicalInfo['total_discovered']} canonical globals into {$dbName}");
+    }
 
-            // 3. Configure default tabs: Calendar & Message Center
-            $pdo->exec("UPDATE list_options SET activity = 1 WHERE list_id = 'default_open_tabs' AND option_id IN ('cal', 'msg')");
-            $pdo->exec("UPDATE list_options SET activity = 0 WHERE list_id = 'default_open_tabs' AND option_id NOT IN ('cal', 'msg')");
+    /**
+     * Initialize canonical ACL and official service accounts via OpenEmrCanonicalAclSeeder
+     */
+    protected function seedCanonicalAcl(string $sitePath, string $tenantSlug, string $dbName): void
+    {
+        $this->aclSeeder->seedCanonicalAcl($sitePath, $tenantSlug, $dbName, 'admin', 'Billy Smith');
+    }
 
-            // 4. Insert Spanish language so the Language selector is displayed as on demo.openemr.io
-            $pdo->exec("INSERT IGNORE INTO lang_languages (lang_id, lang_code, lang_description, lang_is_rtl) VALUES (2, 'es', 'Spanish (Latin American)', 0)");
+    /**
+     * Apply tenant-specific business overrides AFTER canonical defaults
+     */
+    protected function applyTenantOverrides(string $dbName, Subscription $subscription): void
+    {
+        $pdo = $this->getTenantPdo($dbName);
 
-            // 5. Seed Demo 'admin' user as Billy Smith (password: 'pass')
-            $adminPassHash = password_hash('pass', PASSWORD_DEFAULT);
-            $adminId = $pdo->query("SELECT id FROM users WHERE username = 'admin'")->fetchColumn();
-            if (!$adminId) {
-                $stmtAdmin = $pdo->prepare("INSERT INTO users (id, username, password, fname, lname, authorized, active, calendar, cal_ui, facility_id, info, date_created, last_updated) 
-                    VALUES (2, 'admin', 'NoLongerUsed', 'Billy', 'Smith', 1, 1, 1, 3, 3, 'Demo Administrator', NOW(), NOW())");
-                $stmtAdmin->execute();
-                $adminId = 2;
-            } else {
-                $pdo->exec("UPDATE users SET fname = 'Billy', lname = 'Smith', authorized = 1, active = 1, calendar = 1, cal_ui = 3, facility_id = 3, last_updated = NOW() WHERE id = {$adminId}");
-            }
-            $pdo->exec("REPLACE INTO users_secure (id, username, password, last_update_password, last_update) VALUES ({$adminId}, 'admin', '{$adminPassHash}', NOW(), NOW())");
+        $clinicName = $subscription->practice_type 
+            ? ($subscription->practice_type . ' Clinic') 
+            : ($subscription->doctor_name ? ($subscription->doctor_name . ' Practice') : 'CarelioEMR Medical Practice');
 
-            // 6. Seed demo patient: Abel Bule
-            $pdo->exec("INSERT INTO patient_data (pid, pubpid, fname, lname, DOB, sex, date) 
-                VALUES (1, '1', 'Abel', 'Bule', '1985-05-15', 'Male', NOW())
-                ON DUPLICATE KEY UPDATE fname = 'Abel', lname = 'Bule'");
+        $overrides = [
+            'practice_name' => $clinicName,
+            'phone' => $subscription->phone ?? '',
+            'css_header' => 'style_light.css',
+            'show_primary_logo' => '1',
+            'primary_logo_width' => 'w-50',
+            'logo_position' => 'flex-column',
+            'show_tagline_on_login' => '1',
+            'login_tagline_text' => 'CarelioEMR - Advanced Clinical & Medical Practice Management EHR',
+            'show_labels_on_login_form' => '1',
+            'language_menu_login' => '1',
+            'language_menu_showall' => '1',
+            'display_acknowledgements_on_login' => '1',
+            'login_page_layout' => 'login/layouts/vertical_band.html.twig',
+            'timeout' => '14400',
+            'portal_timeout' => '1800',
+            'calendar_view_type' => 'day',
+            'calendar_interval' => '15',
+            'schedule_start' => '8',
+            'schedule_end' => '18',
+        ];
 
-            // 7. Seed demo calendar appointments for today (9:00 IN and 10:00 EMAIL Abel Bule)
-            $today = date('Y-m-d');
-            $pdo->exec("DELETE FROM openemr_postcalendar_events WHERE pc_eventDate = '{$today}'");
-            $stmt1 = $pdo->prepare("INSERT INTO openemr_postcalendar_events 
-                (pc_catid, pc_multiple, pc_aid, pc_pid, pc_title, pc_time, pc_eventDate, pc_endDate, pc_duration, pc_startTime, pc_endTime, pc_facility, pc_apptstatus, pc_eventstatus, pc_sharing, pc_topic, pc_hometext)
-                VALUES (5, 0, ?, 0, 'IN', NOW(), ?, ?, 900, '09:00:00', '09:15:00', 3, '-', 1, 1, 1, '')");
-            $stmt1->execute([$adminId, $today, $today]);
-            $stmt2 = $pdo->prepare("INSERT INTO openemr_postcalendar_events 
-                (pc_catid, pc_multiple, pc_aid, pc_pid, pc_title, pc_time, pc_eventDate, pc_endDate, pc_duration, pc_startTime, pc_endTime, pc_facility, pc_apptstatus, pc_eventstatus, pc_sharing, pc_topic, pc_hometext)
-                VALUES (9, 0, ?, 1, 'EMAIL', NOW(), ?, ?, 1800, '10:00:00', '10:30:00', 3, '-', 1, 1, 1, '')");
-            $stmt2->execute([$adminId, $today, $today]);
+        $stmtOverride = $pdo->prepare("REPLACE INTO globals (gl_name, gl_index, gl_value) VALUES (?, 0, ?)");
+        foreach ($overrides as $gk => $gv) {
+            $stmtOverride->execute([$gk, (string) $gv]);
+        }
 
-            // 8. Seed subscriber doctor user (password: 'ClinicPass123!')
-            $username = Str::slug($subscription->doctor_name, '_') ?: 'doctor_' . $subscription->id;
+        // Configure facility primary business entity
+        $stmtFac = $pdo->prepare("UPDATE facility SET name = ?, color = '#99FFFF' WHERE primary_business_entity = 1 OR id = 3");
+        $stmtFac->execute([$clinicName]);
+
+        // Configure default tabs (Calendar & Message Center)
+        $pdo->exec("UPDATE list_options SET activity = 1 WHERE list_id = 'default_open_tabs' AND option_id IN ('cal', 'msg')");
+        $pdo->exec("UPDATE list_options SET activity = 0 WHERE list_id = 'default_open_tabs' AND option_id NOT IN ('cal', 'msg')");
+
+        // Insert Spanish language for language menu support
+        $pdo->exec("INSERT IGNORE INTO lang_languages (lang_id, lang_code, lang_description, lang_is_rtl) VALUES (2, 'es', 'Spanish (Latin American)', 0)");
+    }
+
+    /**
+     * Create the first tenant Admin user and link to canonical Admin ACL group
+     */
+    protected function createFirstAdminUserAndMapAcl(string $dbName, Subscription $subscription): void
+    {
+        $pdo = $this->getTenantPdo($dbName);
+
+        // 1. Seed Demo 'admin' user as Billy Smith (password: 'pass')
+        $adminPassHash = password_hash('pass', PASSWORD_DEFAULT);
+        $adminId = $pdo->query("SELECT id FROM users WHERE username = 'admin'")->fetchColumn();
+
+        if (!$adminId) {
+            $stmtAdmin = $pdo->prepare("INSERT INTO users (username, password, fname, lname, authorized, active, calendar, cal_ui, facility_id, info, date_created, last_updated) 
+                VALUES ('admin', 'NoLongerUsed', 'Billy', 'Smith', 1, 1, 1, 3, 3, 'Administrator', NOW(), NOW())");
+            $stmtAdmin->execute();
+            $adminId = (int) $pdo->lastInsertId();
+        } else {
+            $adminId = (int) $adminId;
+            $pdo->exec("UPDATE users SET fname = 'Billy', lname = 'Smith', authorized = 1, active = 1, calendar = 1, cal_ui = 3, facility_id = 3, last_updated = NOW() WHERE id = {$adminId}");
+        }
+
+        $pdo->exec("REPLACE INTO users_secure (id, username, password, last_update_password, last_update) VALUES ({$adminId}, 'admin', '{$adminPassHash}', NOW(), NOW())");
+        $pdo->exec("INSERT IGNORE INTO `groups` (name, user) VALUES ('Default', 'admin')");
+
+        // Ensure admin user is mapped into canonical Admin ACL group
+        $this->aclSeeder->ensureAdminUserAclMapped($dbName, 'admin', 'Billy Smith');
+
+        // 2. Seed subscriber doctor user if different from admin
+        if (!empty($subscription->doctor_name)) {
+            $username = Str::slug($subscription->doctor_name, '_') ?: ('doctor_' . $subscription->id);
             $hashedPassword = password_hash('ClinicPass123!', PASSWORD_DEFAULT);
             $nameParts = explode(' ', trim($subscription->doctor_name));
             $fname = $nameParts[0] ?? 'Doctor';
@@ -268,65 +410,76 @@ class OpenEmrProvisioningService
 
             $existingId = $pdo->query("SELECT id FROM users WHERE username = '{$username}'")->fetchColumn();
             if (!$existingId) {
-                $stmt = $pdo->prepare("INSERT INTO users (username, password, fname, lname, email, facility, authorized, active, calendar, cal_ui, facility_id, info, date_created, last_updated) 
-                    VALUES (?, 'NoLongerUsed', ?, ?, ?, ?, 1, 1, 1, 3, 3, 'Role: Practice Manager / Clinician', NOW(), NOW())");
-                $stmt->execute([$username, $fname, $lname, $subscription->email, $facilityName]);
-                $userId = $pdo->lastInsertId();
+                $stmtDoc = $pdo->prepare("INSERT INTO users (username, password, fname, lname, email, facility, authorized, active, calendar, cal_ui, facility_id, info, date_created, last_updated) 
+                    VALUES (?, 'NoLongerUsed', ?, ?, ?, ?, 1, 1, 1, 3, 3, 'Practice Manager / Clinician', NOW(), NOW())");
+                $stmtDoc->execute([$username, $fname, $lname, $subscription->email, $facilityName]);
+                $docUserId = (int) $pdo->lastInsertId();
             } else {
-                $userId = $existingId;
-                $stmt = $pdo->prepare("UPDATE users SET authorized = 1, active = 1, calendar = 1, cal_ui = 3, facility_id = 3, last_updated = NOW() WHERE id = ?");
-                $stmt->execute([$userId]);
+                $docUserId = (int) $existingId;
             }
 
-            $pdo->exec("REPLACE INTO users_secure (id, username, password, last_update_password, last_update) VALUES ({$userId}, '{$username}', '{$hashedPassword}', NOW(), NOW())");
-
-            // 9. Seed OpenEMR legacy groups table for both admin and doctor
-            $pdo->exec("INSERT IGNORE INTO `groups` (name, user) VALUES ('Default', 'admin')");
+            $pdo->exec("REPLACE INTO users_secure (id, username, password, last_update_password, last_update) VALUES ({$docUserId}, '{$username}', '{$hashedPassword}', NOW(), NOW())");
             $pdo->exec("INSERT IGNORE INTO `groups` (name, user) VALUES ('Default', '{$username}')");
 
-            // 10. Map both users into phpGACL ARO and permission groups
-            foreach (['admin' => 'Administrator', $username => $subscription->doctor_name . ' (Practice Manager)'] as $uName => $uTitle) {
-                $existingAro = $pdo->query("SELECT id FROM gacl_aro WHERE section_value = 'users' AND value = '{$uName}'")->fetchColumn();
-                if ($existingAro === false || $existingAro === null) {
-                    $nextAroId = (int) $pdo->query("SELECT COALESCE(MAX(id), 0) + 1 FROM gacl_aro")->fetchColumn();
-                    $stmtAro = $pdo->prepare("INSERT INTO gacl_aro (id, section_value, value, order_value, name, hidden) VALUES (?, 'users', ?, 1, ?, 0)");
-                    $stmtAro->execute([$nextAroId, $uName, $uTitle]);
-                    $aroId = $nextAroId;
-                } else {
-                    $aroId = (int) $existingAro;
-                }
-
-                // Group 1: Administrators, Group 2: Physicians, Group 3: Clinicians
-                $pdo->exec("INSERT IGNORE INTO gacl_groups_aro_map (group_id, aro_id) VALUES (1, {$aroId})");
-                $pdo->exec("INSERT IGNORE INTO gacl_groups_aro_map (group_id, aro_id) VALUES (2, {$aroId})");
-                $pdo->exec("INSERT IGNORE INTO gacl_groups_aro_map (group_id, aro_id) VALUES (3, {$aroId})");
-            }
-
-            Log::info("Successfully seeded demo appearance, admin user, and doctor {$username} into tenant DB {$dbName}");
+            // Map subscriber doctor into canonical admin group as well
+            $this->aclSeeder->ensureAdminUserAclMapped($dbName, $username, $subscription->doctor_name);
         }
     }
 
     /**
-     * Rollback provisioning resources dynamically on failure
+     * Run rigorous health checks on the newly provisioned tenant
+     */
+    protected function verifyTenantHealth(Subscription $subscription): void
+    {
+        $audit = $this->auditService->auditTenant($subscription);
+
+        if (!$audit['version_compatible']) {
+            throw new RuntimeException("Health check failed: Version verification failed (" . implode(', ', $audit['compatibility_errors']) . ")");
+        }
+
+        if (($audit['health_invariants']['theme_tabs_layout']['status'] ?? '') !== 'PASS') {
+            throw new RuntimeException("Health check failed: theme_tabs_layout invariant not passed (value: " . ($audit['health_invariants']['theme_tabs_layout']['value'] ?? 'none') . ")");
+        }
+
+        if (($audit['health_invariants']['full_new_patient_form']['status'] ?? '') !== 'PASS') {
+            throw new RuntimeException("Health check failed: full_new_patient_form invariant not passed (value: " . ($audit['health_invariants']['full_new_patient_form']['value'] ?? 'none') . ")");
+        }
+
+        if (empty($audit['admin_user_audit']['gacl_mapped'])) {
+            throw new RuntimeException("Health check failed: Admin user is not mapped to canonical Admin ACL group");
+        }
+
+        $missingSafe = count($audit['missing_globals_by_category']['safe_static_default']);
+        if ($missingSafe > 0) {
+            throw new RuntimeException("Health check failed: {$missingSafe} canonical safe default globals are missing");
+        }
+
+        Log::info("All canonical health checks passed successfully for #{$subscription->id}");
+    }
+
+    /**
+     * Rollback provisioning resources dynamically on failure with strict path and database guards
      */
     protected function rollbackProvisioning(string $sitePath, string $dbName): void
     {
-        if (File::exists($sitePath)) {
+        $openEmrBasePath = $this->getOpenEmrBasePath();
+        $normalizedSites = str_replace('\\', '/', realpath($openEmrBasePath . '/sites') ?: ($openEmrBasePath . '/sites'));
+        $normalizedSitePath = str_replace('\\', '/', $sitePath);
+
+        // Safety Guard 1: Only delete directories strictly within oemr/sites/site-*
+        if (str_starts_with($normalizedSitePath, $normalizedSites . '/site-') && File::exists($sitePath)) {
+            Log::warning("Rollback: Deleting failed tenant site directory: {$sitePath}");
             File::deleteDirectory($sitePath);
         }
 
-        try {
-            $driver = config('database.default', 'mysql');
-            if ($driver === 'mysql') {
+        // Safety Guard 2: Only drop databases strictly matching openemr_site_* and never system/reference DBs
+        if (str_starts_with($dbName, 'openemr_site_') && !in_array($dbName, ['openemr', 'auraemr', 'mysql', 'information_schema', 'performance_schema', 'sys'], true)) {
+            try {
+                Log::warning("Rollback: Dropping failed tenant database: {$dbName}");
                 DB::statement("DROP DATABASE IF EXISTS `{$dbName}`");
-            } else {
-                $sqlitePath = database_path("{$dbName}.sqlite");
-                if (File::exists($sqlitePath)) {
-                    File::delete($sqlitePath);
-                }
+            } catch (Throwable $e) {
+                Log::warning("Rollback DB drop warning: " . $e->getMessage());
             }
-        } catch (Exception $e) {
-            Log::warning("Rollback DB drop notice: " . $e->getMessage());
         }
     }
 }
