@@ -164,6 +164,33 @@ class OpenEmrProvisioningService
         if (!File::exists($sitePath . '/config.php') && File::exists($templatePath . '/config.php')) {
             File::copy($templatePath . '/config.php', $sitePath . '/config.php');
         }
+
+        $this->deployTenantFavicon($sitePath);
+    }
+
+    /**
+     * Copy canonical Carelio brand favicon to isolated tenant directory.
+     * Preserves OEMR core integrity by deploying brand assets only to tenant runtime directories.
+     */
+    protected function deployTenantFavicon(string $sitePath): void
+    {
+        $sourceFavicon = public_path('favicon.ico');
+
+        if (!File::exists($sourceFavicon)) {
+            Log::error("Canonical Carelio favicon source not found at {$sourceFavicon}. Tenant runtime directory will not receive brand favicon.");
+            return;
+        }
+
+        try {
+            $destDir = $sitePath . '/images/logos/core/favicon';
+            if (!File::isDirectory($destDir)) {
+                File::makeDirectory($destDir, 0755, true, true);
+            }
+            File::copy($sourceFavicon, $destDir . '/favicon.ico');
+        } catch (Throwable $e) {
+            Log::error("Failed to deploy Carelio favicon to tenant site at {$sitePath}: " . $e->getMessage());
+            // Favicon copy failure must not corrupt tenant provisioning
+        }
     }
 
     /**
