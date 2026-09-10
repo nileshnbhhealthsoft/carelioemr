@@ -161,6 +161,7 @@ class OpenEmrTenantRepairService
             'gacl_aco_map_count' => (int) $pdo->query("SELECT COUNT(*) FROM gacl_aco_map")->fetchColumn(),
             'gacl_aro_groups_map_count' => (int) $pdo->query("SELECT COUNT(*) FROM gacl_aro_groups_map")->fetchColumn(),
             'gacl_groups_aro_map_count' => (int) $pdo->query("SELECT COUNT(*) FROM gacl_groups_aro_map")->fetchColumn(),
+            'module_acl_group_settings_count' => (int) $pdo->query("SELECT COUNT(*) FROM module_acl_group_settings")->fetchColumn(),
             'admin_mapped' => $adminMapped,
             'users_count' => (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(),
             'patients_count' => (int) $pdo->query("SELECT COUNT(*) FROM patient_data")->fetchColumn(),
@@ -186,12 +187,23 @@ class OpenEmrTenantRepairService
         $backupFilename = "backup_{$tenantSlug}_sub{$subscription->id}_{$dbName}_{$timestamp}.sql";
         $backupFilePath = $backupDir . '/' . $backupFilename;
 
-        $mysqlDumpExe = 'C:\\Program Files\\MySQL\\MySQL Server 9.6\\bin\\mysqldump.exe';
-        if (!File::exists($mysqlDumpExe)) {
-            $mysqlDumpExe = 'E:\\xampp\\mysql\\bin\\mysqldump.exe';
+        $mysqlDumpExe = config('database.mysqldump_path') ?: env('MYSQLDUMP_PATH');
+        if (!$mysqlDumpExe || !File::exists($mysqlDumpExe)) {
+            $candidates = [
+                'C:\\Program Files\\MySQL\\MySQL Server 9.6\\bin\\mysqldump.exe',
+                'E:\\xampp\\mysql\\bin\\mysqldump.exe',
+                'C:\\xampp\\mysql\\bin\\mysqldump.exe',
+                'mysqldump',
+            ];
+            foreach ($candidates as $cand) {
+                if (File::exists($cand)) {
+                    $mysqlDumpExe = $cand;
+                    break;
+                }
+            }
         }
 
-        if (!File::exists($mysqlDumpExe)) {
+        if (!$mysqlDumpExe) {
             throw new RuntimeException("mysqldump executable not found. Cannot perform safe backup.");
         }
 
@@ -491,12 +503,71 @@ class OpenEmrTenantRepairService
             }
         }
 
+        // 5. Canonical Module ACL repair: Care Coordination module (Installer::on_care_coordination)
+        $moduleAclRepaired = false;
+        try {
+            $stmtMod = $pdo->prepare("SELECT mod_id FROM modules WHERE mod_name = 'Carecoordination' LIMIT 1");
+            $stmtMod->execute();
+            $modId = $stmtMod->fetchColumn();
+
+            $stmtSec = $pdo->prepare("SELECT section_id FROM module_acl_sections WHERE section_identifier = 'carecoordination' LIMIT 1");
+            $stmtSec->execute();
+            $secId = $stmtSec->fetchColumn();
+
+            $stmtGrp = $pdo->prepare("SELECT id FROM gacl_aro_groups WHERE value = 'admin' LIMIT 1");
+            $stmtGrp->execute();
+            $grpId = $stmtGrp->fetchColumn();
+
+            if ($modId && $secId && $grpId) {
+                $stmtChk = $pdo->prepare("SELECT allowed FROM module_acl_group_settings WHERE module_id = ? AND group_id = ? AND section_id = ? LIMIT 1");
+                $stmtChk->execute([$modId, $grpId, $secId]);
+                $row = $stmtChk->fetch(PDO::FETCH_ASSOC);
+
+                if (!$row) {
+                    $stmtInsertModAcl = $pdo->prepare("INSERT INTO module_acl_group_settings (module_id, group_id, section_id, allowed) VALUES (?, ?, ?, 1)");
+                    $stmtInsertModAcl->execute([$modId, $grpId, $secId]);
+                    $insertedAcl[] = "module_acl_group_settings: Carecoordination allowed for admin group (mod: {$modId}, grp: {$grpId}, sec: {$secId})";
+                    $auditLog[] = [
+                        'repair_run_id' => $runId,
+                        'subscription_id' => $subscription->id,
+                        'database' => $dbName,
+                        'table' => 'module_acl_group_settings',
+                        'record_key' => "{$modId}:{$grpId}:{$secId}",
+                        'operation' => 'INSERT',
+                        'old_state' => null,
+                        'new_state' => 'allowed=1',
+                        'timestamp' => date('Y-m-d H:i:s'),
+                    ];
+                    $moduleAclRepaired = true;
+                } elseif ((int) $row['allowed'] !== 1) {
+                    $stmtUpdateModAcl = $pdo->prepare("UPDATE module_acl_group_settings SET allowed = 1 WHERE module_id = ? AND group_id = ? AND section_id = ?");
+                    $stmtUpdateModAcl->execute([$modId, $grpId, $secId]);
+                    $insertedAcl[] = "module_acl_group_settings: Carecoordination updated to allowed=1 for admin group";
+                    $auditLog[] = [
+                        'repair_run_id' => $runId,
+                        'subscription_id' => $subscription->id,
+                        'database' => $dbName,
+                        'table' => 'module_acl_group_settings',
+                        'record_key' => "{$modId}:{$grpId}:{$secId}",
+                        'operation' => 'UPDATE',
+                        'old_state' => 'allowed=' . $row['allowed'],
+                        'new_state' => 'allowed=1',
+                        'timestamp' => date('Y-m-d H:i:s'),
+                    ];
+                    $moduleAclRepaired = true;
+                }
+            }
+        } catch (Exception $e) {
+            Log::warning("Carecoordination module ACL repair failed for tenant {$subscription->id}: " . $e->getMessage());
+        }
+
         return [
             'inserted_acl' => $insertedAcl,
             'inserted_aco_mappings_count' => $insertedAcoMappingsCount,
             'admin_group_id_resolved' => (int) $adminGroupId,
             'admin_aro_id_resolved' => (int) $adminAroId,
             'admin_mapped' => true,
+            'module_acl_repaired' => $moduleAclRepaired,
         ];
     }
 

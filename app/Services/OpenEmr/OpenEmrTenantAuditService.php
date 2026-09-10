@@ -431,6 +431,7 @@ class OpenEmrTenantAuditService
                     'back' => [],
                     'breakglass' => [],
                 ],
+                'carecoordination_module_acl' => null,
             ],
             'admin_user_audit' => [
                 'users_record' => null,
@@ -736,6 +737,41 @@ class OpenEmrTenantAuditService
             }
             if ($audit['acl_audit']['existing_counts']['group_aro_maps'] === 0) {
                 $audit['acl_audit']['missing_mappings'][] = "gacl_groups_aro_map is completely empty (0 user/role mappings)";
+            }
+
+            // 5b. Canonical Module ACL Check (Installer::on_care_coordination)
+            try {
+                $stmtMod = $pdo->prepare("SELECT mod_id FROM modules WHERE mod_name = 'Carecoordination' LIMIT 1");
+                $stmtMod->execute();
+                $modId = $stmtMod->fetchColumn();
+
+                $stmtSec = $pdo->prepare("SELECT section_id FROM module_acl_sections WHERE section_identifier = 'carecoordination' LIMIT 1");
+                $stmtSec->execute();
+                $secId = $stmtSec->fetchColumn();
+
+                $stmtGrp = $pdo->prepare("SELECT id FROM gacl_aro_groups WHERE value = 'admin' LIMIT 1");
+                $stmtGrp->execute();
+                $grpId = $stmtGrp->fetchColumn();
+
+                $hasModuleAcl = false;
+                if ($modId && $secId && $grpId) {
+                    $stmtChk = $pdo->prepare("SELECT allowed FROM module_acl_group_settings WHERE module_id = ? AND group_id = ? AND section_id = ? LIMIT 1");
+                    $stmtChk->execute([$modId, $grpId, $secId]);
+                    $hasModuleAcl = ((int) $stmtChk->fetchColumn() === 1);
+                }
+
+                $audit['acl_audit']['carecoordination_module_acl'] = [
+                    'mod_id' => $modId ? (int) $modId : null,
+                    'section_id' => $secId ? (int) $secId : null,
+                    'group_id' => $grpId ? (int) $grpId : null,
+                    'allowed' => $hasModuleAcl,
+                ];
+
+                if ($modId && $secId && $grpId && !$hasModuleAcl) {
+                    $audit['acl_audit']['missing_mappings'][] = "Carecoordination module ACL for admin group is missing (module_acl_group_settings)";
+                }
+            } catch (Exception $e) {
+                $audit['acl_audit']['carecoordination_module_acl'] = ['error' => $e->getMessage()];
             }
 
         } catch (Exception $e) {

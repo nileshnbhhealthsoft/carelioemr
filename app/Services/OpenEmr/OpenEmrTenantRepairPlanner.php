@@ -70,16 +70,9 @@ class OpenEmrTenantRepairPlanner
             return $plan;
         }
 
-        // If already synchronized with canonical 8.3.0
-        if ($compat['classification'] === 'CANONICAL_8_3_0_SYNCHRONIZED') {
-            $plan['status'] = 'SKIPPED';
-            $plan['skip_reason'] = 'Database is already fully synchronized with canonical OpenEMR 8.3.0 schema and revision 541.';
-            $plan['current_version'] = '8.3.0 (rev 541, acl 13)';
-            return $plan;
-        }
-
-        // Must be LEGACY_8_3_0_BASELINE_COMPATIBLE or LEGACY_8_3_0_ACL_UNSTAMPED to proceed to repair calculation
-        if (!in_array($compat['classification'], ['LEGACY_8_3_0_BASELINE_COMPATIBLE', 'LEGACY_8_3_0_ACL_UNSTAMPED'])) {
+        // Must be in eligible classifications to proceed to repair calculation
+        $eligibleClassifications = ['LEGACY_8_3_0_BASELINE_COMPATIBLE', 'LEGACY_8_3_0_ACL_UNSTAMPED', 'CANONICAL_8_3_0_SYNCHRONIZED'];
+        if (!in_array($compat['classification'], $eligibleClassifications)) {
             $plan['status'] = 'SKIPPED';
             $plan['skip_reason'] = "Tenant classification '{$compat['classification']}' is not eligible for baseline repair.";
             return $plan;
@@ -100,14 +93,18 @@ class OpenEmrTenantRepairPlanner
             // Version info
             $vRow = $compat['version_row'];
             $plan['current_version'] = "{$vRow['v_major']}.{$vRow['v_minor']}.{$vRow['v_patch']} (rev {$vRow['v_database']}, acl {$vRow['v_acl']})";
-            $plan['version_change_proposed'] = [
-                'operation' => 'UPDATE',
-                'table' => 'version',
-                'current' => $plan['current_version'],
-                'target' => '8.3.0 (rev 541, acl 13, tag: "")',
-                'sql' => "UPDATE version SET v_major = 8, v_minor = 3, v_patch = 0, v_database = 541, v_acl = 13, v_tag = '' WHERE v_database = 0;",
-                'rationale' => 'Canonical OpenEMR 8.3.0 Installer::add_version_info() stamping for proven 8.3.0 baseline schema',
-            ];
+            if ((int)$vRow['v_major'] === 0 && (int)$vRow['v_database'] === 0) {
+                $plan['version_change_proposed'] = [
+                    'operation' => 'UPDATE',
+                    'table' => 'version',
+                    'current' => $plan['current_version'],
+                    'target' => '8.3.0 (rev 541, acl 13, tag: "")',
+                    'sql' => "UPDATE version SET v_major = 8, v_minor = 3, v_patch = 0, v_database = 541, v_acl = 13, v_tag = '' WHERE v_database = 0;",
+                    'rationale' => 'Canonical OpenEMR 8.3.0 Installer::add_version_info() stamping for proven 8.3.0 baseline schema',
+                ];
+            } else {
+                $plan['version_change_proposed'] = null;
+            }
 
             // Globals audit
             $canonicalInfo = $this->globalsLoader->loadCanonicalGlobals();
@@ -172,14 +169,46 @@ class OpenEmrTenantRepairPlanner
             if (!array_key_exists('users', $existingAroGroups)) {
                 $proposedAcl[] = "INSERT INTO gacl_aro_groups (parent_id, name, value, order_value) VALUES (0, 'OpenEMR Users', 'users', 10)";
             }
-            $proposedAcl[] = "Execute canonical official_additional_users.sql (service accounts & permissions)";
-            $proposedAcl[] = "Execute canonical on_care_coordination() ACL mappings (Care Coordination ACOs)";
+
+            // Check Carecoordination module ACL
+            $careAclNeeded = false;
+            try {
+                $stmtMod = $pdo->prepare("SELECT mod_id FROM modules WHERE mod_name = 'Carecoordination' LIMIT 1");
+                $stmtMod->execute();
+                $modId = $stmtMod->fetchColumn();
+
+                $stmtSec = $pdo->prepare("SELECT section_id FROM module_acl_sections WHERE section_identifier = 'carecoordination' LIMIT 1");
+                $stmtSec->execute();
+                $secId = $stmtSec->fetchColumn();
+
+                $stmtGrp = $pdo->prepare("SELECT id FROM gacl_aro_groups WHERE value = 'admin' LIMIT 1");
+                $stmtGrp->execute();
+                $grpId = $stmtGrp->fetchColumn();
+
+                if ($modId && $secId && $grpId) {
+                    $stmtChk = $pdo->prepare("SELECT allowed FROM module_acl_group_settings WHERE module_id = ? AND group_id = ? AND section_id = ? LIMIT 1");
+                    $stmtChk->execute([$modId, $grpId, $secId]);
+                    $row = $stmtChk->fetch(PDO::FETCH_ASSOC);
+                    if (!$row || (int) $row['allowed'] !== 1) {
+                        $careAclNeeded = true;
+                        $proposedAcl[] = "INSERT INTO module_acl_group_settings: Carecoordination allowed=1 for admin group (mod: {$modId}, grp: {$grpId}, sec: {$secId})";
+                    }
+                }
+            } catch (Exception $e) {
+                // Ignore if tables do not exist
+            }
+
+            if ($compat['classification'] !== 'CANONICAL_8_3_0_SYNCHRONIZED') {
+                $proposedAcl[] = "Execute canonical official_additional_users.sql (service accounts & permissions)";
+                $proposedAcl[] = "Execute canonical on_care_coordination() ACL mappings (Care Coordination ACOs)";
+            }
             $proposedAcl[] = "Zero existing ACL records will be deleted or dropped";
 
             $plan['acl_inserts_proposed'] = [
                 'current_aco_count' => $existingAcoCount,
                 'current_aco_maps' => $existingAcoMapCount,
                 'proposed_actions' => $proposedAcl,
+                'care_coordination_acl_needed' => $careAclNeeded,
             ];
 
             // Admin User & ARO mapping
@@ -220,8 +249,21 @@ class OpenEmrTenantRepairPlanner
             ];
 
             // Overall safety & verdict
-            $plan['is_safe_to_repair'] = true;
-            $plan['status'] = 'SAFE TO REPAIR';
+            $hasChangesToMake = !empty($plan['version_change_proposed'])
+                || ($plan['missing_globals_count'] > 0)
+                || $careAclNeeded
+                || (!$adminMapped)
+                || (!in_array('users', $existingAroSections))
+                || (!array_key_exists('users', $existingAroGroups));
+
+            if (!$hasChangesToMake && $compat['classification'] === 'CANONICAL_8_3_0_SYNCHRONIZED') {
+                $plan['is_safe_to_repair'] = false;
+                $plan['status'] = 'SYNCHRONIZED';
+                $plan['skip_reason'] = 'Database is already fully synchronized with canonical OpenEMR 8.3.0 schema, globals, and ACLs.';
+            } else {
+                $plan['is_safe_to_repair'] = true;
+                $plan['status'] = 'SAFE TO REPAIR';
+            }
 
         } catch (Exception $e) {
             $plan['status'] = 'SKIPPED';

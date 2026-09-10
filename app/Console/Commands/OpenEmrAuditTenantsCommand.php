@@ -134,6 +134,13 @@ class OpenEmrAuditTenantsCommand extends Command
             $this->line("  {$rLabel} ({$rKey}) missing rules: " . (empty($mRules) ? "None (0) [PASS]" : count($mRules) . " missing [FAIL] (" . implode('; ', $mRules) . ")"));
         }
         $this->line("  Missing mappings summary: " . (empty($acl['missing_mappings']) ? "None (0) [PASS]" : implode('; ', $acl['missing_mappings']) . " [FAIL]"));
+        if (isset($acl['carecoordination_module_acl']) && is_array($acl['carecoordination_module_acl'])) {
+            $modAcl = $acl['carecoordination_module_acl'];
+            if (isset($modAcl['allowed'])) {
+                $statusStr = $modAcl['allowed'] ? "Allowed (module: {$modAcl['mod_id']}, group: {$modAcl['group_id']}, section: {$modAcl['section_id']}) [PASS]" : "MISSING [FAIL]";
+                $this->line("  Carecoordination Module ACL: " . $statusStr);
+            }
+        }
         $this->line("");
 
         $admin = $audit['admin_user_audit'];

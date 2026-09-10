@@ -79,7 +79,7 @@ class OpenEmrRepairTenantsCommand extends Command
             return $this->handleDryRun($subscriptions, $planner);
         }
 
-        return $this->handleLiveRepair($subscriptions, $repairService, $checker);
+        return $this->handleLiveRepair($subscriptions, $repairService, $checker, $planner);
     }
 
     /**
@@ -129,9 +129,10 @@ class OpenEmrRepairTenantsCommand extends Command
     protected function handleLiveRepair(
         $subscriptions,
         OpenEmrTenantRepairService $repairService,
-        OpenEmrTenantCompatibilityChecker $checker
+        OpenEmrTenantCompatibilityChecker $checker,
+        OpenEmrTenantRepairPlanner $planner
     ): int {
-        $allowedLegacyIds = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        $eligibleClassifications = ['LEGACY_8_3_0_BASELINE_COMPATIBLE', 'LEGACY_8_3_0_ACL_UNSTAMPED', 'CANONICAL_8_3_0_SYNCHRONIZED'];
         $totalAttempted = 0;
         $successful = [];
         $skipped = [];
@@ -142,44 +143,30 @@ class OpenEmrRepairTenantsCommand extends Command
         foreach ($subscriptions as $subscription) {
             $subId = (int) $subscription->id;
 
-            // Safety Guards: Never touch #10 (canary done), #11 (missing db), #12/#13 (canonical)
-            if ($subId === 10) {
-                $skipped[] = [
-                    'id' => 10,
-                    'tenant' => $subscription->doctor_name,
-                    'reason' => 'Already repaired in Phase 1C-2B canary repair',
-                ];
-                $this->line("Subscription #10 ({$subscription->doctor_name}): SKIPPED (Already repaired in Canary Phase 1C-2B)");
-                continue;
-            }
+            // Step 1: Pre-check compatibility immediately before repair
+            $compat = $checker->checkCompatibility($subscription);
 
-            if ($subId === 11) {
-                $skipped[] = [
-                    'id' => 11,
-                    'tenant' => $subscription->doctor_name,
-                    'reason' => 'Failed test subscription (database does not exist)',
-                ];
-                $this->line("Subscription #11 ({$subscription->doctor_name}): SKIPPED (Database does not exist)");
-                continue;
-            }
-
-            if (in_array($subId, [12, 13])) {
+            if (!$compat['is_compatible'] || !in_array($compat['classification'], $eligibleClassifications)) {
+                $reason = !empty($compat['errors']) ? implode('; ', $compat['errors']) : "Ineligible classification '{$compat['classification']}'";
                 $skipped[] = [
                     'id' => $subId,
                     'tenant' => $subscription->doctor_name,
-                    'reason' => 'Already canonical OpenEMR 8.3.0 synchronized',
+                    'reason' => $reason,
                 ];
-                $this->line("Subscription #{$subId} ({$subscription->doctor_name}): SKIPPED (Already canonical OpenEMR 8.3.0 synchronized)");
+                $this->line("Subscription #{$subId} ({$subscription->doctor_name}): SKIPPED ({$reason})");
                 continue;
             }
 
-            if (!in_array($subId, $allowedLegacyIds)) {
+            // Step 1b: Verify whether repair planner indicates safe actions are actually needed
+            $plan = $planner->planRepair($subscription);
+            if (!$plan['is_safe_to_repair']) {
+                $skipReason = $plan['skip_reason'] ?? 'Already fully synchronized with canonical standards';
                 $skipped[] = [
                     'id' => $subId,
                     'tenant' => $subscription->doctor_name,
-                    'reason' => 'Not an approved legacy repair target',
+                    'reason' => $skipReason,
                 ];
-                $this->line("Subscription #{$subId} ({$subscription->doctor_name}): SKIPPED (Not in allowed legacy list)");
+                $this->line("Subscription #{$subId} ({$subscription->doctor_name}): SKIPPED ({$skipReason})");
                 continue;
             }
 
@@ -189,18 +176,6 @@ class OpenEmrRepairTenantsCommand extends Command
             $this->info("EXECUTING REPAIR: Subscription #{$subId} ({$subscription->doctor_name})");
             $this->line("Database:       {$subscription->openemr_database}");
             $this->line("Site Directory: oemr/sites/{$subscription->tenant_slug}");
-
-            // Step 1: Pre-check compatibility immediately before repair
-            $compat = $checker->checkCompatibility($subscription);
-            $expectedClassification = ($subId === 1) ? 'LEGACY_8_3_0_BASELINE_COMPATIBLE' : 'LEGACY_8_3_0_ACL_UNSTAMPED';
-
-            if (!$compat['is_compatible'] || $compat['classification'] !== $expectedClassification) {
-                $msg = "Compatibility mismatch: expected {$expectedClassification}, got {$compat['classification']}";
-                $this->error("   [FAIL] {$msg}");
-                $skipped[] = ['id' => $subId, 'tenant' => $subscription->doctor_name, 'reason' => $msg];
-                continue;
-            }
-
             $this->line("   [PASS] Pre-repair compatibility verified: {$compat['classification']}");
 
             // Step 2: Execute guarded repair
@@ -302,8 +277,12 @@ class OpenEmrRepairTenantsCommand extends Command
 
         if ($plan['is_safe_to_repair']) {
             $this->line("Version change proposed:");
-            $this->line("  {$plan['version_change_proposed']['operation']}: {$plan['version_change_proposed']['current']} -> {$plan['version_change_proposed']['target']}");
-            $this->line("  SQL: {$plan['version_change_proposed']['sql']}");
+            if ($plan['version_change_proposed']) {
+                $this->line("  {$plan['version_change_proposed']['operation']}: {$plan['version_change_proposed']['current']} -> {$plan['version_change_proposed']['target']}");
+                $this->line("  SQL: {$plan['version_change_proposed']['sql']}");
+            } else {
+                $this->line("  None (already canonical 8.3.0)");
+            }
 
             $this->line("Globals inserts proposed:");
             $this->line("  Total inserts: {$plan['globals_inserts_proposed']['total_inserts']} keys ({$plan['globals_inserts_proposed']['method']})");
