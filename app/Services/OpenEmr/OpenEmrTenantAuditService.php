@@ -22,7 +22,10 @@ class OpenEmrTenantAuditService
      */
     public function getOpenEmrBasePath(): string
     {
-        return base_path('oemr');
+        return rtrim(
+            (string) config('oemr.base_path', base_path('oemr')),
+            '/\\'
+        );
     }
 
     /**

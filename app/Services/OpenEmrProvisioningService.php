@@ -27,12 +27,10 @@ class OpenEmrProvisioningService
      */
     public function getOpenEmrBasePath(): string
     {
-        try {
-            if (function_exists('base_path') && app()->has('path.base')) {
-                return base_path('oemr');
-            }
-        } catch (Throwable $e) {}
-        return 'E:/xampp/htdocs/1page/oemr';
+        return rtrim(
+            (string) config('oemr.base_path', base_path('oemr')),
+            '/\\'
+        );
     }
 
     /**
@@ -64,7 +62,10 @@ class OpenEmrProvisioningService
         $dbName = 'openemr_' . str_replace('-', '_', $tenantSlug);
         $openEmrBasePath = $this->getOpenEmrBasePath();
         $sitePath = $openEmrBasePath . '/sites/' . $tenantSlug;
-        $siteUrl = config('app.url', 'http://localhost:8000') . '/oemr/interface/login/login.php?site=' . $tenantSlug;
+
+        $baseUrl = rtrim((string) config('app.url'), '/');
+        $webPath = '/' . trim((string) config('oemr.web_path', '/oemr'), '/');
+        $siteUrl = $baseUrl . $webPath . '/interface/login/login.php?site=' . rawurlencode($tenantSlug);
 
         Log::info("Starting Canonical OpenEMR Tenant Provisioning for Subscription #{$subscription->id} ({$tenantSlug})");
 

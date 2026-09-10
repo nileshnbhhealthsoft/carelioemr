@@ -29,6 +29,14 @@ class OpenEmrTenantRepairService
         $this->auditService = $auditService;
     }
 
+    public function getOpenEmrBasePath(): string
+    {
+        return rtrim(
+            (string) config('oemr.base_path', base_path('oemr')),
+            '/\\'
+        );
+    }
+
     /**
      * Execute a safe, verified canary repair on a single legacy tenant
      *
@@ -284,7 +292,7 @@ class OpenEmrTenantRepairService
     protected function repairGlobals(PDO $pdo, string $runId, Subscription $subscription, string $dbName, array &$auditLog): array
     {
         $canonicalInfo = $this->globalsLoader->loadCanonicalGlobals();
-        $sitePath = base_path('oemr/sites/' . $subscription->tenant_slug);
+        $sitePath = $this->getOpenEmrBasePath() . '/sites/' . $subscription->tenant_slug;
 
         $existingGlobals = $pdo->query("SELECT gl_name FROM globals")->fetchAll(PDO::FETCH_COLUMN);
         $existingMap = array_flip($existingGlobals);
@@ -301,9 +309,9 @@ class OpenEmrTenantRepairService
 
             // Dynamic installation values
             if ($gk === 'webserver_root') {
-                $value = str_replace('\\', '/', base_path('oemr'));
+                $value = str_replace('\\', '/', $this->getOpenEmrBasePath());
             } elseif ($gk === 'web_root') {
-                $value = '/oemr';
+                $value = '/' . trim((string) config('oemr.web_path', '/oemr'), '/');
             } elseif ($gk === 'temporary_files_dir') {
                 $value = $sitePath . '/documents/temp';
             } elseif ($gk === 'site_id') {

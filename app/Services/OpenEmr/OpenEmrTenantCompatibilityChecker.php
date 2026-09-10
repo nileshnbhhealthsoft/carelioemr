@@ -15,13 +15,21 @@ class OpenEmrTenantCompatibilityChecker
     protected static ?array $canonicalTables = null;
     protected static ?string $canonicalTableHash = null;
 
+    public function getOpenEmrBasePath(): string
+    {
+        return rtrim(
+            (string) config('oemr.base_path', base_path('oemr')),
+            '/\\'
+        );
+    }
+
     /**
      * Get or compute the deterministic table hash from bundled database.sql
      */
     public function getCanonicalTableInfo(): array
     {
         if (self::$canonicalTables === null) {
-            $databaseSqlPath = base_path('oemr/sql/database.sql');
+            $databaseSqlPath = $this->getOpenEmrBasePath() . '/sql/database.sql';
             if (!File::exists($databaseSqlPath)) {
                 throw new Exception("Canonical database.sql not found at {$databaseSqlPath}");
             }
@@ -71,7 +79,7 @@ class OpenEmrTenantCompatibilityChecker
         $evidence[] = "Managed Subscription #{$subscription->id} confirmed in Laravel application database";
 
         // 2. Tenant filesystem site directory and configuration validation
-        $openEmrSitesPath = base_path('oemr/sites');
+        $openEmrSitesPath = $this->getOpenEmrBasePath() . '/sites';
         $siteDir = $openEmrSitesPath . '/' . $tenantSlug;
         $sqlConfPath = $siteDir . '/sqlconf.php';
 

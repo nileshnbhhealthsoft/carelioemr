@@ -19,6 +19,14 @@ class OpenEmrTenantRepairPlanner
         $this->globalsLoader = $globalsLoader;
     }
 
+    public function getOpenEmrBasePath(): string
+    {
+        return rtrim(
+            (string) config('oemr.base_path', base_path('oemr')),
+            '/\\'
+        );
+    }
+
     /**
      * Generate a complete, dry-run repair plan for a single managed tenant
      *
@@ -35,7 +43,7 @@ class OpenEmrTenantRepairPlanner
             'doctor_name' => $subscription->doctor_name ?? 'Unknown',
             'tenant_slug' => $subscription->tenant_slug ?? 'unknown',
             'database' => $subscription->openemr_database ?? 'unknown',
-            'site_dir' => base_path('oemr/sites/' . ($subscription->tenant_slug ?? '')),
+            'site_dir' => $this->getOpenEmrBasePath() . '/sites/' . ($subscription->tenant_slug ?? ''),
             'compatibility' => $compat,
             'is_safe_to_repair' => false,
             'status' => 'SKIPPED',

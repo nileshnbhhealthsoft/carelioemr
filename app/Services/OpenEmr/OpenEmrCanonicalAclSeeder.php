@@ -16,12 +16,10 @@ class OpenEmrCanonicalAclSeeder
      */
     public function getOpenEmrBasePath(): string
     {
-        try {
-            if (function_exists('base_path') && app()->has('path.base')) {
-                return base_path('oemr');
-            }
-        } catch (Throwable $e) {}
-        return 'E:/xampp/htdocs/1page/oemr';
+        return rtrim(
+            (string) config('oemr.base_path', base_path('oemr')),
+            '/\\'
+        );
     }
 
     /**
