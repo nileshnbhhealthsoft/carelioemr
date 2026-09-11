@@ -59,7 +59,7 @@ $twig = new TwigContainer(null, $globalsBag->getKernel());
 $t = $twig->getTwig();
 
 $logoService = new LogoService();
-$primaryLogo = $globalsBag->get('webroot') . '/public/images/oemr_logo.png';
+$primaryLogo = $logoService->getLogo("core/login/primary") ?: ($globalsBag->get('webroot') . '/public/images/logos/core/login/primary/logo.png');
 $secondaryLogo = $logoService->getLogo("core/login/secondary");
 $smallLogoOne = $logoService->getLogo("core/login/small_logo_1");
 $smallLogoTwo = $logoService->getLogo("core/login/small_logo_2");

@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SubscriptionConfirmationMail;
+use App\Mail\RegistrationAcknowledgementMail;
+use App\Mail\AdminTenantReadyForReviewMail;
 use App\Jobs\ProvisionOpenEmrTenantJob;
 
 class StripeSubscriptionController extends Controller
@@ -197,10 +199,20 @@ class StripeSubscriptionController extends Controller
                     ->delete();
             }
 
-            // Provision OpenEMR Tenant synchronously so user gets instant launch link
+            // Send customer acknowledgement email immediately after payment confirmation and BEFORE provisioning
+            try {
+                if ($intent->status === 'succeeded' && $subscription->email) {
+                    Mail::to($subscription->email)->send(new RegistrationAcknowledgementMail($subscription));
+                }
+            } catch (\Exception $mailEx) {
+                \Log::warning('Registration acknowledgement mail error: ' . $mailEx->getMessage());
+            }
+
+            // Provision OpenEMR Tenant synchronously
+            $provisionSuccess = false;
             try {
                 $provisioningService = app(\App\Services\OpenEmrProvisioningService::class);
-                $provisioningService->provisionTenant($subscription);
+                $provisionSuccess = $provisioningService->provisionTenant($subscription);
                 $subscription->refresh();
             } catch (\Exception $provEx) {
                 \Log::error("Direct OpenEMR provisioning error: " . $provEx->getMessage());
@@ -209,16 +221,20 @@ class StripeSubscriptionController extends Controller
                 } catch (\Exception $qEx) {}
             }
 
-            // Dispatch Emails dynamically
-            try {
-                Mail::to($subscription->email)->send(new SubscriptionConfirmationMail($subscription));
+            // Send internal admin review notification ONLY when provisioning succeeded and health checks passed
+            if ($provisionSuccess && $subscription->provision_status === 'completed') {
+                $subscription->update([
+                    'review_status' => 'pending_review',
+                ]);
 
-                $adminEmail = env('ADMIN_NOTIFICATION_EMAIL', 'shrivastavanandini11@gmail.com');
-                if (strtolower($subscription->email) !== strtolower($adminEmail)) {
-                    Mail::to($adminEmail)->send(new SubscriptionConfirmationMail($subscription));
+                $adminEmail = config('mail.admin_notification_email') ?: env('ADMIN_NOTIFICATION_EMAIL');
+                if (!empty($adminEmail)) {
+                    try {
+                        Mail::to($adminEmail)->send(new AdminTenantReadyForReviewMail($subscription));
+                    } catch (\Exception $adminMailEx) {
+                        \Log::warning('Admin tenant ready notification error: ' . $adminMailEx->getMessage());
+                    }
                 }
-            } catch (\Exception $mailEx) {
-                \Log::warning('Subscription mail notice: ' . $mailEx->getMessage());
             }
 
             return response()->json([

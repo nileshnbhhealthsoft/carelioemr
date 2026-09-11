@@ -92,6 +92,9 @@ class Header
         // BS4 required tag
         $output .= "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\" />\n";
         // Favicon
+        $webroot = OEGlobalsBag::getInstance()->getWebRoot();
+        $output .= "<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"" . attr($webroot) . "/public/images/favicon-32x32.png\" />\n";
+        $output .= "<link rel=\"icon\" type=\"image/x-icon\" href=\"$favicon\" />\n";
         $output .= "<link rel=\"shortcut icon\" href=\"$favicon\" />\n";
         $output .= self::setupAssets(is_array($assets) ? $assets : [$assets], true);
 

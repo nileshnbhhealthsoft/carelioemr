@@ -62,6 +62,10 @@ Route::get('/admin/logout', function () {
     return redirect('/');
 });
 
+// Admin Tenant Review Actions
+Route::post('/admin/subscribers/{id}/approve', [\App\Http\Controllers\AdminSubscriptionReviewController::class, 'approve']);
+Route::post('/admin/subscribers/{id}/reject', [\App\Http\Controllers\AdminSubscriptionReviewController::class, 'reject']);
+
 // OpenEMR Tenant Portal Route - uses /tenant/ prefix to avoid conflict with public/openemr symlink
 Route::get('/tenant/{tenant_slug}', function ($tenant_slug) {
     $subscription = Subscription::where('tenant_slug', $tenant_slug)->first();

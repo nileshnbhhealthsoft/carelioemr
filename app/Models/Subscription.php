@@ -26,11 +26,32 @@ class Subscription extends Model
         'currency',
         'payment_status',
         'setup_cost_status',
-        'paid_at'
+        'paid_at',
+        'review_status',
+        'reviewed_at',
+        'reviewed_by',
+        'rejection_reason',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'paid_at' => 'datetime',
+        'reviewed_at' => 'datetime',
     ];
+
+    /**
+     * Get canonical OpenEMR tenant login URL using provisioning value or OEMR config
+     */
+    public function getCanonicalSiteUrl(): string
+    {
+        if (!empty($this->openemr_site_url)) {
+            return $this->openemr_site_url;
+        }
+
+        $baseUrl = rtrim((string) config('app.url'), '/');
+        $webPath = config('oemr.web_path') ? ('/' . trim((string) config('oemr.web_path'), '/')) : '';
+        $tenantSlug = $this->tenant_slug ?? '';
+
+        return $baseUrl . $webPath . '/interface/login/login.php?site=' . rawurlencode($tenantSlug);
+    }
 }

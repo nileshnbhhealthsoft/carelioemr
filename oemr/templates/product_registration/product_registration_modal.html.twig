@@ -16,10 +16,13 @@ Product Registration modal
         <div class="modal-content">
             <div class="modal-header"></div>
             <div class="modal-body">
+                <div class="text-center mb-3">
+                    <img src="{{ webroot|attr }}/public/images/logos/core/login/primary/logo.png" alt="CarelioEMR" class="img-fluid" style="max-height: 44px;">
+                </div>
                 {% if allowEmail %}
                     <div class="form-group">
                         <p class="context">
-                            {{ "We kindly ask you to take a moment to register your installation by providing an email. This ensures you receive timely updates, security alerts, and critical announcements from the OpenEMR Foundation. You can opt out of this by simply leaving this field blank."|xlt }}
+                            {{ "We kindly ask you to take a moment to register your installation by providing an email. This ensures you receive timely updates, security alerts, and critical announcements from CarelioEMR. You can opt out of this by simply leaving this field blank."|xlt }}
                         </p>
                         <input placeholder="{{ "email"|xla }}" type="email" id="email" class="email w-100 text-body form-control" value="" />
                         <p class="message font-italic"></p>
@@ -32,8 +35,8 @@ Product Registration modal
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="allow_telemetry" id="allowTelemetry" name="allow_telemetry" checked>
                             <label class="form-check-label" for="allowTelemetry">
-                                {{ "I consent to share anonymous usage data with the OpenEMR Foundation."|xlt }}
-                                {{ "We are committed to continually improving OpenEMR. By opting in to anonymous telemetry data collection, you help us better understand real-world usage and prioritize new features. No Personal Health Information (PHI) is ever collected. Please consider consenting to share the following data types:"|xlt }}
+                                {{ "I consent to share anonymous usage data with CarelioEMR."|xlt }}
+                                {{ "We are committed to continually improving CarelioEMR. By opting in to anonymous telemetry data collection, you help us better understand real-world usage and prioritize new features. No Personal Health Information (PHI) is ever collected. Please consider consenting to share the following data types:"|xlt }}
                                 <div class="m-1">
                                     <li>{{ "Usage Metrics (features used)"|xlt }}</li>
                                     <li>{{ "Aggregated User Data (total patients, clinicians, etc.)"|xlt }}</li>
