@@ -69,9 +69,13 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="color:#64748b; font-weight:500; vertical-align:top;">Password:</td>
-                        <td style="font-size:12px; color:#475569; text-align:right; font-weight:500;">
-                            Use your initial secure onboarding password.
+                        <td style="color:#64748b; font-weight:500; vertical-align:top;">Temporary Password:</td>
+                        <td style="font-family:monospace; font-size:12px; color:#0f172a; text-align:right; font-weight:700;">
+                            @if (!empty($temporaryPassword))
+                                <span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; letter-spacing:0.5px;">{{ $temporaryPassword }}</span>
+                            @else
+                                <span style="color:#475569; font-weight:500;">Use your initial secure onboarding password.</span>
+                            @endif
                         </td>
                     </tr>
                 </table>

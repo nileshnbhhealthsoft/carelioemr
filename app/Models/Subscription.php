@@ -31,12 +31,14 @@ class Subscription extends Model
         'reviewed_at',
         'reviewed_by',
         'rejection_reason',
+        'initial_password_encrypted',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'paid_at' => 'datetime',
         'reviewed_at' => 'datetime',
+        'initial_password_encrypted' => 'encrypted',
     ];
 
     /**

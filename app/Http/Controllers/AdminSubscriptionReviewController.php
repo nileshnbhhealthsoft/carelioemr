@@ -55,8 +55,15 @@ class AdminSubscriptionReviewController extends Controller
         // Phase 3E: Send final customer Site Ready email after successful admin approval
         try {
             if (!empty($subscription->email)) {
-                Mail::to($subscription->email)->send(new CustomerSiteReadyMail($subscription));
+                $tempPassword = $subscription->initial_password_encrypted;
+                Mail::to($subscription->email)->send(new CustomerSiteReadyMail($subscription, $tempPassword));
                 Log::info("Phase 3E: Customer Site Ready email dispatched to {$subscription->email} for subscription #{$subscription->id}.");
+
+                // Immediately clear the encrypted temporary password from storage after successful dispatch
+                $subscription->update([
+                    'initial_password_encrypted' => null,
+                ]);
+                Log::info("Securely cleared encrypted temporary password for subscription #{$subscription->id} after email dispatch.");
             }
         } catch (\Exception $mailEx) {
             Log::error("Phase 3E: Failed to send customer Site Ready email for subscription #{$subscription->id}: " . $mailEx->getMessage());

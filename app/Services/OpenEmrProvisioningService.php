@@ -430,7 +430,9 @@ class OpenEmrProvisioningService
         // 2. Seed subscriber doctor user if different from admin
         if (!empty($subscription->doctor_name)) {
             $username = Str::slug($subscription->doctor_name, '_') ?: ('doctor_' . $subscription->id);
-            $hashedPassword = password_hash('ClinicPass123!', PASSWORD_DEFAULT);
+            // Generate strong random temporary password for first customer login
+            $tempPassword = Str::password(16, letters: true, numbers: true, symbols: true, spaces: false);
+            $hashedPassword = password_hash($tempPassword, PASSWORD_DEFAULT);
             $nameParts = explode(' ', trim($subscription->doctor_name));
             $fname = $nameParts[0] ?? 'Doctor';
             $lname = implode(' ', array_slice($nameParts, 1)) ?: 'Subscriber';
@@ -449,8 +451,14 @@ class OpenEmrProvisioningService
             $pdo->exec("REPLACE INTO users_secure (id, username, password, last_update_password, last_update) VALUES ({$docUserId}, '{$username}', '{$hashedPassword}', NOW(), NOW())");
             $pdo->exec("INSERT IGNORE INTO `groups` (name, user) VALUES ('Default', '{$username}')");
 
-            // Map subscriber doctor into canonical admin group as well
-            $this->aclSeeder->ensureAdminUserAclMapped($dbName, $username, $subscription->doctor_name);
+            // Map subscriber doctor into safe Tenant Administrators group
+            $this->aclSeeder->ensureTenantAdminUserAclMapped($dbName, $username, $subscription->doctor_name);
+
+            // Store temporary password encrypted in Laravel storage until admin approval (never logged)
+            $subscription->update([
+                'initial_password_encrypted' => $tempPassword,
+            ]);
+            Log::info("Generated and securely stored encrypted temporary password for doctor user ({$username}) on subscription #{$subscription->id}");
         }
     }
 

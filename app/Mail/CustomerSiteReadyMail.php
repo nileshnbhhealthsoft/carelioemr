@@ -17,14 +17,16 @@ class CustomerSiteReadyMail extends Mailable
 
     public $subscription;
     public $siteUrl;
+    public $temporaryPassword;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Subscription $subscription)
+    public function __construct(Subscription $subscription, ?string $temporaryPassword = null)
     {
         $this->subscription = $subscription;
         $this->siteUrl = $subscription->getCanonicalSiteUrl();
+        $this->temporaryPassword = $temporaryPassword;
     }
 
     /**
@@ -47,6 +49,7 @@ class CustomerSiteReadyMail extends Mailable
             with: [
                 'subscription' => $this->subscription,
                 'siteUrl' => $this->siteUrl,
+                'temporaryPassword' => $this->temporaryPassword,
             ],
         );
     }
