@@ -99,7 +99,13 @@ $twig = (new TwigContainer(null, OEGlobalsBag::getInstance()->getKernel()))->get
 <html>
 
 <head>
-    <title><?php echo text(OEGlobalsBag::getInstance()->getString('openemr_name')); ?></title>
+    <?php
+    $appTitle = OEGlobalsBag::getInstance()->getString('openemr_name');
+    if ($appTitle === 'OpenEMR' || empty($appTitle)) {
+        $appTitle = 'OEMR';
+    }
+    ?>
+    <title><?php echo text($appTitle); ?></title>
 
     <script>
         // This is to prevent users from losing data by refreshing or backing out of OpenEMR.
@@ -150,7 +156,7 @@ $twig = (new TwigContainer(null, OEGlobalsBag::getInstance()->getKernel()))->get
         jsGlobals.timezone = <?php echo js_escape(OEGlobalsBag::getInstance()->get('gbl_time_zone') ?? ''); ?>;
         jsGlobals.assetVersion = <?php echo js_escape(OEGlobalsBag::getInstance()->get('v_js_includes')); ?>;
         var WindowTitleAddPatient = <?php echo(OEGlobalsBag::getInstance()->getBoolean('window_title_add_patient_name') ? 'true' : 'false'); ?>;
-        var WindowTitleBase = <?php echo js_escape(OEGlobalsBag::getInstance()->getString('openemr_name')); ?>;
+        var WindowTitleBase = <?php echo js_escape($appTitle); ?>;
         const isSms = "<?php echo !empty(OEGlobalsBag::getInstance()->get('oefax_enable_sms') ?? null); ?>";
         const isFax = "<?php echo !empty(OEGlobalsBag::getInstance()->get('oefax_enable_fax')) ?? null?>";
         const isServicesOther = (isSms || isFax);
@@ -401,7 +407,7 @@ $twig = (new TwigContainer(null, OEGlobalsBag::getInstance()->getKernel()))->get
     <?php
     echo $twig->render("interface/main/tabs/therapy_group_template.html.twig", []);
     echo $twig->render("interface/main/tabs/user_data_template.html.twig", [
-        'openemr_name' => OEGlobalsBag::getInstance()->getString('openemr_name')
+        'openemr_name' => $appTitle
     ]);
     // Collect the menu then build it
     $menuMain = new MainMenuRole(OEGlobalsBag::getInstance()->getKernel()->getEventDispatcher());

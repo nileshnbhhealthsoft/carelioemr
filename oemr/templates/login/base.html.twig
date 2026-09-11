@@ -21,9 +21,11 @@ and semantic choices
         {% include "login/partials/html/google_signin.html.twig" %}
     {% endif %}
 
-    <title>{% block title %}{{ title|text }} {{ "Login"|xlt }}{% endblock %}</title>
+    <title>{% block title %}OEMR {{ "Login"|xlt }}{% endblock %}</title>
     {% block head %}{% endblock %}
     {{ setupHeader() }}
+    <link rel="icon" type="image/x-icon" href="{{ webroot }}/public/images/logos/core/favicon/oemr_favicon.ico" />
+    <link rel="shortcut icon" href="{{ webroot }}/public/images/logos/core/favicon/oemr_favicon.ico" />
 
     {% include "login/partials/js/login_submit.js.twig" %}
 

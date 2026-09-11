@@ -59,7 +59,7 @@ $twig = new TwigContainer(null, $globalsBag->getKernel());
 $t = $twig->getTwig();
 
 $logoService = new LogoService();
-$primaryLogo = $logoService->getLogo("core/login/primary");
+$primaryLogo = $globalsBag->get('webroot') . '/public/images/oemr_logo.png';
 $secondaryLogo = $logoService->getLogo("core/login/secondary");
 $smallLogoOne = $logoService->getLogo("core/login/small_logo_1");
 $smallLogoTwo = $logoService->getLogo("core/login/small_logo_2");
@@ -247,7 +247,7 @@ $viewArgs = [
     'smallLogoTwo' => $smallLogoTwo,
     'showTitleOnLogin' => $globalsBag->getBoolean('show_label_login'),
     'displayTagline' => $globalsBag->getBoolean('show_tagline_on_login'),
-    'tagline' => $globalsBag->getString('login_tagline_text'),
+    'tagline' => str_replace('CarelioEMR', 'OEMR', $globalsBag->getString('login_tagline_text')),
     'displayAck' => $globalsBag->getBoolean('display_acknowledgements_on_login'),
     'hasSession' => true,
     'cookieText' => $cookie,
