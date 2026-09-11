@@ -33,21 +33,31 @@ class ProvisionOpenEmrTenantJob implements ShouldQueue
      */
     public function handle(OpenEmrProvisioningService $provisioningService): void
     {
+        $this->subscription->refresh();
+        if ($this->subscription->provision_status === 'completed') {
+            Log::info("ProvisionOpenEmrTenantJob: Subscription #{$this->subscription->id} already completed. Skipping duplicate execution.");
+            return;
+        }
+
         Log::info("Executing ProvisionOpenEmrTenantJob for Subscription #{$this->subscription->id}");
         $provisionSuccess = $provisioningService->provisionTenant($this->subscription);
         $this->subscription->refresh();
 
         if ($provisionSuccess && $this->subscription->provision_status === 'completed') {
+            $alreadyPendingOrReviewed = in_array($this->subscription->review_status, ['pending_review', 'approved', 'rejected'], true);
+
             $this->subscription->update([
                 'review_status' => 'pending_review',
             ]);
 
-            $adminEmail = config('mail.admin_notification_email') ?: env('ADMIN_NOTIFICATION_EMAIL');
-            if (!empty($adminEmail)) {
-                try {
-                    \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminTenantReadyForReviewMail($this->subscription));
-                } catch (\Exception $adminMailEx) {
-                    Log::warning('Admin tenant ready notification error from job: ' . $adminMailEx->getMessage());
+            if (!$alreadyPendingOrReviewed) {
+                $adminEmail = config('mail.admin_notification_email') ?: env('ADMIN_NOTIFICATION_EMAIL');
+                if (!empty($adminEmail)) {
+                    try {
+                        \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminTenantReadyForReviewMail($this->subscription));
+                    } catch (\Exception $adminMailEx) {
+                        Log::warning('Admin tenant ready notification error from job: ' . $adminMailEx->getMessage());
+                    }
                 }
             }
         }

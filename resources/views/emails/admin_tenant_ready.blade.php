@@ -62,7 +62,7 @@
                     </tr>
                     <tr>
                         <td style="color:#64748b; font-weight:500;">Tenant Site URL:</td>
-                        <td style="font-family:monospace; font-size:11px; color:#2563eb; text-align:right; font-weight:700;">{{ $subscription->openemr_site_url }}</td>
+                        <td style="font-family:monospace; font-size:11px; color:#2563eb; text-align:right; font-weight:700;">{{ $subscription->getCanonicalSiteUrl() }}</td>
                     </tr>
                     <tr>
                         <td style="color:#64748b; font-weight:500;">Provisioning Status:</td>

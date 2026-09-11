@@ -208,39 +208,15 @@ class StripeSubscriptionController extends Controller
                 \Log::warning('Registration acknowledgement mail error: ' . $mailEx->getMessage());
             }
 
-            // Provision OpenEMR Tenant synchronously
-            $provisionSuccess = false;
-            try {
-                $provisioningService = app(\App\Services\OpenEmrProvisioningService::class);
-                $provisionSuccess = $provisioningService->provisionTenant($subscription);
-                $subscription->refresh();
-            } catch (\Exception $provEx) {
-                \Log::error("Direct OpenEMR provisioning error: " . $provEx->getMessage());
-                try {
-                    ProvisionOpenEmrTenantJob::dispatch($subscription);
-                } catch (\Exception $qEx) {}
-            }
-
-            // Send internal admin review notification ONLY when provisioning succeeded and health checks passed
-            if ($provisionSuccess && $subscription->provision_status === 'completed') {
-                $subscription->update([
-                    'review_status' => 'pending_review',
-                ]);
-
-                $adminEmail = config('mail.admin_notification_email') ?: env('ADMIN_NOTIFICATION_EMAIL');
-                if (!empty($adminEmail)) {
-                    try {
-                        Mail::to($adminEmail)->send(new AdminTenantReadyForReviewMail($subscription));
-                    } catch (\Exception $adminMailEx) {
-                        \Log::warning('Admin tenant ready notification error: ' . $adminMailEx->getMessage());
-                    }
-                }
+            // Dispatch tenant provisioning job (sync in local dev, non-blocking queued database worker in production)
+            if ($intent->status === 'succeeded') {
+                ProvisionOpenEmrTenantJob::dispatch($subscription);
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Payment confirmed and CarelioEMR tenant provisioned successfully!',
-                'subscriber' => $subscription,
+                'message' => 'Payment confirmed and CarelioEMR tenant provisioning initiated successfully!',
+                'subscriber' => $subscription->fresh(),
                 'openemr_site_url' => $subscription->openemr_site_url,
                 'tenant_slug' => $subscription->tenant_slug,
                 'openemr_database' => $subscription->openemr_database,

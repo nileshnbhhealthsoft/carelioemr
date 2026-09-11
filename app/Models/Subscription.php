@@ -42,14 +42,10 @@ class Subscription extends Model
     ];
 
     /**
-     * Get canonical OpenEMR tenant login URL using provisioning value or OEMR config
+     * Get canonical OpenEMR tenant login URL dynamically from app and oemr configuration
      */
     public function getCanonicalSiteUrl(): string
     {
-        if (!empty($this->openemr_site_url)) {
-            return $this->openemr_site_url;
-        }
-
         $baseUrl = rtrim((string) config('app.url'), '/');
         $webPath = config('oemr.web_path') ? ('/' . trim((string) config('oemr.web_path'), '/')) : '';
         $tenantSlug = $this->tenant_slug ?? '';
