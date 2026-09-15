@@ -109,10 +109,11 @@ class OpenEmrProvisioningService
             // Stage 11: Run health checks
             $this->verifyTenantHealth($subscription);
 
-            // Stage 12: Mark completed
+            // Stage 12: Mark completed and transition to pending_review
             $subscription->update([
                 'provision_status' => 'completed',
                 'provision_error' => null,
+                'review_status' => 'pending_review',
             ]);
 
             Log::info("Successfully Provisioned Canonical OpenEMR Tenant for #{$subscription->id} at {$siteUrl}");
@@ -451,8 +452,8 @@ class OpenEmrProvisioningService
             $pdo->exec("REPLACE INTO users_secure (id, username, password, last_update_password, last_update) VALUES ({$docUserId}, '{$username}', '{$hashedPassword}', NOW(), NOW())");
             $pdo->exec("INSERT IGNORE INTO `groups` (name, user) VALUES ('Default', '{$username}')");
 
-            // Map subscriber doctor into safe Tenant Administrators group
-            $this->aclSeeder->ensureTenantAdminUserAclMapped($dbName, $username, $subscription->doctor_name);
+            // Map subscriber doctor into safe Site Admin group
+            $this->aclSeeder->ensureSiteAdminUserAclMapped($dbName, $username, $subscription->doctor_name);
 
             // Store temporary password encrypted in Laravel storage until admin approval (never logged)
             $subscription->update([

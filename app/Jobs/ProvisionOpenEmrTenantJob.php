@@ -34,8 +34,8 @@ class ProvisionOpenEmrTenantJob implements ShouldQueue
     public function handle(OpenEmrProvisioningService $provisioningService): void
     {
         $this->subscription->refresh();
-        if ($this->subscription->provision_status === 'completed') {
-            Log::info("ProvisionOpenEmrTenantJob: Subscription #{$this->subscription->id} already completed. Skipping duplicate execution.");
+        if ($this->subscription->provision_status === 'completed' && !empty($this->subscription->openemr_database) && !empty($this->subscription->tenant_slug)) {
+            Log::info("ProvisionOpenEmrTenantJob: Subscription #{$this->subscription->id} already completed with database {$this->subscription->openemr_database}. Skipping duplicate execution.");
             return;
         }
 

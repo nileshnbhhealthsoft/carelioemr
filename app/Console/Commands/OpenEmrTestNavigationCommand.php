@@ -32,7 +32,7 @@ class OpenEmrTestNavigationCommand extends Command
     public function handle(): int
     {
         $this->info("================================================================================");
-        $this->info("      OEMR COMPLETE NAVIGATION REGRESSION AUDIT (TENANT ADMIN SESSION)          ");
+        $this->info("      OEMR COMPLETE NAVIGATION REGRESSION AUDIT (SITE ADMIN SESSION)            ");
         $this->info("================================================================================");
 
         $defaultUrl = config('app.url', 'http://127.0.0.1:8000');
@@ -137,7 +137,7 @@ class OpenEmrTestNavigationCommand extends Command
     }
 
     /**
-     * Authenticate tenant admin and return main.php HTML
+     * Authenticate site admin and return main.php HTML
      */
     protected function authenticateAdmin(): ?string
     {

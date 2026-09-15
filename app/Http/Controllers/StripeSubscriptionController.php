@@ -133,6 +133,7 @@ class StripeSubscriptionController extends Controller
                     'amount' => 80.00,
                     'currency' => 'usd',
                     'payment_status' => 'pending',
+                    'provision_status' => 'pending',
                     'setup_cost_status' => 'setup_cost_additional_billed_separately',
                 ]);
             }
@@ -180,6 +181,7 @@ class StripeSubscriptionController extends Controller
                     'amount' => 80.00,
                     'currency' => 'usd',
                     'payment_status' => $intent->status === 'succeeded' ? 'succeeded' : $intent->status,
+                    'provision_status' => 'pending',
                     'setup_cost_status' => 'setup_cost_additional_billed_separately',
                     'paid_at' => $intent->status === 'succeeded' ? Carbon::now() : null,
                 ]);

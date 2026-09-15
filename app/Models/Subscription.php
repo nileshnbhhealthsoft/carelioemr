@@ -9,6 +9,10 @@ class Subscription extends Model
 {
     use HasFactory;
 
+    protected $attributes = [
+        'provision_status' => 'pending',
+    ];
+
     protected $fillable = [
         'doctor_name',
         'email',

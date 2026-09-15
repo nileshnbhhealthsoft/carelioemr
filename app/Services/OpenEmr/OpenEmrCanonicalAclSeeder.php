@@ -116,9 +116,9 @@ class OpenEmrCanonicalAclSeeder
         // 4. Ensure admin user is mapped into the canonical 'admin' ARO group dynamically
         $this->ensureAdminUserAclMapped($dbName, $adminUser, $adminFullName);
 
-        // 5. Ensure safe 'Tenant Administrators' group exists
+        // 5. Ensure safe 'Site Admin' group exists
         $pdo = $this->getTenantPdo($dbName);
-        $this->ensureTenantAdminGroup($pdo);
+        $this->ensureSiteAdminGroup($pdo);
 
         return true;
     }
@@ -155,15 +155,15 @@ class OpenEmrCanonicalAclSeeder
     }
 
     /**
-     * Ensure the safe 'Tenant Administrators' group exists with correct ACL rules (idempotent)
+     * Ensure the safe 'Site Admin' group exists with correct ACL rules (idempotent)
      */
-    public function ensureTenantAdminGroup(PDO $pdo): int
+    public function ensureSiteAdminGroup(PDO $pdo): int
     {
         // 0. Clean up any invalid/dead root group placeholders with lft=0, rgt=0 and no members
         $pdo->exec("DELETE FROM gacl_aro_groups WHERE parent_id = 0 AND lft = 0 AND rgt = 0 AND id NOT IN (SELECT DISTINCT group_id FROM gacl_groups_aro_map)");
 
-        // 1. Check if group already exists
-        $groupStmt = $pdo->prepare("SELECT id FROM gacl_aro_groups WHERE value = 'tenant_admin' OR name = 'Tenant Administrators' LIMIT 1");
+        // 1. Check if group already exists (supports 'site_admin' and legacy 'tenant_admin')
+        $groupStmt = $pdo->prepare("SELECT id FROM gacl_aro_groups WHERE value IN ('site_admin', 'tenant_admin') OR name IN ('Site Admin', 'Tenant Administrators') LIMIT 1");
         $groupStmt->execute();
         $groupId = $groupStmt->fetchColumn();
 
@@ -180,18 +180,20 @@ class OpenEmrCanonicalAclSeeder
             $pdo->prepare("UPDATE gacl_aro_groups SET lft = lft + 2 WHERE lft > ?")->execute([$parentRgt]);
 
             $nextGroupId = (int) $pdo->query("SELECT COALESCE(MAX(id), 0) + 1 FROM gacl_aro_groups")->fetchColumn();
-            $stmtInsertGroup = $pdo->prepare("INSERT INTO gacl_aro_groups (id, parent_id, name, value, lft, rgt) VALUES (?, ?, 'Tenant Administrators', 'tenant_admin', ?, ?)");
+            $stmtInsertGroup = $pdo->prepare("INSERT INTO gacl_aro_groups (id, parent_id, name, value, lft, rgt) VALUES (?, ?, 'Site Admin', 'site_admin', ?, ?)");
             $stmtInsertGroup->execute([$nextGroupId, $parentId, $parentRgt, $parentRgt + 1]);
             $groupId = $nextGroupId;
             $pdo->exec("UPDATE gacl_aro_groups_id_seq SET id = (SELECT COALESCE(MAX(id), 0) + 1 FROM gacl_aro_groups)");
         } else {
             $groupId = (int) $groupId;
+            // Migrate display name and value to 'Site Admin' / 'site_admin'
+            $pdo->prepare("UPDATE gacl_aro_groups SET name = 'Site Admin', value = 'site_admin' WHERE id = ?")->execute([$groupId]);
         }
 
-        // 2. Define safe permissions: physician/clinical + practice administration without super/acl/modules/database
+        // 2. Define safe permissions: physician/clinical + users administration ONLY (no super, acl, modules, database, practice, forms, coding, etc.)
         $writeAcos = [
             'acct' => ['bill', 'disc', 'eob', 'rep', 'rep_a'],
-            'admin' => ['calendar', 'forms', 'practice', 'superbill', 'users', 'batchcom', 'language', 'drugs', 'menu'],
+            'admin' => ['users'],
             'encounters' => ['auth_a', 'auth', 'coding_a', 'coding', 'notes_a', 'notes', 'date_a', 'relaxed'],
             'inventory' => ['lots', 'sales', 'purchases', 'transfers', 'adjustments', 'consumption', 'destruction', 'reporting'],
             'lists' => ['default', 'state', 'country', 'language', 'ethrace'],
@@ -199,7 +201,6 @@ class OpenEmrCanonicalAclSeeder
             'sensitivities' => ['normal', 'high'],
             'nationnotes' => ['nn_configure'],
             'patientportal' => ['portal'],
-            'menus' => ['modle'],
             'groups' => ['gadd', 'gcalendar', 'glog', 'gdlog', 'gm'],
         ];
 
@@ -217,12 +218,14 @@ class OpenEmrCanonicalAclSeeder
 
         if (!$writeAclId) {
             $nextAclId = (int) $pdo->query("SELECT COALESCE(MAX(id), 0) + 1 FROM gacl_acl")->fetchColumn();
-            $stmt = $pdo->prepare("INSERT INTO gacl_acl (id, section_value, allow, enabled, return_value, note, updated_date) VALUES (?, 'system', 1, 1, 'write', 'Tenant Administrators full practice and clinical permissions', ?)");
+            $stmt = $pdo->prepare("INSERT INTO gacl_acl (id, section_value, allow, enabled, return_value, note, updated_date) VALUES (?, 'system', 1, 1, 'write', 'Site Admin full practice and clinical permissions', ?)");
             $stmt->execute([$nextAclId, time()]);
             $stmtMap = $pdo->prepare("INSERT IGNORE INTO gacl_aro_groups_map (acl_id, group_id) VALUES (?, ?)");
             $stmtMap->execute([$nextAclId, $groupId]);
             $writeAclId = $nextAclId;
             $pdo->exec("UPDATE gacl_acl_seq SET id = (SELECT COALESCE(MAX(id), 0) + 1 FROM gacl_acl)");
+        } else {
+            $pdo->prepare("UPDATE gacl_acl SET note = 'Site Admin full practice and clinical permissions' WHERE id = ?")->execute([$writeAclId]);
         }
 
         $stmtAco = $pdo->prepare("INSERT IGNORE INTO gacl_aco_map (acl_id, section_value, value) VALUES (?, ?, ?)");
@@ -231,8 +234,9 @@ class OpenEmrCanonicalAclSeeder
                 $stmtAco->execute([$writeAclId, $sec, $val]);
             }
         }
-        // Strict guard: ensure super, acl, manage_modules, database are NEVER present in tenant admin ACL
-        $pdo->prepare("DELETE FROM gacl_aco_map WHERE acl_id = ? AND section_value = 'admin' AND value IN ('super', 'acl', 'manage_modules', 'database')")->execute([$writeAclId]);
+        // Strict guard: ensure ONLY 'users' is present in admin section for site admin ACL, and module menus are stripped
+        $pdo->prepare("DELETE FROM gacl_aco_map WHERE acl_id = ? AND section_value = 'admin' AND value != 'users'")->execute([$writeAclId]);
+        $pdo->prepare("DELETE FROM gacl_aco_map WHERE acl_id = ? AND section_value = 'menus' AND value = 'modle'")->execute([$writeAclId]);
 
         // Ensure view ACL
         $viewAclId = $pdo->query("
@@ -244,12 +248,14 @@ class OpenEmrCanonicalAclSeeder
 
         if (!$viewAclId) {
             $nextAclId = (int) $pdo->query("SELECT COALESCE(MAX(id), 0) + 1 FROM gacl_acl")->fetchColumn();
-            $stmt = $pdo->prepare("INSERT INTO gacl_acl (id, section_value, allow, enabled, return_value, note, updated_date) VALUES (?, 'system', 1, 1, 'view', 'Things that tenant administrators can only read', ?)");
+            $stmt = $pdo->prepare("INSERT INTO gacl_acl (id, section_value, allow, enabled, return_value, note, updated_date) VALUES (?, 'system', 1, 1, 'view', 'Things that site administrators can only read', ?)");
             $stmt->execute([$nextAclId, time()]);
             $stmtMap = $pdo->prepare("INSERT IGNORE INTO gacl_aro_groups_map (acl_id, group_id) VALUES (?, ?)");
             $stmtMap->execute([$nextAclId, $groupId]);
             $viewAclId = $nextAclId;
             $pdo->exec("UPDATE gacl_acl_seq SET id = (SELECT COALESCE(MAX(id), 0) + 1 FROM gacl_acl)");
+        } else {
+            $pdo->prepare("UPDATE gacl_acl SET note = 'Things that site administrators can only read' WHERE id = ?")->execute([$viewAclId]);
         }
 
         foreach ($viewAcos as $sec => $vals) {
@@ -257,17 +263,27 @@ class OpenEmrCanonicalAclSeeder
                 $stmtAco->execute([$viewAclId, $sec, $val]);
             }
         }
+        $pdo->prepare("DELETE FROM gacl_aco_map WHERE acl_id = ? AND section_value = 'admin'")->execute([$viewAclId]);
+        $pdo->prepare("DELETE FROM gacl_aco_map WHERE acl_id = ? AND section_value = 'menus' AND value = 'modle'")->execute([$viewAclId]);
 
         return $groupId;
     }
 
     /**
-     * Map a doctor / customer user to the safe Tenant Administrators group
+     * Backward-compatible alias for ensureSiteAdminGroup
      */
-    public function ensureTenantAdminUserAclMapped(string $dbName, string $username, string $fullName): void
+    public function ensureTenantAdminGroup(PDO $pdo): int
+    {
+        return $this->ensureSiteAdminGroup($pdo);
+    }
+
+    /**
+     * Map a doctor / customer user to the safe Site Admin group
+     */
+    public function ensureSiteAdminUserAclMapped(string $dbName, string $username, string $fullName): void
     {
         $pdo = $this->getTenantPdo($dbName);
-        $groupId = $this->ensureTenantAdminGroup($pdo);
+        $groupId = $this->ensureSiteAdminGroup($pdo);
 
         // 1. Ensure ARO exists for customer user
         $stmtAro = $pdo->prepare("SELECT id FROM gacl_aro WHERE section_value = 'users' AND value = ? LIMIT 1");
@@ -289,9 +305,17 @@ class OpenEmrCanonicalAclSeeder
             $pdo->prepare("DELETE FROM gacl_groups_aro_map WHERE aro_id = ? AND group_id IN ({$inClause})")->execute([$aroId]);
         }
 
-        // 3. Map into safe Tenant Administrators group
+        // 3. Map into safe Site Admin group
         $stmtMap = $pdo->prepare("INSERT IGNORE INTO gacl_groups_aro_map (group_id, aro_id) VALUES (?, ?)");
         $stmtMap->execute([$groupId, $aroId]);
+    }
+
+    /**
+     * Backward-compatible alias for ensureSiteAdminUserAclMapped
+     */
+    public function ensureTenantAdminUserAclMapped(string $dbName, string $username, string $fullName): void
+    {
+        $this->ensureSiteAdminUserAclMapped($dbName, $username, $fullName);
     }
 }
 

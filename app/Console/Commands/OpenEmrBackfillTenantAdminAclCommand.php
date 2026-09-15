@@ -28,7 +28,7 @@ class OpenEmrBackfillTenantAdminAclCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Backfill existing provisioned tenants to the safe Tenant Administrators ACL';
+    protected $description = 'Backfill existing provisioned tenants to the safe Site Admin ACL';
 
     /**
      * Execute the console command.
@@ -40,7 +40,7 @@ class OpenEmrBackfillTenantAdminAclCommand extends Command
         $dryRun = (bool) $this->option('dry-run');
 
         $this->info("================================================================================");
-        $this->info("   CANONICAL OPENEMR 8.3.0 TENANT ADMINISTRATORS ACL BATCH BACKFILL ENGINE   ");
+        $this->info("      CANONICAL OPENEMR 8.3.0 SITE ADMIN ACL BATCH BACKFILL ENGINE              ");
         $this->info("================================================================================");
         if ($dryRun) {
             $this->warn("RUNNING IN DRY-RUN MODE: No databases will be backed up or modified.");
@@ -103,7 +103,7 @@ class OpenEmrBackfillTenantAdminAclCommand extends Command
                 continue;
             }
 
-            // Guard 4: Check if doctor user is already in Tenant Administrators and not in Administrators/Emergency Login
+            // Guard 4: Check if doctor user is already in Site Admin and not in Administrators/Emergency Login
             $currentDocGroups = $pdo->query("
                 SELECT g.name, g.value 
                 FROM gacl_groups_aro_map gam 
@@ -113,11 +113,13 @@ class OpenEmrBackfillTenantAdminAclCommand extends Command
             ")->fetchAll(PDO::FETCH_ASSOC);
 
             $groupValues = array_column($currentDocGroups, 'value');
-            $isAlreadyTenantAdmin = in_array('tenant_admin', $groupValues, true);
+            $groupNames = array_column($currentDocGroups, 'name');
+            $isAlreadySiteAdmin = (in_array('site_admin', $groupValues, true) || in_array('tenant_admin', $groupValues, true))
+                && in_array('Site Admin', $groupNames, true);
             $hasSuperGroup = in_array('admin', $groupValues, true) || in_array('breakglass', $groupValues, true);
 
-            if ($isAlreadyTenantAdmin && !$hasSuperGroup) {
-                $reason = "Already synchronized with Tenant Administrators";
+            if ($isAlreadySiteAdmin && !$hasSuperGroup) {
+                $reason = "Already synchronized with Site Admin";
                 $skipped[] = ['id' => $subId, 'slug' => $tenantSlug, 'reason' => $reason];
                 $this->line("Subscription #{$subId} ({$tenantSlug}): SKIPPED - {$reason}");
                 continue;
@@ -130,7 +132,7 @@ class OpenEmrBackfillTenantAdminAclCommand extends Command
                     'doctor' => $docUsername,
                     'current_groups' => implode(', ', array_column($currentDocGroups, 'name')),
                 ];
-                $this->info("Subscription #{$subId} ({$tenantSlug}): PLAN TO UPDATE - Move '{$docUsername}' to Tenant Administrators");
+                $this->info("Subscription #{$subId} ({$tenantSlug}): PLAN TO UPDATE - Move '{$docUsername}' to Site Admin");
                 continue;
             }
 
@@ -143,12 +145,12 @@ class OpenEmrBackfillTenantAdminAclCommand extends Command
                 $backupInfo = $this->createVerifiedBackup($subscription);
                 $this->line("   [BACKUP] Verified backup created: {$backupInfo['file_name']} (" . number_format($backupInfo['file_size']) . " bytes)");
 
-                // Step B: Apply safe Tenant Administrators mapping
-                $aclSeeder->ensureTenantAdminUserAclMapped($dbName, $docUsername, $docName);
-                $this->line("   [ACL] Applied ensureTenantAdminUserAclMapped for '{$docUsername}'");
+                // Step B: Apply safe Site Admin mapping
+                $aclSeeder->ensureSiteAdminUserAclMapped($dbName, $docUsername, $docName);
+                $this->line("   [ACL] Applied ensureSiteAdminUserAclMapped for '{$docUsername}'");
 
                 // Step C: Verify post-migration invariants
-                // 1. Customer user has tenant_admin and NOT admin/breakglass
+                // 1. Customer user has site_admin and NOT admin/breakglass
                 $postDocGroups = $pdo->query("
                     SELECT g.value 
                     FROM gacl_groups_aro_map gam 
@@ -157,7 +159,8 @@ class OpenEmrBackfillTenantAdminAclCommand extends Command
                     WHERE a.value = '{$docUsername}'
                 ")->fetchAll(PDO::FETCH_COLUMN);
 
-                if (!in_array('tenant_admin', $postDocGroups, true) || in_array('admin', $postDocGroups, true) || in_array('breakglass', $postDocGroups, true)) {
+                $hasSiteAdmin = in_array('site_admin', $postDocGroups, true) || in_array('tenant_admin', $postDocGroups, true);
+                if (!$hasSiteAdmin || in_array('admin', $postDocGroups, true) || in_array('breakglass', $postDocGroups, true)) {
                     throw new RuntimeException("Post-migration group verification failed for '{$docUsername}' (groups: " . implode(', ', $postDocGroups) . ")");
                 }
 
