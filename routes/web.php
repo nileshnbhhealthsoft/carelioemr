@@ -19,16 +19,16 @@ Route::get('/admin/login', function () {
     return view('admin.login');
 });
 
-// Admin Login Action (MySQL User Authentication)
+// Portal Login Action (MySQL User Authentication)
 Route::post('/admin/login', function (Request $request) {
     $request->validate([
-        'email' => 'required|email',
+        'email' => 'required|string',
         'password' => 'required|string',
     ]);
 
-    $email = $request->email;
-    $user = User::where('email', $email)->first();
-    if (!$user && in_array(strtolower($email), ['admin@carelioemr.com', 'admin@auraemr.com'])) {
+    $loginInput = trim($request->email);
+    $user = User::where('email', $loginInput)->orWhere('name', $loginInput)->first();
+    if (!$user && in_array(strtolower($loginInput), ['admin', 'admin@carelioemr.com', 'admin@auraemr.com'])) {
         $user = User::whereIn('email', ['admin@carelioemr.com', 'admin@auraemr.com'])->first();
     }
 
@@ -44,7 +44,7 @@ Route::post('/admin/login', function (Request $request) {
         return redirect('/admin/dashboard');
     }
 
-    return redirect('/admin/login')->with('error', 'Invalid administrator email or password.');
+    return redirect('/admin/login')->with('error', 'Invalid username or password.');
 });
 
 // Admin Dashboard View (Session Guarded)

@@ -1,0 +1,6 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Internally rewrite OpenEMR paths to oemr/...
+    RewriteRule ^(interface|portal|apis|library|custom|sites|templates|swagger|ccdaservice)(/.*)?$ oemr/$1$2 [L,QSA]
+</IfModule>

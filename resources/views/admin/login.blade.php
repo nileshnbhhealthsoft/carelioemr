@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Portal Login - CarelioEMR')
+@section('title', 'Portal Login - CarelioEMR')
 
 @section('content')
 
@@ -15,7 +15,7 @@
                 <i data-lucide="activity" class="w-7 h-7 stroke-[2.5]"></i>
             </div>
             <div>
-                <h2 class="text-2xl font-black text-slate-900">CarelioEMR Admin Portal</h2>
+                <h2 class="text-2xl font-black text-slate-900">CarelioEMR Portal</h2>
                 <p class="text-xs text-slate-500 font-semibold mt-0.5">
                     Authorized Management &amp; Subscriber Console
                 </p>
@@ -32,10 +32,10 @@
         <form action="{{ url('/admin/login') }}" method="POST" class="space-y-4">
             @csrf
             <div>
-                <label class="text-xs font-bold text-slate-700 block mb-1.5">Admin Email</label>
+                <label class="text-xs font-bold text-slate-700 block mb-1.5">Username</label>
                 <div class="relative">
-                    <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-                    <input type="email" name="email" required placeholder="admin@carelioemr.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 font-semibold focus:border-blue-600 focus:outline-none">
+                    <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                    <input type="text" name="email" required placeholder="Username" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 font-semibold focus:border-blue-600 focus:outline-none">
                 </div>
             </div>
 
@@ -49,7 +49,7 @@
 
             <button type="submit" class="w-full py-3.5 rounded-xl bg-blue-600 text-white font-black text-sm shadow-md shadow-blue-600/25 hover:bg-blue-700 transition-all flex items-center justify-center space-x-2 cursor-pointer">
                 <i data-lucide="key" class="w-4 h-4"></i>
-                <span>Sign In to Admin Portal</span>
+                <span>Sign in</span>
             </button>
         </form>
 
