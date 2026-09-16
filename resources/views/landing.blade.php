@@ -11,7 +11,7 @@
         <span class="break-words">CarelioEMR Cloud Healthcare Platform • 24/7 Global Infrastructure</span>
     </div>
     <a href="{{ url('/admin/login') }}" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0">
-        Admin Portal &rarr;
+        Subscription Portal &rarr;
     </a>
 </div>
 
@@ -56,7 +56,7 @@
         <div class="hidden xl:flex items-center space-x-2.5 2xl:space-x-3 shrink-0">
             <a href="{{ url('/admin/login') }}" class="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold hover:bg-slate-200 transition-all whitespace-nowrap">
                 <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-600"></i>
-                <span>Admin Portal</span>
+                <span>Subscription Portal</span>
             </a>
 
             <button onclick="openCheckoutModal()" class="flex items-center space-x-1.5 2xl:space-x-2 px-3.5 2xl:px-4 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-md shadow-blue-600/20 hover:bg-blue-700 transition-all cursor-pointer whitespace-nowrap">
@@ -94,7 +94,7 @@
         <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row gap-2">
             <a href="{{ url('/admin/login') }}" class="flex items-center justify-center space-x-1.5 px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold hover:bg-slate-200 transition-all">
                 <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-600"></i>
-                <span>Admin Portal</span>
+                <span>Subscription Portal</span>
             </a>
             <button onclick="toggleMobileMenu(false); openCheckoutModal();" class="flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-md shadow-blue-600/20 hover:bg-blue-700 transition-all cursor-pointer">
                 <i data-lucide="credit-card" class="w-4 h-4 stroke-[2.5]"></i>
@@ -159,13 +159,6 @@
             <div class="lg:col-span-5 relative">
                 <div class="relative rounded-3xl overflow-hidden border border-slate-200 shadow-2xl bg-white p-3">
                     <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80" alt="Doctor using CarelioEMR software" class="w-full h-80 sm:h-96 object-cover rounded-2xl">
-                    <div class="absolute bottom-4 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 p-3 sm:p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl flex items-center justify-between gap-2 min-w-0">
-                        <div class="min-w-0">
-                            <div class="text-xs font-bold text-slate-900 truncate">Dr. Sarah Johnson</div>
-                            <div class="text-[11px] text-blue-600 font-semibold truncate">General Practice • Caribbean Hub</div>
-                        </div>
-                        <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">Live Sync</span>
-                    </div>
                 </div>
             </div>
 
@@ -971,55 +964,83 @@
         <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
             
             <!-- Company Address -->
-            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-3 text-center shadow-2xs">
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-3 text-center shadow-2xs hover:border-blue-200 transition-colors">
                 <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shadow-xs mx-auto">
                     <i data-lucide="map-pin" class="w-6 h-6"></i>
                 </div>
                 <h4 class="text-sm font-extrabold text-slate-900">Company Address</h4>
-                <p class="text-xs text-slate-600 font-medium leading-relaxed">[Add Company Address]</p>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">
+                    CarelioEMR Global Operations<br>
+                    <span class="text-slate-500">[Add Company Address]</span>
+                </p>
             </div>
 
             <!-- Contact Number -->
-            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-3 text-center shadow-2xs">
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-3 text-center shadow-2xs hover:border-emerald-200 transition-colors">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold shadow-xs mx-auto">
                     <i data-lucide="phone" class="w-6 h-6"></i>
                 </div>
                 <h4 class="text-sm font-extrabold text-slate-900">Contact Number</h4>
-                <p class="text-xs text-slate-600 font-medium leading-relaxed">[Add Contact Number]</p>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">
+                    Support &amp; Inquiries<br>
+                    <span class="text-slate-800 font-semibold">[Add Contact Number]</span>
+                </p>
             </div>
 
             <!-- Email Address -->
-            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-3 text-center shadow-2xs">
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-3 text-center shadow-2xs hover:border-indigo-200 transition-colors">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold shadow-xs mx-auto">
                     <i data-lucide="mail" class="w-6 h-6"></i>
                 </div>
                 <h4 class="text-sm font-extrabold text-slate-900">Email Address</h4>
-                <a href="mailto:admin@carelioemr.com" class="text-xs text-blue-600 font-bold hover:underline block break-all">
-                    admin@carelioemr.com
-                </a>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">
+                    General Inquiries &amp; Support<br>
+                    <a href="mailto:admin@carelioemr.com" class="text-blue-600 font-bold hover:underline break-all">
+                        admin@carelioemr.com
+                    </a>
+                </p>
             </div>
 
         </div>
-
 
     </div>
 </section>
 
 <!-- Footer -->
 <footer class="bg-slate-900 text-white py-12 border-t border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-slate-400">
-        <div class="text-center sm:text-left">
-            &copy; 2026 CarelioEMR Cloud Healthcare Suite. All rights reserved.<br>
-            HIPAA, GDPR, ABDM, DHA &amp; Regional Standards Compliant Infrastructure.
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-800 text-xs text-slate-400">
+            <div class="text-center md:text-left space-y-2">
+                <div class="font-semibold text-slate-200">
+                    &copy; 2026 CarelioEMR Cloud Healthcare Suite. All rights reserved.
+                </div>
+                <div class="text-slate-400">
+                    <span class="text-slate-300 font-bold">Compliances:</span> HIPAA, GDPR, ABDM, DHA &amp; NABIDH, Regional Standards Compliant.
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center md:justify-end gap-x-6 gap-y-2 font-bold text-slate-300">
+                <a href="#services" class="hover:text-white transition-colors">Target Practices</a>
+                <a href="#specialties" class="hover:text-white transition-colors">Specialties</a>
+                <a href="#regions" class="hover:text-white transition-colors">Global Coverage</a>
+                <a href="#pricing" class="hover:text-white transition-colors">Pricing ($80/mo)</a>
+                <a href="#contact" class="hover:text-white transition-colors">Contact</a>
+                <a href="{{ url('/admin/login') }}" class="hover:text-white transition-colors">Subscription Portal</a>
+            </div>
         </div>
 
-        <div class="flex flex-wrap items-center justify-center sm:justify-end gap-x-6 gap-y-2 font-bold">
-            <a href="#services" class="hover:text-white transition-colors">Target Practices</a>
-            <a href="#specialties" class="hover:text-white transition-colors">Specialties</a>
-            <a href="#regions" class="hover:text-white transition-colors">Global Coverage</a>
-            <a href="#pricing" class="hover:text-white transition-colors">Pricing ($80/mo)</a>
-            <a href="#contact" class="hover:text-white transition-colors">Contact</a>
-            <a href="{{ url('/admin/login') }}" class="hover:text-white transition-colors">Admin Portal</a>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <div class="flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>HIPAA, GDPR, ABDM, DHA &amp; NABIDH, Regional Standards Compliant.</span>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-slate-400 font-medium">
+                <a href="#privacy" class="hover:text-slate-200 transition-colors">Privacy Policy</a>
+                <span class="text-slate-700">&bull;</span>
+                <a href="#terms" class="hover:text-slate-200 transition-colors">Terms of Service</a>
+                <span class="text-slate-700">&bull;</span>
+                <a href="#regions" class="hover:text-slate-200 transition-colors">Coverage</a>
+            </div>
         </div>
     </div>
 </footer>

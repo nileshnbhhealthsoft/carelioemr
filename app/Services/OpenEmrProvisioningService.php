@@ -64,7 +64,7 @@ class OpenEmrProvisioningService
         $sitePath = $openEmrBasePath . '/sites/' . $tenantSlug;
 
         $baseUrl = rtrim((string) config('app.url'), '/');
-        $webPath = '/' . trim((string) config('oemr.web_path', '/oemr'), '/');
+        $webPath = config('oemr.web_path') ? ('/' . trim((string) config('oemr.web_path'), '/')) : '';
         $siteUrl = $baseUrl . $webPath . '/interface/login/login.php?site=' . rawurlencode($tenantSlug);
 
         Log::info("Starting Canonical OpenEMR Tenant Provisioning for Subscription #{$subscription->id} ({$tenantSlug})");

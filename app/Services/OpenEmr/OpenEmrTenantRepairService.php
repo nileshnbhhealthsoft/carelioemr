@@ -323,7 +323,7 @@ class OpenEmrTenantRepairService
             if ($gk === 'webserver_root') {
                 $value = str_replace('\\', '/', $this->getOpenEmrBasePath());
             } elseif ($gk === 'web_root') {
-                $value = '/' . trim((string) config('oemr.web_path', '/oemr'), '/');
+                $value = config('oemr.web_path') ? ('/' . trim((string) config('oemr.web_path'), '/')) : '';
             } elseif ($gk === 'temporary_files_dir') {
                 $value = $sitePath . '/documents/temp';
             } elseif ($gk === 'site_id') {
