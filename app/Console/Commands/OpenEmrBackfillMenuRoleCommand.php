@@ -75,19 +75,14 @@ class OpenEmrBackfillMenuRoleCommand extends Command
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 ]);
 
-                // 1. Ensure platform super admin retains 'standard' menu
-                $pdo->exec("UPDATE users SET main_menu_role = 'standard' WHERE username = 'admin'");
-
-                // 2. Assign 'site_admin' custom menu role to all tenant users
-                $stmt = $pdo->prepare("UPDATE users SET main_menu_role = 'site_admin' WHERE username != 'admin'");
-                $stmt->execute();
-                $updatedUsers = $stmt->rowCount();
+                // Apply native branding (globals) and phpGACL Site Administrator access restrictions
+                app(\Database\Seeders\OpenemrTenantAclAndBrandingSeeder::class)->runOnPdo($pdo);
 
                 // Fetch current user roles for reporting
                 $userList = $pdo->query("SELECT username, main_menu_role FROM users ORDER BY id ASC")->fetchAll();
                 $rolesSummary = array_map(fn($u) => "{$u['username']}: {$u['main_menu_role']}", $userList);
 
-                $this->info("  -> Done: Updated {$updatedUsers} non-admin user(s) to 'site_admin'. (" . implode(', ', $rolesSummary) . ")");
+                $this->info("  -> Done: Native branding & phpGACL Site Administrator role configured. (" . implode(', ', $rolesSummary) . ")");
                 $successCount++;
             } catch (Throwable $e) {
                 if (str_contains($e->getMessage(), 'Unknown database')) {

@@ -404,8 +404,8 @@ class OpenEmrProvisioningService
         app(\Database\Seeders\OpenemrLocationListsSeeder::class)->runOnPdo($pdo);
         app(\Database\Seeders\OpenemrDemographicsLayoutSeeder::class)->runOnPdo($pdo);
 
-        // Assign native Custom Menu Role 'site_admin' to tenant users (Super Admin 'admin' remains standard)
-        $pdo->exec("UPDATE users SET main_menu_role = 'site_admin' WHERE username != 'admin'");
+        // Apply native branding (globals) and phpGACL Site Administrator access restrictions
+        app(\Database\Seeders\OpenemrTenantAclAndBrandingSeeder::class)->runOnPdo($pdo);
     }
 
     /**
@@ -450,22 +450,18 @@ class OpenEmrProvisioningService
             $existingId = $pdo->query("SELECT id FROM users WHERE username = '{$username}'")->fetchColumn();
             if (!$existingId) {
                 $stmtDoc = $pdo->prepare("INSERT INTO users (username, password, fname, lname, email, facility, authorized, active, calendar, cal_ui, facility_id, info, main_menu_role, date_created, last_updated) 
-                    VALUES (?, 'NoLongerUsed', ?, ?, ?, ?, 1, 1, 1, 3, 3, 'Practice Manager / Clinician', 'site_admin', NOW(), NOW())");
+                    VALUES (?, 'NoLongerUsed', ?, ?, ?, ?, 1, 1, 1, 3, 3, 'Practice Manager / Clinician', 'standard', NOW(), NOW())");
                 $stmtDoc->execute([$username, $fname, $lname, $subscription->email, $facilityName]);
                 $docUserId = (int) $pdo->lastInsertId();
             } else {
                 $docUserId = (int) $existingId;
-                $pdo->exec("UPDATE users SET main_menu_role = 'site_admin' WHERE id = {$docUserId}");
             }
 
             $pdo->exec("REPLACE INTO users_secure (id, username, password, last_update_password, last_update) VALUES ({$docUserId}, '{$username}', '{$hashedPassword}', NOW(), NOW())");
             $pdo->exec("INSERT IGNORE INTO `groups` (name, user) VALUES ('Default', '{$username}')");
 
-            // Map subscriber doctor into safe Site Admin group
-            $this->aclSeeder->ensureSiteAdminUserAclMapped($dbName, $username, $subscription->doctor_name);
-
-            // Assign site_admin menu role to all non-admin users
-            $pdo->exec("UPDATE users SET main_menu_role = 'site_admin' WHERE username != 'admin'");
+            // Map subscriber doctor into native Site Administrator phpGACL group and apply branding
+            app(\Database\Seeders\OpenemrTenantAclAndBrandingSeeder::class)->runOnPdo($pdo, $username, $subscription->doctor_name);
 
             // Store temporary password encrypted in Laravel storage until admin approval (never logged)
             $subscription->update([
