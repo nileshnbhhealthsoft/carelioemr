@@ -46,4 +46,31 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Determine whether the user has administrative privileges.
+     */
+    public function isAdmin(): bool
+    {
+        if (array_key_exists('is_admin', $this->attributes) && $this->attributes['is_admin'] !== null) {
+            return (bool) $this->attributes['is_admin'];
+        }
+
+        $adminEmails = config('auth.admin_emails');
+        if (!empty($adminEmails)) {
+            $whitelist = is_array($adminEmails) ? $adminEmails : array_map('trim', explode(',', $adminEmails));
+            return in_array(strtolower($this->email), array_map('strtolower', $whitelist));
+        }
+
+        return true;
+    }
+
+    /**
+     * Accessor for is_admin attribute ($user->is_admin).
+     */
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->isAdmin();
+    }
 }
+

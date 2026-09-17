@@ -143,7 +143,7 @@ class AdminSubscriptionReviewController extends Controller
     protected function resolveAuthenticatedAdmin(Request $request): ?string
     {
         if (session()->has('admin_authenticated') && session('admin_authenticated') === true) {
-            return session('admin_user.email') ?? session('admin_user.name') ?? 'admin@carelioemr.com';
+            return session('admin_user.email') ?? session('admin_user.name') ?? 'Platform Admin';
         }
 
         return null;

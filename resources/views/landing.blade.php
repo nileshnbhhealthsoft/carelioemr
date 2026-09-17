@@ -1069,7 +1069,11 @@
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-700 block mb-1">Email Address</label>
-                    <input type="email" id="email" name="email" required placeholder="e.g. doctor@clinic.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:border-blue-600 focus:outline-none">
+                    <input type="email" id="email" name="email" required placeholder="e.g. doctor@clinic.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:border-blue-600 focus:outline-none transition-colors">
+                    <p id="email-error" class="text-xs text-rose-600 mt-1.5 font-semibold hidden flex items-start gap-1">
+                        <svg class="w-3.5 h-3.5 text-rose-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span id="email-error-text"></span>
+                    </p>
                 </div>
             </div>
 
@@ -1130,7 +1134,19 @@
 
     function closeCheckoutModal() {
         document.getElementById('checkoutModal').classList.add('hidden');
+        const emailError = document.getElementById('email-error');
+        if (emailError) emailError.classList.add('hidden');
+        const emailInput = document.getElementById('email');
+        if (emailInput) emailInput.classList.remove('border-rose-500', 'bg-rose-50/40');
+        const cardErrors = document.getElementById('card-errors');
+        if (cardErrors) cardErrors.innerText = '';
     }
+
+    document.getElementById('email')?.addEventListener('input', function() {
+        const emailError = document.getElementById('email-error');
+        if (emailError) emailError.classList.add('hidden');
+        this.classList.remove('border-rose-500', 'bg-rose-50/40');
+    });
 
     function toggleMobileMenu(forceState) {
         const menu = document.getElementById('mobileMenu');
@@ -1172,9 +1188,17 @@
         submitBtn.innerText = 'Processing Payment...';
 
         const doctorName = document.getElementById('doctor_name').value;
-        const email = document.getElementById('email').value;
+        const emailInput = document.getElementById('email');
+        const email = emailInput ? emailInput.value.trim() : '';
         const practiceType = document.getElementById('practice_type').value;
         const region = document.getElementById('region').value;
+
+        const emailError = document.getElementById('email-error');
+        const emailErrorText = document.getElementById('email-error-text');
+        const cardErrors = document.getElementById('card-errors');
+        if (cardErrors) cardErrors.innerText = '';
+        if (emailError) emailError.classList.add('hidden');
+        if (emailInput) emailInput.classList.remove('border-rose-500', 'bg-rose-50/40');
 
         try {
             const res = await fetch('{{ url("/api/stripe/create-intent") }}', {
@@ -1183,6 +1207,33 @@
                 body: JSON.stringify({ doctor_name: doctorName, email: email, practice_type: practiceType, region: region })
             });
             const data = await res.json();
+
+            // Handle duplicate email or validation errors (HTTP 422)
+            if (res.status === 422 || !res.ok) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Confirm & Subscribe ($80/month)';
+
+                let errorMsg = data.message || 'Validation failed. Please verify your details.';
+                if (data.errors && data.errors.email && data.errors.email.length > 0) {
+                    errorMsg = data.errors.email[0];
+                    if (emailError && emailErrorText) {
+                        emailErrorText.innerText = errorMsg;
+                        emailError.classList.remove('hidden');
+                        if (emailInput) {
+                            emailInput.classList.add('border-rose-500', 'bg-rose-50/40');
+                            emailInput.focus();
+                        }
+                        return;
+                    }
+                }
+
+                if (cardErrors) {
+                    cardErrors.innerText = errorMsg;
+                } else {
+                    alert(errorMsg);
+                }
+                return;
+            }
 
             if (data.clientSecret) {
                 const result = await stripe.confirmCardPayment(data.clientSecret, {
@@ -1205,8 +1256,13 @@
                 }
             }
         } catch (err) {
-            alert('Payment processed successfully!');
-            closeCheckoutModal();
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Confirm & Subscribe ($80/month)';
+            if (cardErrors) {
+                cardErrors.innerText = err.message || 'An unexpected error occurred during payment processing.';
+            } else {
+                alert('Payment processing error. Please try again.');
+            }
         }
     }
 </script>
