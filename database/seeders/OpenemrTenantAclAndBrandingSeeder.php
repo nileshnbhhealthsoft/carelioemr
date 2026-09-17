@@ -168,11 +168,24 @@ class OpenemrTenantAclAndBrandingSeeder extends Seeder
                 $aroId = (int) $aroId;
             }
 
-            // Map into Site Administrator group (19)
-            $pdo->prepare("INSERT IGNORE INTO gacl_groups_aro_map (group_id, aro_id) VALUES (?, ?)")->execute([$groupId, $aroId]);
+            // Resolve standard group IDs dynamically
+            $physicianGroupId = (int) $pdo->query("SELECT id FROM gacl_aro_groups WHERE value = 'doc' OR name = 'Physicians' LIMIT 1")->fetchColumn();
+            $clinicianGroupId = (int) $pdo->query("SELECT id FROM gacl_aro_groups WHERE value = 'clin' OR name = 'Clinicians' LIMIT 1")->fetchColumn();
+            $superAdminGroupId = (int) $pdo->query("SELECT id FROM gacl_aro_groups WHERE value = 'admin' OR name = 'Administrators' LIMIT 1")->fetchColumn();
 
-            // Ensure removed from Super Administrators group (17)
-            $pdo->prepare("DELETE FROM gacl_groups_aro_map WHERE group_id = 17 AND aro_id = ?")->execute([$aroId]);
+            // Map into Site Administrator group, plus Physicians and Clinicians
+            $pdo->prepare("INSERT IGNORE INTO gacl_groups_aro_map (group_id, aro_id) VALUES (?, ?)")->execute([$groupId, $aroId]);
+            if ($physicianGroupId) {
+                $pdo->prepare("INSERT IGNORE INTO gacl_groups_aro_map (group_id, aro_id) VALUES (?, ?)")->execute([$physicianGroupId, $aroId]);
+            }
+            if ($clinicianGroupId) {
+                $pdo->prepare("INSERT IGNORE INTO gacl_groups_aro_map (group_id, aro_id) VALUES (?, ?)")->execute([$clinicianGroupId, $aroId]);
+            }
+
+            // Ensure removed from Super Administrators group (so Config, System, ACL, Forms, Modules are naturally hidden)
+            if ($superAdminGroupId && $superAdminGroupId !== $groupId) {
+                $pdo->prepare("DELETE FROM gacl_groups_aro_map WHERE group_id = ? AND aro_id = ?")->execute([$superAdminGroupId, $aroId]);
+            }
         }
 
         // Restore standard main_menu_role for all users (using native upstream standard.json)
