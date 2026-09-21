@@ -101,10 +101,10 @@ class OpenEmrProvisioningService
             $this->seedCanonicalAcl($sitePath, $tenantSlug, $dbName);
 
             // Stage 9: Apply tenant-specific overrides (clinic name, phone, etc.)
-            $this->applyTenantOverrides($dbName, $subscription);
+            $this->applyTenantOverrides($dbName, $subscription, $sitePath);
 
             // Stage 10: Create tenant first Admin user & map to canonical Admin ACL group
-            $this->createFirstAdminUserAndMapAcl($dbName, $subscription);
+            $this->createFirstAdminUserAndMapAcl($dbName, $subscription, $sitePath);
 
             // Stage 11: Run health checks
             $this->verifyTenantHealth($subscription);
@@ -354,9 +354,13 @@ class OpenEmrProvisioningService
     /**
      * Apply tenant-specific business overrides AFTER canonical defaults
      */
-    protected function applyTenantOverrides(string $dbName, Subscription $subscription): void
+    protected function applyTenantOverrides(string $dbName, Subscription $subscription, ?string $sitePath = null): void
     {
         $pdo = $this->getTenantPdo($dbName);
+
+        if ($sitePath && class_exists(OEGlobalsBag::class)) {
+            OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $sitePath);
+        }
 
         $clinicName = $subscription->practice_type 
             ? ($subscription->practice_type . ' Clinic') 
@@ -411,9 +415,13 @@ class OpenEmrProvisioningService
     /**
      * Create the first tenant Admin user and link to canonical Admin ACL group
      */
-    protected function createFirstAdminUserAndMapAcl(string $dbName, Subscription $subscription): void
+    protected function createFirstAdminUserAndMapAcl(string $dbName, Subscription $subscription, ?string $sitePath = null): void
     {
         $pdo = $this->getTenantPdo($dbName);
+
+        if ($sitePath && class_exists(OEGlobalsBag::class)) {
+            OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $sitePath);
+        }
 
         // 1. Seed Demo 'admin' user as Billy Smith
         $adminDefaultPass = config('oemr.admin_default_password') ?: env('OEMR_ADMIN_DEFAULT_PASSWORD', 'pass');
