@@ -166,32 +166,62 @@ class OpenEmrProvisioningService
             File::copy($templatePath . '/config.php', $sitePath . '/config.php');
         }
 
-        $this->deployTenantFavicon($sitePath);
+        $this->deployTenantBrandAssets($sitePath);
     }
 
     /**
-     * Copy canonical Carelio brand favicon to isolated tenant directory.
+     * Copy canonical Carelio brand assets (logos, favicon) to isolated tenant directory.
      * Preserves OEMR core integrity by deploying brand assets only to tenant runtime directories.
+     */
+    protected function deployTenantBrandAssets(string $sitePath): void
+    {
+        try {
+            $destBase = $sitePath . '/images/logos';
+
+            // 1. Favicon (.ico)
+            $sourceFavicon = public_path('favicon.ico');
+            if (File::exists($sourceFavicon)) {
+                $destFavDir = $destBase . '/core/favicon';
+                if (!File::isDirectory($destFavDir)) {
+                    File::makeDirectory($destFavDir, 0755, true, true);
+                }
+                File::copy($sourceFavicon, $destFavDir . '/favicon.ico');
+            }
+
+            // 2. Primary Login Logo (SVG & PNG)
+            $sourceLogoSvg = public_path('images/carelio_logo.svg');
+            $sourceLogoPng = public_path('images/carelio_logo.png');
+            $destLoginDir = $destBase . '/core/login/primary';
+            if (!File::isDirectory($destLoginDir)) {
+                File::makeDirectory($destLoginDir, 0755, true, true);
+            }
+            if (File::exists($sourceLogoSvg)) {
+                File::copy($sourceLogoSvg, $destLoginDir . '/logo.svg');
+            }
+            if (File::exists($sourceLogoPng)) {
+                File::copy($sourceLogoPng, $destLoginDir . '/logo.png');
+            }
+
+            // 3. Menu / Header Logo (SVG)
+            $sourceIconSvg = public_path('images/carelio_icon.svg');
+            $destMenuDir = $destBase . '/core/menu/primary';
+            if (!File::isDirectory($destMenuDir)) {
+                File::makeDirectory($destMenuDir, 0755, true, true);
+            }
+            if (File::exists($sourceIconSvg)) {
+                File::copy($sourceIconSvg, $destMenuDir . '/logo.svg');
+            }
+        } catch (Throwable $e) {
+            Log::error("Failed to deploy Carelio brand assets to tenant site at {$sitePath}: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Backward-compatible alias for favicon deployment
      */
     protected function deployTenantFavicon(string $sitePath): void
     {
-        $sourceFavicon = public_path('favicon.ico');
-
-        if (!File::exists($sourceFavicon)) {
-            Log::error("Canonical Carelio favicon source not found at {$sourceFavicon}. Tenant runtime directory will not receive brand favicon.");
-            return;
-        }
-
-        try {
-            $destDir = $sitePath . '/images/logos/core/favicon';
-            if (!File::isDirectory($destDir)) {
-                File::makeDirectory($destDir, 0755, true, true);
-            }
-            File::copy($sourceFavicon, $destDir . '/favicon.ico');
-        } catch (Throwable $e) {
-            Log::error("Failed to deploy Carelio favicon to tenant site at {$sitePath}: " . $e->getMessage());
-            // Favicon copy failure must not corrupt tenant provisioning
-        }
+        $this->deployTenantBrandAssets($sitePath);
     }
 
     /**

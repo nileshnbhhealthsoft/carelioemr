@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 72" width="380" height="72" fill="none">
+  <defs>
+    <linearGradient id="carelioLogoDarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ACD7" />
+      <stop offset="35%" stop-color="#009FF0" />
+      <stop offset="70%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#60A5FA" />
+    </linearGradient>
+  </defs>
+
+  <!-- Emblem Mark -->
+  <g transform="translate(6, 4) scale(0.64)">
+    <path d="M 50,3 C 76,3 97,24 97,50 C 97,76 76,97 50,97 C 42,97 34.5,94.8 28,90.8 L 34.2,80.5 C 39,83.2 44.3,84.8 50,84.8 C 69.2,84.8 84.8,69.2 84.8,50 C 84.8,30.8 69.2,15.2 50,15.2 C 44.3,15.2 39,16.8 34.2,19.5 L 28,9.2 C 34.5,5.2 42,3 50,3 Z" fill="url(#carelioLogoDarkGrad)" />
+    <circle cx="28" cy="11" r="3.8" fill="#00ACDF" />
+    <rect x="28" y="8.8" width="22" height="4.4" rx="2.2" fill="#00ACDF" />
+    <circle cx="18" cy="21.5" r="3.8" fill="#00ACDF" />
+    <rect x="18" y="19.3" width="28" height="4.4" rx="2.2" fill="#00ACDF" />
+    <circle cx="12" cy="32" r="3.8" fill="#00ACDF" />
+    <rect x="12" y="29.8" width="31" height="4.4" rx="2.2" fill="#00ACDF" />
+    <circle cx="16" cy="42" r="3.8" fill="#00ACDF" />
+    <rect x="16" y="39.8" width="24" height="4.4" rx="2.2" fill="#00ACDF" />
+    <circle cx="16" cy="58" r="3.8" fill="#38BDF8" />
+    <rect x="16" y="55.8" width="24" height="4.4" rx="2.2" fill="#38BDF8" />
+    <circle cx="12" cy="68" r="3.8" fill="#38BDF8" />
+    <rect x="12" y="65.8" width="31" height="4.4" rx="2.2" fill="#38BDF8" />
+    <circle cx="18" cy="78.5" r="3.8" fill="#60A5FA" />
+    <rect x="18" y="76.3" width="28" height="4.4" rx="2.2" fill="#60A5FA" />
+    <circle cx="28" cy="89" r="3.8" fill="#60A5FA" />
+    <rect x="28" y="86.8" width="22" height="4.4" rx="2.2" fill="#60A5FA" />
+  </g>
+
+  <!-- Typography: Wordmark + Tagline -->
+  <g transform="translate(80, 42)">
+    <text x="0" y="0" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="34" letter-spacing="-0.5px">
+      <tspan fill="#FFFFFF">Carelio</tspan><tspan fill="#009FF0">EMR</tspan>
+    </text>
+    <text x="1.5" y="19" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="8.8" fill="#93C5FD" letter-spacing="2.2px">
+      CONNECTED DATA. BETTER CARE.
+    </text>
+  </g>
+</svg>
+

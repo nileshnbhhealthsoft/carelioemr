@@ -10,13 +10,14 @@
         
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500"></div>
 
-        <div class="text-center space-y-3">
-            <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white font-bold flex items-center justify-center mx-auto shadow-md shadow-blue-600/20">
-                <i data-lucide="activity" class="w-7 h-7 stroke-[2.5]"></i>
-            </div>
+        <div class="text-center space-y-2">
+            <img src="{{ asset('images/carelio_icon.svg') }}" alt="CarelioEMR" class="w-14 h-14 mx-auto mb-2 drop-shadow-md">
             <div>
-                <h2 class="text-2xl font-black text-slate-900">CarelioEMR Portal</h2>
-                <p class="text-xs text-slate-500 font-semibold mt-0.5">
+                <h2 class="text-2xl font-black text-[#0B2D5B]">Carelio<span class="text-[#0078F0]">EMR</span> <span class="text-slate-600 text-lg font-bold">Portal</span></h2>
+                <p class="text-[10px] text-[#0B2D5B] font-extrabold tracking-[0.16em] uppercase mt-1">
+                    Connected Data. Better Care.
+                </p>
+                <p class="text-[11px] text-slate-500 font-medium mt-1">
                     Authorized Management &amp; Subscriber Console
                 </p>
             </div>

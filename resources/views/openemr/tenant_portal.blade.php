@@ -48,13 +48,9 @@ tailwind.config = {
 
     {{-- Logo --}}
     <div class="text-center mb-8">
-      <div class="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-blue-600/40">
-        <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-        </svg>
-      </div>
-      <h1 class="text-2xl font-black text-white">CarelioEMR <span class="text-blue-400">Cloud</span></h1>
-      <p class="text-slate-400 text-sm mt-1 font-medium">Electronic Medical Records — Tenant Workstation</p>
+      <img src="{{ asset('images/carelio_icon.svg') }}" alt="CarelioEMR" class="w-16 h-16 mx-auto mb-3 drop-shadow-2xl">
+      <h1 class="text-2xl font-black text-white">Carelio<span class="text-[#009FF0]">EMR</span> <span class="text-blue-400 text-lg font-bold">Cloud</span></h1>
+      <p class="text-[#38BDF8] text-[10px] mt-1 font-extrabold tracking-[0.16em] uppercase">Connected Data. Better Care.</p>
       <div class="flex items-center justify-center gap-2 mt-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
         <span class="text-xs text-emerald-400 font-semibold">Tenant: <span class="font-mono">{{ $tenant_slug }}</span></span>

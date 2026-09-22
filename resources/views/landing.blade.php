@@ -21,20 +21,18 @@
         
         <!-- Brand Logo -->
         <a href="{{ url('/') }}" class="flex items-center space-x-2.5 sm:space-x-3 shrink-0">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/20 font-bold shrink-0">
-                <i data-lucide="activity" class="w-6 h-6 stroke-[2.5]"></i>
-            </div>
+            <img src="{{ asset('images/carelio_icon.svg') }}" alt="CarelioEMR" class="w-10 h-10 shrink-0">
             <div class="flex flex-col justify-center">
                 <div class="flex items-center space-x-1.5 sm:space-x-2">
-                    <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none">
-                        Carelio<span class="text-blue-600">EMR</span>
+                    <span class="text-lg sm:text-xl font-black tracking-tight text-[#0B2D5B] leading-none">
+                        Carelio<span class="text-[#0078F0]">EMR</span>
                     </span>
-                    <span class="text-[10px] uppercase font-extrabold tracking-wider px-1.5 sm:px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/80 shrink-0">
+                    <span class="text-[10px] uppercase font-extrabold tracking-wider px-1.5 sm:px-2 py-0.5 rounded-md bg-blue-50 text-[#0078F0] border border-blue-200/80 shrink-0">
                         Cloud
                     </span>
                 </div>
-                <span class="text-[10px] sm:text-[11px] text-slate-500 font-semibold mt-0.5 hidden xs:block">
-                    EMR &amp; EHR Healthcare Suite
+                <span class="text-[9px] sm:text-[10px] text-[#0B2D5B] font-bold tracking-[0.18em] uppercase mt-1 hidden xs:block">
+                    Connected Data. Better Care.
                 </span>
             </div>
         </a>

@@ -7,9 +7,30 @@
     <title>@yield('title', 'CarelioEMR - Cloud EMR & EHR Healthcare Suite')</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}?v=3">
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=3">
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=3">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=4">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}?v=4">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=4">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=4">
+    
+    <!-- CarelioEMR Brand Tokens -->
+    <style>
+        :root {
+            --carelio-midnight-navy: #0B2D5B;
+            --carelio-carelio-blue-ui: #2563EB;
+            --carelio-teal: #06B6D4;
+            --carelio-light-blue: #E6F4FF;
+            --carelio-light-gray: #F4F7FA;
+            --carelio-logo-azure: #0078F0;
+            --carelio-logo-cyan: #009FF0;
+            --carelio-logo-deep-blue: #0046A8;
+            --carelio-logo-lower-mid: #008DDC;
+            --carelio-data-blue-start: #00ACD7;
+            --carelio-data-teal-end: #0098D9;
+            --carelio-terminal-dots: #00ACDF;
+            --carelio-black: #000000;
+            --carelio-white: #FFFFFF;
+        }
+    </style>
     
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
