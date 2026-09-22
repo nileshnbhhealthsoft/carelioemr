@@ -103,9 +103,9 @@ class OpenEmrTenantCompatibilityChecker
         // 3. Database connection & existence
         $driver = config('database.default', 'mysql');
         $host = config("database.connections.{$driver}.host", '127.0.0.1');
-        $port = config("database.connections.{$driver}.port", '3307');
+        $port = config("database.connections.{$driver}.port", '3306');
         $user = config("database.connections.{$driver}.username", 'root');
-        $pass = config("database.connections.{$driver}.password", 'root');
+        $pass = config("database.connections.{$driver}.password", '');
 
         try {
             $pdoRoot = new PDO("mysql:host={$host};port={$port};charset=utf8mb4", $user, $pass, [

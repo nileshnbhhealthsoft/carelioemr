@@ -34,13 +34,9 @@ class StripeSubscriptionController extends Controller
             'password' => 'required|string',
         ]);
 
-        $email = $request->email;
-        $user = User::where('email', $email)->first();
-        if (!$user && in_array(strtolower($email), ['admin@carelioemr.com', 'admin@auraemr.com'])) {
-            $user = User::whereIn('email', ['admin@carelioemr.com', 'admin@auraemr.com'])->first();
-        }
+        $user = User::where('email', $request->email)->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
+        if ($user && Hash::check($request->password, $user->password) && $user->is_admin) {
             return response()->json([
                 'success' => true,
                 'message' => 'Admin authentication successful',
@@ -64,9 +60,47 @@ class StripeSubscriptionController extends Controller
      */
     public function createPaymentIntent(Request $request)
     {
+        $normalizedEmail = strtolower(trim((string) $request->email));
+        $request->merge(['email' => $normalizedEmail]);
+
         $request->validate([
             'doctor_name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => [
+                'required',
+                'email',
+                function ($attribute, $value, $fail) {
+                    $normalized = strtolower(trim((string) $value));
+                    $hasCustomerEmail = \Illuminate\Support\Facades\Schema::hasColumn('subscriptions', 'customer_email');
+                    $hasStripeStatus = \Illuminate\Support\Facades\Schema::hasColumn('subscriptions', 'stripe_status');
+
+                    $exists = Subscription::where(function ($q) use ($normalized, $hasCustomerEmail) {
+                            $q->where('email', $normalized);
+                            if ($hasCustomerEmail) {
+                                $q->orWhere('customer_email', $normalized);
+                            }
+                        })
+                        ->where(function ($query) use ($hasStripeStatus) {
+                            if ($hasStripeStatus) {
+                                $query->whereIn('stripe_status', ['active', 'trialing', 'incomplete']);
+                            }
+                            $query->orWhereIn('provision_status', ['completed', 'provisioning'])
+                                  ->orWhereNotNull('openemr_database')
+                                  ->orWhereIn('payment_status', ['succeeded', 'paid', 'active', 'trialing'])
+                                  ->orWhere(function ($q2) {
+                                      $q2->where('provision_status', 'pending')
+                                         ->where(function ($q3) {
+                                             $q3->whereNotNull('paid_at')
+                                                ->orWhereIn('payment_status', ['succeeded', 'paid']);
+                                         });
+                                  });
+                        })
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('An active account or subscription is already associated with this email address. Please log in to your tenant portal or contact support.');
+                    }
+                },
+            ],
             'practice_type' => 'nullable|string',
             'region' => 'nullable|string',
         ]);

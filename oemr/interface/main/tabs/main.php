@@ -45,7 +45,7 @@ const ENV_DISABLE_TELEMETRY = 'OPENEMR_DISABLE_TELEMETRY';
 $session = SessionWrapperFactory::getInstance()->getActiveSession();
 
 $logoService = new LogoService();
-$menuLogo = $logoService->getLogo('core/login/primary') ?: (OEGlobalsBag::getInstance()->getWebRoot() . '/public/images/logos/core/login/primary/logo.png');
+$menuLogo = $logoService->getLogo('core/menu/primary/');
 $versionService = new VersionService();
 $softwareVersion = text((string) $versionService->getSoftwareVersion());
 // Registration status and options.
@@ -99,21 +99,7 @@ $twig = (new TwigContainer(null, OEGlobalsBag::getInstance()->getKernel()))->get
 <html>
 
 <head>
-    <?php
-    $appTitle = OEGlobalsBag::getInstance()->getString('openemr_name');
-    if ($appTitle === 'OpenEMR' || empty($appTitle) || $appTitle === 'OEMR') {
-        $appTitle = 'CarelioEMR';
-    }
-    $favicon = Header::getFavIcon();
-    $webroot = OEGlobalsBag::getInstance()->getWebRoot();
-    if (empty($favicon)) {
-        $favicon = $webroot . '/public/images/logos/core/favicon/favicon.ico';
-    }
-    ?>
-    <title><?php echo text($appTitle); ?></title>
-    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo attr($webroot); ?>/public/images/favicon-32x32.png" />
-    <link rel="icon" type="image/x-icon" href="<?php echo attr($favicon); ?>" />
-    <link rel="shortcut icon" href="<?php echo attr($favicon); ?>" />
+    <title><?php echo text(OEGlobalsBag::getInstance()->getString('openemr_name')); ?></title>
 
     <script>
         // This is to prevent users from losing data by refreshing or backing out of OpenEMR.
@@ -164,7 +150,7 @@ $twig = (new TwigContainer(null, OEGlobalsBag::getInstance()->getKernel()))->get
         jsGlobals.timezone = <?php echo js_escape(OEGlobalsBag::getInstance()->get('gbl_time_zone') ?? ''); ?>;
         jsGlobals.assetVersion = <?php echo js_escape(OEGlobalsBag::getInstance()->get('v_js_includes')); ?>;
         var WindowTitleAddPatient = <?php echo(OEGlobalsBag::getInstance()->getBoolean('window_title_add_patient_name') ? 'true' : 'false'); ?>;
-        var WindowTitleBase = <?php echo js_escape($appTitle); ?>;
+        var WindowTitleBase = <?php echo js_escape(OEGlobalsBag::getInstance()->getString('openemr_name')); ?>;
         const isSms = "<?php echo !empty(OEGlobalsBag::getInstance()->get('oefax_enable_sms') ?? null); ?>";
         const isFax = "<?php echo !empty(OEGlobalsBag::getInstance()->get('oefax_enable_fax')) ?? null?>";
         const isServicesOther = (isSms || isFax);
@@ -415,7 +401,7 @@ $twig = (new TwigContainer(null, OEGlobalsBag::getInstance()->getKernel()))->get
     <?php
     echo $twig->render("interface/main/tabs/therapy_group_template.html.twig", []);
     echo $twig->render("interface/main/tabs/user_data_template.html.twig", [
-        'openemr_name' => $appTitle
+        'openemr_name' => OEGlobalsBag::getInstance()->getString('openemr_name')
     ]);
     // Collect the menu then build it
     $menuMain = new MainMenuRole(OEGlobalsBag::getInstance()->getKernel()->getEventDispatcher());
@@ -500,17 +486,11 @@ $twig = (new TwigContainer(null, OEGlobalsBag::getInstance()->getKernel()))->get
         <nav class="navbar navbar-expand-xl navbar-light bg-light py-0">
             <?php if (OEGlobalsBag::getInstance()->getBoolean('display_main_menu_logo')) {
                 $bag = OEGlobalsBag::getInstance();
-                $logoLinkDefault = '';
-                $logoTitleDefault = 'CarelioEMR';
+                $logoLinkDefault = 'https://www.open-emr.org/';
+                $logoTitleDefault = xl('OpenEMR Website');
                 $logoLink = trim($bag->getString('main_menu_logo_link', $logoLinkDefault));
-                if ($logoLink === 'https://www.open-emr.org/') {
-                    $logoLink = '';
-                }
                 $logoTitle = trim($bag->getString('main_menu_logo_title', $logoTitleDefault));
-                if ($logoTitle === 'OpenEMR Website' || empty($logoTitle)) {
-                    $logoTitle = 'CarelioEMR';
-                }
-                $logoImg = '<img src="' . attr($menuLogo) . '" class="d-inline-block align-middle" height="16" style="max-height: 16px; width: auto;" alt="' . xla('CarelioEMR') . '">';
+                $logoImg = '<img src="' . attr($menuLogo) . '" class="d-inline-block align-middle" height="16" alt="' . xla('Main Menu Logo') . '">';
                 if ($logoLink !== '') {
                     echo '<a class="navbar-brand" href="' . attr($logoLink) . '" title="' . attr($logoTitle) . '" rel="noopener" target="_blank">' . $logoImg . '</a>' . "\n";
                 } else {

@@ -358,10 +358,11 @@ class OpenEmrTenantAuditService
      */
     protected function getTenantPdo(string $dbName): PDO
     {
-        $host = config('database.connections.mysql.host', '127.0.0.1');
-        $port = config('database.connections.mysql.port', '3307');
-        $user = config('database.connections.mysql.username', 'root');
-        $pass = config('database.connections.mysql.password', 'root');
+        $driver = config('database.default', 'mysql');
+        $host = config("database.connections.{$driver}.host", '127.0.0.1');
+        $port = config("database.connections.{$driver}.port", '3306');
+        $user = config("database.connections.{$driver}.username", 'root');
+        $pass = config("database.connections.{$driver}.password", '');
 
         $pdo = new PDO("mysql:host={$host};port={$port};dbname={$dbName};charset=utf8mb4", $user, $pass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

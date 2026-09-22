@@ -114,4 +114,15 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Authorized Administrative Emails
+    |--------------------------------------------------------------------------
+    |
+    | Whitelist of emails authorized for platform administration. If empty,
+    | all authenticated records in the users table are granted administrative access.
+    |
+    */
+    'admin_emails' => array_values(array_filter(array_map('trim', explode(',', env('ADMIN_EMAILS', env('ADMIN_EMAIL', '')))))),
+
 ];

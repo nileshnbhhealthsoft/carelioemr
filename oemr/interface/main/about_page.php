@@ -26,7 +26,6 @@ use OpenEMR\Common\Twig\TwigContainer;
 use OpenEMR\Common\Uuid\UniqueInstallationUuid;
 use OpenEMR\Core\OEGlobalsBag;
 use OpenEMR\Events\Core\TemplatePageEvent;
-use OpenEMR\Services\LogoService;
 use OpenEMR\Services\ProductRegistrationService;
 use OpenEMR\Services\VersionService;
 
@@ -43,26 +42,19 @@ $userManual = (OEGlobalsBag::getInstance()->getString('user_manual_link') === ''
 // Collect registered email, if applicable
 $emailRegistered = (new ProductRegistrationService())->getRegistrationEmail() ?? '';
 
-$rawSupportLink = OEGlobalsBag::getInstance()->getString("online_support_link");
-$onlineSupportHref = (str_contains(strtolower((string) $rawSupportLink), 'open-emr.org')) ? '' : $rawSupportLink;
-
-$logoService = new LogoService();
-$carelioLogo = $logoService->getLogo('core/login/primary') ?: (OEGlobalsBag::getInstance()->getWebRoot() . '/public/images/logos/core/login/primary/logo.png');
-
 $viewArgs = [
-    'onlineSupportHref' => $onlineSupportHref,
+    'onlineSupportHref' => OEGlobalsBag::getInstance()->getString("online_support_link"),
     'ackHref' => "../../acknowledge_license_cert.html",
-    'applicationTitle' => 'CarelioEMR',
+    'applicationTitle' => OEGlobalsBag::getInstance()->getString('openemr_name'),
     'versionNumber' => (string) $versionService->getSoftwareVersion(),
     'supportPhoneNumber' => OEGlobalsBag::getInstance()->getString('support_phone_number') ?? false,
     'theUUID' => UniqueInstallationUuid::getUniqueInstallationUuid(),
     'userManualHref' => $userManual,
-    'onlineSupportLink' => !empty($onlineSupportHref) ? $onlineSupportHref : false,
+    'onlineSupportLink' => OEGlobalsBag::getInstance()->getString('online_support_link') ?? false,
     'displayAcknowledgements' => OEGlobalsBag::getInstance()->getBoolean('display_acknowledgements'),
     'displayDonations' => OEGlobalsBag::getInstance()->getBoolean('display_donations_link'),
     'displayReview' => OEGlobalsBag::getInstance()->getBoolean('display_review_link'),
-    'emailRegistered' => $emailRegistered,
-    'carelioLogo' => $carelioLogo,
+    'emailRegistered' => $emailRegistered
 ];
 
 $templatePageEvent = new TemplatePageEvent('about_page', [], 'core/about.html.twig', $viewArgs);

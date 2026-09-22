@@ -75,12 +75,236 @@ class OpenemrLocationListsSeeder extends Seeder
         $sCount = $this->upsertListOptions($pdo, $states);
         $coCount = $this->upsertListOptions($pdo, $counties);
 
+        // Configure demographics layout options (Country, State, County + dynamic cascading script)
+        $this->configureDemographicsLayout($pdo, $countries, $states, $counties);
+
         return [
             'country' => $cCount,
             'state' => $sCount,
             'county' => $coCount,
             'total' => $cCount + $sCount + $coCount,
         ];
+    }
+
+    /**
+     * Configure layout_options for patient demographics (form_id = 'DEM'):
+     * 1. Re-orders location fields: Country (seq 4), State (seq 5), County (seq 6), Postal Code (seq 7).
+     * 2. Binds them to their respective lists with data_type = 26 (List Box with Add) and uor = 1 (Optional).
+     * 3. Injects a client-side cascading script (data_type = 31, Static Text) to link Country -> State -> County dynamically.
+     *
+     * @param PDO $pdo
+     * @param array|null $countries
+     * @param array|null $states
+     * @param array|null $counties
+     * @return void
+     */
+    public function configureDemographicsLayout(PDO $pdo, ?array $countries = null, ?array $states = null, ?array $counties = null): void
+    {
+        $countries = $countries ?? $this->getCountryData();
+        $states = $states ?? $this->getStateData();
+        $counties = $counties ?? $this->getCountyData();
+
+        // 1. Ensure location fields have data_type = 26, proper list_id, and logical sequence
+        $pdo->exec("
+            UPDATE layout_options 
+            SET data_type = 26, list_id = 'country', uor = 1, seq = 4, title = 'Country' 
+            WHERE form_id = 'DEM' AND field_id = 'country_code'
+        ");
+
+        $pdo->exec("
+            UPDATE layout_options 
+            SET data_type = 26, list_id = 'country', uor = 1, seq = 4, title = 'Country' 
+            WHERE form_id = 'DEM' AND field_id = 'country'
+        ");
+
+        $pdo->exec("
+            UPDATE layout_options 
+            SET data_type = 26, list_id = 'state', uor = 1, seq = 5, title = 'State' 
+            WHERE form_id = 'DEM' AND field_id = 'state'
+        ");
+
+        $pdo->exec("
+            UPDATE layout_options 
+            SET data_type = 26, list_id = 'county', uor = 1, seq = 6, title = 'County' 
+            WHERE form_id = 'DEM' AND field_id = 'county'
+        ");
+
+        $pdo->exec("
+            UPDATE layout_options 
+            SET seq = 7 
+            WHERE form_id = 'DEM' AND field_id = 'postal_code'
+        ");
+
+        // 2. Build cascading lookup maps
+        $countryStatesMap = [];
+        $stateToCountry = [];
+        foreach ($states as $s) {
+            $cCode = $s['mapping'] ?? '';
+            if ($cCode) {
+                $countryStatesMap[$cCode][] = [
+                    'id' => $s['option_id'],
+                    'title' => $s['title'],
+                ];
+                $stateToCountry[$s['option_id']] = $cCode;
+            }
+        }
+
+        $stateCountiesMap = [];
+        $countyToState = [];
+        foreach ($counties as $co) {
+            $sCode = $co['mapping'] ?? '';
+            if ($sCode) {
+                $stateCountiesMap[$sCode][] = [
+                    'id' => $co['option_id'],
+                    'title' => $co['title'],
+                ];
+                $countyToState[$co['option_id']] = $sCode;
+            }
+        }
+
+        $allStatesList = [];
+        foreach ($states as $s) {
+            $allStatesList[] = [
+                'id' => $s['option_id'],
+                'title' => $s['title'],
+            ];
+        }
+
+        $jsonCountryStates = json_encode($countryStatesMap, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+        $jsonStateCounties = json_encode($stateCountiesMap, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+        $jsonStateToCountry = json_encode($stateToCountry, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+        $jsonCountyToState = json_encode($countyToState, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+        $jsonAllStates = json_encode($allStatesList, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+
+        // 3. Construct lightweight client-side cascading script
+        $scriptHtml = '<div style="display:none;" id="carelio_cascading_locations_container">' . "\n" .
+'<script>' . "\n" .
+'(function() {' . "\n" .
+'    var countryStates = ' . $jsonCountryStates . ';' . "\n" .
+'    var stateCounties = ' . $jsonStateCounties . ';' . "\n" .
+'    var stateToCountry = ' . $jsonStateToCountry . ';' . "\n" .
+'    var countyToState = ' . $jsonCountyToState . ';' . "\n" .
+'    var allStates = ' . $jsonAllStates . ';' . "\n" .
+'    function setupLocationCascade() {' . "\n" .
+'        var countryEl = document.getElementById("form_country_code") || document.getElementById("form_country");' . "\n" .
+'        var stateEl = document.getElementById("form_state");' . "\n" .
+'        var countyEl = document.getElementById("form_county");' . "\n" .
+'        if (!countryEl || !stateEl) return;' . "\n" .
+'        if (countryEl.getAttribute("data-cascade-ready") === "1") return;' . "\n" .
+'        countryEl.setAttribute("data-cascade-ready", "1");' . "\n" .
+'        function populateSelect(selectEl, items, desiredVal, emptyLabel) {' . "\n" .
+'            if (!selectEl) return;' . "\n" .
+'            var currentVal = (desiredVal !== undefined && desiredVal !== null) ? desiredVal : selectEl.value;' . "\n" .
+'            selectEl.innerHTML = "";' . "\n" .
+'            var optEmpty = document.createElement("option");' . "\n" .
+'            optEmpty.value = "";' . "\n" .
+'            optEmpty.textContent = emptyLabel || " ";' . "\n" .
+'            selectEl.appendChild(optEmpty);' . "\n" .
+'            var found = false;' . "\n" .
+'            if (items && items.length > 0) {' . "\n" .
+'                for (var i = 0; i < items.length; i++) {' . "\n" .
+'                    var opt = document.createElement("option");' . "\n" .
+'                    opt.value = items[i].id;' . "\n" .
+'                    opt.textContent = items[i].title;' . "\n" .
+'                    if (items[i].id === currentVal) {' . "\n" .
+'                        opt.selected = true;' . "\n" .
+'                        found = true;' . "\n" .
+'                    }' . "\n" .
+'                    selectEl.appendChild(opt);' . "\n" .
+'                }' . "\n" .
+'            }' . "\n" .
+'            if (!found && currentVal) {' . "\n" .
+'                var optCustom = document.createElement("option");' . "\n" .
+'                optCustom.value = currentVal;' . "\n" .
+'                optCustom.textContent = currentVal;' . "\n" .
+'                optCustom.selected = true;' . "\n" .
+'                selectEl.appendChild(optCustom);' . "\n" .
+'            }' . "\n" .
+'            if (window.jQuery && window.jQuery(selectEl).data("select2")) {' . "\n" .
+'                window.jQuery(selectEl).trigger("change.select2");' . "\n" .
+'            }' . "\n" .
+'        }' . "\n" .
+'        function syncStates(countryVal, preserveVal) {' . "\n" .
+'            var targetVal = preserveVal ? stateEl.value : "";' . "\n" .
+'            var list = countryVal ? (countryStates[countryVal] || []) : allStates;' . "\n" .
+'            populateSelect(stateEl, list, targetVal, "Select State / Locality");' . "\n" .
+'            syncCounties(stateEl.value, preserveVal);' . "\n" .
+'        }' . "\n" .
+'        function syncCounties(stateVal, preserveVal) {' . "\n" .
+'            if (!countyEl) return;' . "\n" .
+'            var targetVal = preserveVal ? countyEl.value : "";' . "\n" .
+'            var list = stateVal ? (stateCounties[stateVal] || []) : [];' . "\n" .
+'            populateSelect(countyEl, list, targetVal, "Select County / District");' . "\n" .
+'        }' . "\n" .
+'        var initC = countryEl.value;' . "\n" .
+'        var initS = stateEl.value;' . "\n" .
+'        var initCo = countyEl ? countyEl.value : "";' . "\n" .
+'        if (!initC && initS && stateToCountry[initS]) {' . "\n" .
+'            initC = stateToCountry[initS];' . "\n" .
+'            countryEl.value = initC;' . "\n" .
+'            if (window.jQuery && window.jQuery(countryEl).data("select2")) {' . "\n" .
+'                window.jQuery(countryEl).trigger("change.select2");' . "\n" .
+'            }' . "\n" .
+'        }' . "\n" .
+'        if (!initS && initCo && countyToState[initCo]) {' . "\n" .
+'            initS = countyToState[initCo];' . "\n" .
+'            stateEl.value = initS;' . "\n" .
+'            if (!initC && stateToCountry[initS]) {' . "\n" .
+'                initC = stateToCountry[initS];' . "\n" .
+'                countryEl.value = initC;' . "\n" .
+'                if (window.jQuery && window.jQuery(countryEl).data("select2")) {' . "\n" .
+'                    window.jQuery(countryEl).trigger("change.select2");' . "\n" .
+'                }' . "\n" .
+'            }' . "\n" .
+'        }' . "\n" .
+'        if (initC) syncStates(initC, true);' . "\n" .
+'        else if (initS) syncCounties(initS, true);' . "\n" .
+'        countryEl.addEventListener("change", function() {' . "\n" .
+'            syncStates(this.value, false);' . "\n" .
+'        });' . "\n" .
+'        stateEl.addEventListener("change", function() {' . "\n" .
+'            var stVal = this.value;' . "\n" .
+'            if (stVal && stateToCountry[stVal] && countryEl.value !== stateToCountry[stVal]) {' . "\n" .
+'                countryEl.value = stateToCountry[stVal];' . "\n" .
+'                if (window.jQuery && window.jQuery(countryEl).data("select2")) {' . "\n" .
+'                    window.jQuery(countryEl).trigger("change.select2");' . "\n" .
+'                }' . "\n" .
+'            }' . "\n" .
+'            syncCounties(stVal, false);' . "\n" .
+'        });' . "\n" .
+'    }' . "\n" .
+'    if (document.readyState === "loading") {' . "\n" .
+'        document.addEventListener("DOMContentLoaded", setupLocationCascade);' . "\n" .
+'    } else {' . "\n" .
+'        setupLocationCascade();' . "\n" .
+'    }' . "\n" .
+'    setTimeout(setupLocationCascade, 250);' . "\n" .
+'    setTimeout(setupLocationCascade, 800);' . "\n" .
+'})();' . "\n" .
+'</script>' . "\n" .
+'</div>';
+
+        // 4. Upsert location_cascading_script into layout_options (data_type = 31 Static Text)
+        $stmtScript = $pdo->prepare("
+            INSERT INTO layout_options (
+                form_id, field_id, group_id, title, seq, data_type, uor,
+                fld_length, max_length, list_id, titlecols, datacols,
+                default_value, edit_options, description
+            ) VALUES (
+                'DEM', 'location_cascading_script', 2, '', 8, 31, 1,
+                0, 0, '', 0, 4,
+                '', '', ?
+            ) ON DUPLICATE KEY UPDATE
+                group_id = VALUES(group_id),
+                title = VALUES(title),
+                seq = VALUES(seq),
+                data_type = VALUES(data_type),
+                uor = VALUES(uor),
+                description = VALUES(description)
+        ");
+        $stmtScript->execute([$scriptHtml]);
+
+        Log::info("Configured Demographics layout options and location cascading dropdowns on tenant database.");
     }
 
     /**

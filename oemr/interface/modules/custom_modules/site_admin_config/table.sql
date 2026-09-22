@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS `mod_site_admin_config` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `installed_at` DATETIME NOT NULL,
+  `version` VARCHAR(50) NOT NULL DEFAULT '1.0.0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+

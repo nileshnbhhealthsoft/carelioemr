@@ -209,9 +209,9 @@ class OpenEmrTenantRepairService
 
         $driver = config('database.default', 'mysql');
         $host = config("database.connections.{$driver}.host", '127.0.0.1');
-        $port = config("database.connections.{$driver}.port", '3307');
+        $port = config("database.connections.{$driver}.port", '3306');
         $user = config("database.connections.{$driver}.username", 'root');
-        $pass = config("database.connections.{$driver}.password", 'root');
+        $pass = config("database.connections.{$driver}.password", '');
 
         $passArg = $pass !== '' ? "-p{$pass}" : '';
         $cmd = "cmd.exe /c \"\"{$mysqlDumpExe}\" -h {$host} -P {$port} -u {$user} {$passArg} --set-gtid-purged=OFF --single-transaction --quick --routines --triggers {$dbName} > \"{$backupFilePath}\"\"";
@@ -591,9 +591,9 @@ class OpenEmrTenantRepairService
     {
         $driver = config('database.default', 'mysql');
         $host = config("database.connections.{$driver}.host", '127.0.0.1');
-        $port = config("database.connections.{$driver}.port", '3307');
+        $port = config("database.connections.{$driver}.port", '3306');
         $user = config("database.connections.{$driver}.username", 'root');
-        $pass = config("database.connections.{$driver}.password", 'root');
+        $pass = config("database.connections.{$driver}.password", '');
 
         return new PDO("mysql:host={$host};port={$port};dbname={$dbName};charset=utf8mb4", $user, $pass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

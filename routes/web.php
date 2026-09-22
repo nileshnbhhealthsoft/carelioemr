@@ -28,11 +28,8 @@ Route::post('/admin/login', function (Request $request) {
 
     $loginInput = trim($request->email);
     $user = User::where('email', $loginInput)->orWhere('name', $loginInput)->first();
-    if (!$user && in_array(strtolower($loginInput), ['admin', 'admin@carelioemr.com', 'admin@auraemr.com'])) {
-        $user = User::whereIn('email', ['admin@carelioemr.com', 'admin@auraemr.com'])->first();
-    }
 
-    if ($user && Hash::check($request->password, $user->password)) {
+    if ($user && Hash::check($request->password, $user->password) && $user->is_admin) {
         session([
             'admin_authenticated' => true,
             'admin_user' => [
