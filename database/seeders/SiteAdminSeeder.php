@@ -10,49 +10,65 @@ use PDO;
 class SiteAdminSeeder extends Seeder
 {
     /**
-     * Run the database seeds on the default or specified database connection.
+     * Run the database seeds on the default, specified connection, or across all active tenants.
      */
     public function run(?string $connection = null): void
     {
-        $pdo = DB::connection($connection)->getPdo();
-        $this->runOnPdo($pdo);
+        if ($connection) {
+            $pdo = DB::connection($connection)->getPdo();
+            $this->runOnPdo($pdo);
+            return;
+        }
+
+        $currentDb = DB::connection()->getDatabaseName();
+        if (str_starts_with($currentDb, 'openemr_site_')) {
+            $this->runOnPdo(DB::connection()->getPdo());
+            return;
+        }
+
+        // Master DB: iterate over all completed subscriptions with an OpenEMR database
+        $subscriptions = \App\Models\Subscription::where('provision_status', 'completed')
+            ->whereNotNull('openemr_database')
+            ->get();
+
+        if ($subscriptions->isEmpty()) {
+            $this->command?->warn("No completed OpenEMR tenant subscriptions found to seed.");
+            return;
+        }
+
+        $host = config('database.connections.mysql.host', '127.0.0.1');
+        $port = config('database.connections.mysql.port', '3306');
+        $user = config('database.connections.mysql.username', 'root');
+        $pass = config('database.connections.mysql.password', '');
+
+        foreach ($subscriptions as $sub) {
+            $dbName = $sub->openemr_database;
+            $this->command?->info("Seeding OpenEMR tenant: {$sub->tenant_slug} ({$dbName})...");
+            try {
+                $tenantPdo = new PDO("mysql:host={$host};port={$port};dbname={$dbName};charset=utf8mb4", $user, $pass, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                ]);
+                $siteDir = base_path('oemr/sites/' . $sub->tenant_slug);
+                $this->runOnPdo($tenantPdo, null, $sub->doctor_name, $siteDir);
+                $this->command?->info("Successfully seeded tenant: {$sub->tenant_slug}");
+            } catch (\Throwable $e) {
+                $this->command?->error("Failed seeding tenant {$sub->tenant_slug}: " . $e->getMessage());
+            }
+        }
     }
 
     /**
      * Execute native branding and invoke Site Administrator module installer on target PDO instance.
      */
-    public function runOnPdo(PDO $pdo, ?string $doctorUsername = null, ?string $doctorFullName = null): void
+    public function runOnPdo(PDO $pdo, ?string $doctorUsername = null, ?string $doctorFullName = null, ?string $siteDir = null): void
     {
         // -------------------------------------------------------------
-        // 1. Native Branding via globals Table
-        // -------------------------------------------------------------
-        $branding = [
-            'openemr_name' => 'CarelioEMR',
-            'login_tagline_text' => 'CarelioEMR - Advanced Clinical & Medical Practice Management EHR',
-            'show_tagline_on_login' => '1',
-            'main_menu_logo_title' => 'CarelioEMR',
-            'display_main_menu_logo' => '1',
-            'show_primary_logo' => '1',
-            'login_page_layout' => 'login/layouts/vertical_band.html.twig',
-            'portal_custom_title' => 'CarelioEMR Patient Portal',
-        ];
-
-        $stmtGlobal = $pdo->prepare("
-            INSERT INTO globals (gl_name, gl_value) VALUES (?, ?)
-            ON DUPLICATE KEY UPDATE gl_value = VALUES(gl_value)
-        ");
-
-        foreach ($branding as $name => $value) {
-            $stmtGlobal->execute([$name, $value]);
-        }
-
-        // -------------------------------------------------------------
-        // 2. Delegate Site Administrator ACL & Runtime Setup to Custom Module
+        // 1. Delegate Site Administrator Setup, table.sql & ACL to Custom Module Installer
         // -------------------------------------------------------------
         $this->ensureModuleClassesLoaded();
 
-        // Idempotently install Site Administrator group and ACLs via custom module
-        SiteAdminInstaller::install($pdo);
+        // Idempotently execute table.sql and configure Site Administrator group/ACLs via single entry point
+        SiteAdminInstaller::install($pdo, $siteDir);
 
         // -------------------------------------------------------------
         // 3. Map Target Doctor User(s) via Custom Module

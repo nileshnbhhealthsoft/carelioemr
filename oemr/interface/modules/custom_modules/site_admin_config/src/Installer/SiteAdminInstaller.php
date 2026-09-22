@@ -52,16 +52,13 @@ class SiteAdminInstaller
         $pdoInstance = $pdo ?? self::resolvePdo();
         self::ensureCliEnvironment($pdoInstance, $siteDir);
 
-        // 1. Ensure module tracking table exists
-        $pdoInstance->exec("
-            CREATE TABLE IF NOT EXISTS `mod_site_admin_config` (
-                `id` INT AUTO_INCREMENT PRIMARY KEY,
-                `installed_at` DATETIME NOT NULL,
-                `version` VARCHAR(50) NOT NULL DEFAULT '1.0.0'
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-        ");
+        // 1. Ensure module schema and defaults exist via table.sql
+        self::executeTableSql($pdoInstance);
 
-        // 2. Ensure module is registered and active in modules table (migrating from legacy 'test' if present)
+        // 2. Deploy standard Carelio brand assets (logos, favicon) natively to tenant site directory
+        self::deployBrandAssets($siteDir);
+
+        // 3. Ensure module is registered and active in modules table (migrating from legacy 'test' if present)
         $pdoInstance->exec("
             UPDATE modules SET 
                 mod_name = 'Site Admin Config',
@@ -290,6 +287,52 @@ class SiteAdminInstaller
     }
 
     /**
+     * Deploy standard Carelio brand assets (logos, favicon) natively to tenant site directory
+     */
+    public static function deployBrandAssets(?string $siteDir = null): void
+    {
+        $targetDir = $siteDir;
+        if (empty($targetDir) && class_exists(\OpenEMR\Core\OEGlobalsBag::class)) {
+            $targetDir = \OpenEMR\Core\OEGlobalsBag::getInstance()->get('OE_SITE_DIR');
+        }
+        if (empty($targetDir) || !is_dir($targetDir)) {
+            return;
+        }
+
+        $assetsDir = dirname(__DIR__, 2) . '/assets';
+        if (!is_dir($assetsDir)) {
+            return;
+        }
+
+        $targets = [
+            'core/login/primary' => [
+                'carelio_logo.svg' => 'logo.svg',
+                'carelio_logo.png' => 'logo.png',
+            ],
+            'core/favicon' => [
+                'favicon.ico' => 'favicon.ico',
+            ],
+            'core/menu/primary' => [
+                'carelio_icon.svg' => 'logo.svg',
+            ],
+        ];
+
+        foreach ($targets as $subpath => $fileMap) {
+            $destDir = $targetDir . '/images/logos/' . $subpath;
+            if (!is_dir($destDir)) {
+                @mkdir($destDir, 0755, true);
+            }
+            foreach ($fileMap as $srcFile => $destFile) {
+                $src = $assetsDir . '/' . $srcFile;
+                $dest = $destDir . '/' . $destFile;
+                if (file_exists($src)) {
+                    @copy($src, $dest);
+                }
+            }
+        }
+    }
+
+    /**
      * Ensure MockArraySessionStorage in CLI mode so OpenEMR database connection factory doesn't fail,
      * and auto-detect/set OE_SITE_DIR if not already initialized.
      */
@@ -363,5 +406,32 @@ class SiteAdminInstaller
         }
 
         throw new RuntimeException("Unable to resolve active PDO database connection.");
+    }
+
+    /**
+     * Execute custom module's table.sql against the database
+     */
+    public static function executeTableSql(PDO $pdo): void
+    {
+        $sqlPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'table.sql';
+        if (!file_exists($sqlPath)) {
+            return;
+        }
+
+        $sql = file_get_contents($sqlPath);
+        if (empty(trim($sql))) {
+            return;
+        }
+
+        try {
+            $pdo->exec($sql);
+        } catch (\Throwable $e) {
+            $statements = array_filter(array_map('trim', explode(';', $sql)));
+            foreach ($statements as $stmt) {
+                if (!empty($stmt)) {
+                    $pdo->exec($stmt);
+                }
+            }
+        }
     }
 }

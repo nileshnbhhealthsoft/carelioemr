@@ -12,12 +12,10 @@
         <div class="p-6 space-y-6 overflow-y-auto">
             
             <a href="{{ url('/') }}" class="flex items-center space-x-3 cursor-pointer">
-                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center shadow-md shadow-blue-600/20 shrink-0">
-                    <i data-lucide="activity" class="w-5 h-5 stroke-[2.5]"></i>
-                </div>
+                <img src="{{ asset('images/carelio_icon.svg') }}" alt="CarelioEMR" class="w-10 h-10 shrink-0">
                 <div>
-                    <div class="text-lg font-black text-slate-900 leading-none tracking-tight">Carelio<span class="text-blue-600">Admin</span></div>
-                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Multi-Tenant CarelioEMR</div>
+                    <div class="text-lg font-black text-[#0B2D5B] leading-none tracking-tight">Carelio<span class="text-[#0078F0]">Admin</span></div>
+                    <div class="text-[9px] text-[#0B2D5B]/70 font-bold uppercase tracking-[0.14em] mt-1">Connected Data. Better Care.</div>
                 </div>
             </a>
 
