@@ -13,8 +13,8 @@ class SiteAdminInstaller
     public const GROUP_NAME = 'Site Administrator';
     public const GROUP_VALUE = 'site_admin';
     public const PARENT_GROUP_VALUE = 'doc'; // Physicians
-    public const MODULE_DIR = 'test';
-    public const MODULE_NAME = 'Site Administrator';
+    public const MODULE_DIR = 'site_admin_config';
+    public const MODULE_NAME = 'Site Admin Config';
 
     /**
      * Define full operational permissions allowed for Site Administrator
@@ -61,7 +61,21 @@ class SiteAdminInstaller
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         ");
 
-        // 2. Ensure module is registered and active in modules table
+        // 2. Ensure module is registered and active in modules table (migrating from legacy 'test' if present)
+        $pdoInstance->exec("
+            UPDATE modules SET 
+                mod_name = 'Site Admin Config',
+                mod_directory = 'site_admin_config',
+                mod_ui_name = 'Site Admin Config',
+                mod_relative_link = 'interface/modules/custom_modules/site_admin_config/',
+                mod_description = 'CarelioEMR Site Admin Config Module',
+                mod_nick_name = 'SiteAdminConfig',
+                mod_active = 1,
+                type = 0,
+                sql_run = 1
+            WHERE mod_directory = 'test'
+        ");
+
         $stmtMod = $pdoInstance->prepare("
             SELECT mod_id, mod_active FROM modules 
             WHERE mod_directory = ? LIMIT 1
@@ -78,8 +92,8 @@ class SiteAdminInstaller
                     directory, date, sql_run, type, sql_version, acl_version
                 ) VALUES (
                     ?, ?, '', '', 1,
-                    ?, 'interface/modules/custom_modules/test/', 0, 0,
-                    'CarelioEMR Site Administrator Module', 'SiteAdmin', '', '',
+                    ?, 'interface/modules/custom_modules/site_admin_config/', 0, 0,
+                    'CarelioEMR Site Admin Config Module', 'SiteAdminConfig', '', '',
                     '', NOW(), 1, 0, '1.0.0', ''
                 )
             ");
@@ -87,12 +101,17 @@ class SiteAdminInstaller
         } else {
             $updateMod = $pdoInstance->prepare("
                 UPDATE modules SET 
+                    mod_name = ?,
+                    mod_ui_name = ?,
+                    mod_relative_link = 'interface/modules/custom_modules/site_admin_config/',
+                    mod_description = 'CarelioEMR Site Admin Config Module',
+                    mod_nick_name = 'SiteAdminConfig',
                     mod_active = 1,
                     type = 0,
                     sql_run = 1
                 WHERE mod_directory = ?
             ");
-            $updateMod->execute([self::MODULE_DIR]);
+            $updateMod->execute([self::MODULE_NAME, self::MODULE_NAME, self::MODULE_DIR]);
         }
 
         // 3. Initialize native OpenEMR GaclApi

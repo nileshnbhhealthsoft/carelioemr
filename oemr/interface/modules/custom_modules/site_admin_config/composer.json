@@ -1,6 +1,6 @@
 {
-  "name": "carelio/site-admin-module",
-  "description": "CarelioEMR Site Administrator ACL and Runtime Restrictions Module",
+  "name": "carelio/site-admin-config-module",
+  "description": "CarelioEMR Site Admin Config and Runtime Restrictions Module",
   "type": "openemr-module",
   "license": "GPL-3.0",
   "authors": [

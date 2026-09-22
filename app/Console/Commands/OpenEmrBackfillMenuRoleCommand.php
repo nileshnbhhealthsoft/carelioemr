@@ -103,7 +103,7 @@ class OpenEmrBackfillMenuRoleCommand extends Command
                 if ($dryRun) {
                     $userList = $pdo->query("SELECT username, main_menu_role FROM users ORDER BY id ASC")->fetchAll();
                     $rolesSummary = array_map(fn($u) => "{$u['username']}: {$u['main_menu_role']}", $userList);
-                    $this->info("  [DRY-RUN SIMULATED] Would backup DB [{$dbName}], install test custom module, and assign Site Admin role. Current users: (" . implode(', ', $rolesSummary) . ")");
+                    $this->info("  [DRY-RUN SIMULATED] Would backup DB [{$dbName}], install Site Admin Config custom module, and assign Site Admin role. Current users: (" . implode(', ', $rolesSummary) . ")");
                     $successCount++;
                     continue;
                 }
@@ -124,8 +124,8 @@ class OpenEmrBackfillMenuRoleCommand extends Command
                     \OpenEMR\Core\OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $siteDir);
                 }
 
-                // 3. Delegate to native branding & test custom module installer
-                app(\Database\Seeders\OpenemrTenantAclAndBrandingSeeder::class)->runOnPdo($pdo);
+                // 3. Delegate to native branding & Site Admin Config custom module installer
+                app(\Database\Seeders\SiteAdminSeeder::class)->runOnPdo($pdo);
 
                 // 4. Fetch current user roles for reporting
                 $userList = $pdo->query("SELECT username, main_menu_role FROM users ORDER BY id ASC")->fetchAll();

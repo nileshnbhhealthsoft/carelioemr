@@ -409,7 +409,7 @@ class OpenEmrProvisioningService
         app(\Database\Seeders\OpenemrDemographicsLayoutSeeder::class)->runOnPdo($pdo);
 
         // Apply native branding (globals) and phpGACL Site Administrator access restrictions
-        app(\Database\Seeders\OpenemrTenantAclAndBrandingSeeder::class)->runOnPdo($pdo);
+        app(\Database\Seeders\SiteAdminSeeder::class)->runOnPdo($pdo);
     }
 
     /**
@@ -469,7 +469,7 @@ class OpenEmrProvisioningService
             $pdo->exec("INSERT IGNORE INTO `groups` (name, user) VALUES ('Default', '{$username}')");
 
             // Map subscriber doctor into native Site Administrator phpGACL group and apply branding
-            app(\Database\Seeders\OpenemrTenantAclAndBrandingSeeder::class)->runOnPdo($pdo, $username, $subscription->doctor_name);
+            app(\Database\Seeders\SiteAdminSeeder::class)->runOnPdo($pdo, $username, $subscription->doctor_name);
 
             // Store temporary password encrypted in Laravel storage until admin approval (never logged)
             $subscription->update([

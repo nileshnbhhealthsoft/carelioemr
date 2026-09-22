@@ -59,7 +59,7 @@ class MenuSubscriber implements EventSubscriberInterface
 
             // If Address Book, redirect to module-owned isolated view that excludes root admin
             if ($label === 'address book' || (isset($item->menu_id) && $item->menu_id === 'adb0')) {
-                $item->url = '/interface/modules/custom_modules/test/public/address_book.php';
+                $item->url = '/interface/modules/custom_modules/site_admin_config/public/address_book.php';
             }
 
             // Recurse into children if present
