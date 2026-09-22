@@ -58,60 +58,7 @@ class SiteAdminInstaller
         // 2. Deploy standard Carelio brand assets (logos, favicon) natively to tenant site directory
         self::deployBrandAssets($siteDir);
 
-        // 3. Ensure module is registered and active in modules table (migrating from legacy 'test' if present)
-        $pdoInstance->exec("
-            UPDATE modules SET 
-                mod_name = 'Site Admin Config',
-                mod_directory = 'site_admin_config',
-                mod_ui_name = 'Site Admin Config',
-                mod_relative_link = 'interface/modules/custom_modules/site_admin_config/',
-                mod_description = 'CarelioEMR Site Admin Config Module',
-                mod_nick_name = 'SiteAdminConfig',
-                mod_active = 1,
-                type = 0,
-                sql_run = 1
-            WHERE mod_directory = 'test'
-        ");
-
-        $stmtMod = $pdoInstance->prepare("
-            SELECT mod_id, mod_active FROM modules 
-            WHERE mod_directory = ? LIMIT 1
-        ");
-        $stmtMod->execute([self::MODULE_DIR]);
-        $modRow = $stmtMod->fetch(PDO::FETCH_ASSOC);
-
-        if (!$modRow) {
-            $insertMod = $pdoInstance->prepare("
-                INSERT INTO modules (
-                    mod_name, mod_directory, mod_parent, mod_type, mod_active, 
-                    mod_ui_name, mod_relative_link, mod_ui_order, mod_ui_active, 
-                    mod_description, mod_nick_name, mod_enc_menu, permissions_item_table, 
-                    directory, date, sql_run, type, sql_version, acl_version
-                ) VALUES (
-                    ?, ?, '', '', 1,
-                    ?, 'interface/modules/custom_modules/site_admin_config/', 0, 0,
-                    'CarelioEMR Site Admin Config Module', 'SiteAdminConfig', '', '',
-                    '', NOW(), 1, 0, '1.0.0', ''
-                )
-            ");
-            $insertMod->execute([self::MODULE_NAME, self::MODULE_DIR, self::MODULE_NAME]);
-        } else {
-            $updateMod = $pdoInstance->prepare("
-                UPDATE modules SET 
-                    mod_name = ?,
-                    mod_ui_name = ?,
-                    mod_relative_link = 'interface/modules/custom_modules/site_admin_config/',
-                    mod_description = 'CarelioEMR Site Admin Config Module',
-                    mod_nick_name = 'SiteAdminConfig',
-                    mod_active = 1,
-                    type = 0,
-                    sql_run = 1
-                WHERE mod_directory = ?
-            ");
-            $updateMod->execute([self::MODULE_NAME, self::MODULE_NAME, self::MODULE_DIR]);
-        }
-
-        // 3. Initialize native OpenEMR GaclApi
+        // 3. Initialize native OpenEMR GaclApi to sync sequences and clear cache
         $gacl = new GaclApi();
 
         // 4. Resolve Physicians parent group dynamically
