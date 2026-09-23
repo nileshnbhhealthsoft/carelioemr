@@ -112,7 +112,45 @@ JOIN `gacl_aro_groups` g ON gm.group_id = g.id AND g.value = 'site_admin'
 WHERE (am.section_value = 'admin' AND am.value IN ('super', 'forms', 'acl', 'manage_modules', 'database', 'language', 'menu', 'batchcom', 'drugs'))
    OR (am.section_value = 'menus' AND am.value = 'modle');
 
--- 9. Map all active authorized providers (non-admin) into Site Administrator group
+-- 9. Guarantee Root 'admin' User Full Superadmin Privileges
+-- 9a. Ensure root 'admin' user is active, authorized, and has full unrestricted administrative menu
+UPDATE `users` 
+SET `main_menu_role` = '', `active` = 1, `authorized` = 1 
+WHERE LOWER(`username`) = 'admin';
+
+-- 9b. Ensure root 'admin' user ARO exists in gacl_aro
+INSERT INTO `gacl_aro` (`id`, `section_value`, `value`, `order_value`, `name`, `hidden`)
+SELECT 
+  COALESCE((SELECT MAX(`id`) FROM `gacl_aro`), 10) + 1,
+  'users',
+  'admin',
+  10,
+  'Administrator',
+  0
+WHERE NOT EXISTS (
+  SELECT 1 FROM `gacl_aro` WHERE `section_value` = 'users' AND LOWER(`value`) = 'admin'
+);
+
+-- 9c. Ensure root 'admin' is mapped into Administrators (superadmin) GACL group
+INSERT IGNORE INTO `gacl_groups_aro_map` (`group_id`, `aro_id`)
+SELECT 
+  g.id AS group_id,
+  a.id AS aro_id
+FROM `gacl_aro_groups` g
+JOIN `gacl_aro` a ON a.section_value = 'users' AND LOWER(a.value) = 'admin'
+WHERE g.value = 'admin';
+
+-- 9d. Ensure root 'admin' is strictly excluded from restricted site_admin group
+DELETE gm FROM `gacl_groups_aro_map` gm
+JOIN `gacl_aro_groups` g ON gm.group_id = g.id AND g.value = 'site_admin'
+JOIN `gacl_aro` a ON gm.aro_id = a.id AND a.section_value = 'users'
+WHERE LOWER(a.value) = 'admin';
+
+-- 9e. Ensure Default group membership for admin
+INSERT IGNORE INTO `groups` (`name`, `user`) VALUES ('Default', 'admin');
+
+-- 10. Map Customer / Doctor Users to Site Administrator Role
+-- 10a. Map all active authorized providers (non-admin) into Site Administrator group
 INSERT IGNORE INTO `gacl_groups_aro_map` (`group_id`, `aro_id`)
 SELECT 
   g.id AS group_id,
@@ -122,19 +160,21 @@ JOIN `gacl_aro` a ON a.section_value = 'users'
 JOIN `users` u ON u.username = a.value
 WHERE g.value = 'site_admin'
   AND u.authorized = 1
-  AND u.username != 'admin';
+  AND LOWER(u.username) != 'admin';
 
--- 10. Remove non-admin doctors from Administrator (superadmin) group if present
+-- 10b. Strictly remove customer / doctor users from Administrators (superadmin) group (Guarding root admin)
 DELETE gm FROM `gacl_groups_aro_map` gm
 JOIN `gacl_aro_groups` g ON gm.group_id = g.id AND g.value = 'admin'
 JOIN `gacl_aro` a ON gm.aro_id = a.id AND a.section_value = 'users'
 JOIN `users` u ON u.username = a.value
-WHERE u.authorized = 1 AND u.username != 'admin';
+WHERE u.authorized = 1 
+  AND LOWER(u.username) != 'admin'
+  AND LOWER(a.value) != 'admin';
 
--- 11. Update users main_menu_role to 'standard' for native menu isolation
+-- 11. Update customer / doctor users main_menu_role to 'standard' (Guarding root admin)
 UPDATE `users` 
 SET `main_menu_role` = 'standard' 
-WHERE `username` != 'admin' AND `authorized` = 1;
+WHERE `authorized` = 1 AND LOWER(`username`) != 'admin';
 
 
 -- ============================================================================
