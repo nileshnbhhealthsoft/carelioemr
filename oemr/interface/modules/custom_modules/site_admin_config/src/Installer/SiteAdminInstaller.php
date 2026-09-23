@@ -409,13 +409,17 @@ class SiteAdminInstaller
             return;
         }
 
-        try {
-            $pdo->exec($sql);
-        } catch (\Throwable $e) {
-            $statements = array_filter(array_map('trim', explode(';', $sql)));
-            foreach ($statements as $stmt) {
-                if (!empty($stmt)) {
-                    $pdo->exec($stmt);
+        $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        $statements = array_filter(array_map('trim', explode(';', $sql)));
+        foreach ($statements as $stmt) {
+            if (!empty($stmt)) {
+                try {
+                    $res = $pdo->query($stmt);
+                    if ($res instanceof \PDOStatement) {
+                        $res->closeCursor();
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore non-fatal statement warnings
                 }
             }
         }
