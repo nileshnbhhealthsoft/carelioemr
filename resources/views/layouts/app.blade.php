@@ -7,10 +7,10 @@
     <title>@yield('title', 'CarelioEMR - Cloud EMR & EHR Healthcare Suite')</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=4">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}?v=4">
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=4">
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=4">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}?v=5">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=5">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=5">
     
     <!-- CarelioEMR Brand Tokens -->
     <style>
