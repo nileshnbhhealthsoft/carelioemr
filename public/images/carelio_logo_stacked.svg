@@ -1,60 +1,92 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 300" width="320" height="300" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 280" width="320" height="280" fill="none">
   <defs>
-    <linearGradient id="carelioCrescentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00ACD7" />
-      <stop offset="35%" stop-color="#009FF0" />
-      <stop offset="70%" stop-color="#0078F0" />
-      <stop offset="100%" stop-color="#0046A8" />
+    <!-- Top Arm Gradient: Vibrant Blue to Deep Indigo/Royal Blue -->
+    <linearGradient id="topArmGrad" x1="0%" y1="0%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#0090EA" />
+      <stop offset="50%" stop-color="#0066E0" />
+      <stop offset="100%" stop-color="#0040B8" />
     </linearGradient>
-    <linearGradient id="carelioBarTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00ACDF" />
-      <stop offset="100%" stop-color="#009FF0" />
+
+    <!-- Bottom Arm Gradient: Bright Cyan/Blue to Royal Blue -->
+    <linearGradient id="botArmGrad" x1="0%" y1="20%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00AEEF" />
+      <stop offset="45%" stop-color="#0080F0" />
+      <stop offset="100%" stop-color="#0048C8" />
     </linearGradient>
-    <linearGradient id="carelioBarBotGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#008DDC" />
-      <stop offset="100%" stop-color="#0046A8" />
+
+    <!-- Row 1 & 2 Stream Gradients -->
+    <linearGradient id="streamGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00A3E0" />
+      <stop offset="100%" stop-color="#0072CE" />
+    </linearGradient>
+    <linearGradient id="streamGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0088DE" />
+      <stop offset="100%" stop-color="#0058C6" />
+    </linearGradient>
+
+    <!-- Cyan Accent Gradients for Row 6 & 7 -->
+    <linearGradient id="cyanGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00C4EE" />
+      <stop offset="100%" stop-color="#0098D8" />
+    </linearGradient>
+    <linearGradient id="cyanGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00B4E8" />
+      <stop offset="100%" stop-color="#0088CC" />
     </linearGradient>
   </defs>
 
-  <!-- Centered Emblem Mark (150x150 scaled from 100x100) -->
-  <g transform="translate(85, 12) scale(1.5)">
-    <!-- Main Curved Crescent Arc -->
-    <path d="M 50,3 C 76,3 97,24 97,50 C 97,76 76,97 50,97 C 42,97 34.5,94.8 28,90.8 L 34.2,80.5 C 39,83.2 44.3,84.8 50,84.8 C 69.2,84.8 84.8,69.2 84.8,50 C 84.8,30.8 69.2,15.2 50,15.2 C 44.3,15.2 39,16.8 34.2,19.5 L 28,9.2 C 34.5,5.2 42,3 50,3 Z" fill="url(#carelioCrescentGrad)" />
+  <!-- ==================== EMBLEM (RIGHT-FACING "C") ==================== -->
+  <g id="emblem">
+    <!-- Row 1: Topmost Satellite Dot + Capsule -->
+    <circle cx="145" cy="46" r="4.2" fill="#00A3E0" />
+    <rect x="153" y="41.8" width="36" height="8.4" rx="4.2" fill="url(#streamGrad1)" />
 
-    <!-- Upper Data Stream Nodes & Bars -->
-    <circle cx="28" cy="11" r="3.8" fill="#00ACDF" />
-    <rect x="28" y="8.8" width="22" height="4.4" rx="2.2" fill="url(#carelioBarTopGrad)" />
+    <!-- Row 2: Upper Dot + Capsule -->
+    <circle cx="130" cy="60" r="4.8" fill="#0088DE" />
+    <rect x="139" y="55.2" width="55" height="9.6" rx="4.8" fill="url(#streamGrad2)" />
 
-    <circle cx="18" cy="21.5" r="3.8" fill="#00ACDF" />
-    <rect x="18" y="19.3" width="28" height="4.4" rx="2.2" fill="url(#carelioBarTopGrad)" />
+    <!-- Row 3: TOP ARM OF THE C (Curves up and around to the right) -->
+    <path d="M 148,65
+             C 168,48 194,48 215,58
+             C 224,62 225,72 217,76
+             C 209,80 203,75 197,70
+             C 183,58 165,60 148,73
+             C 141,76 138,69 148,65 Z" fill="url(#topArmGrad)" />
 
-    <circle cx="12" cy="32" r="3.8" fill="#00ACDF" />
-    <rect x="12" y="29.8" width="31" height="4.4" rx="2.2" fill="url(#carelioBarTopGrad)" />
+    <!-- Row 4: Mid-Upper Dot + Capsule -->
+    <circle cx="118" cy="76" r="5.2" fill="#0088DE" />
+    <rect x="128" y="70.8" width="46" height="10.4" rx="5.2" fill="url(#streamGrad2)" />
 
-    <circle cx="16" cy="42" r="3.8" fill="#00ACDF" />
-    <rect x="16" y="39.8" width="24" height="4.4" rx="2.2" fill="url(#carelioBarTopGrad)" />
+    <!-- Row 5: Center Spine Dot + Capsule -->
+    <circle cx="114" cy="93" r="5.5" fill="#007AC8" />
+    <rect x="125" y="87.5" width="42" height="11" rx="5.5" fill="url(#streamGrad2)" />
 
-    <!-- Lower Data Stream Nodes & Bars -->
-    <circle cx="16" cy="58" r="3.8" fill="#008DDC" />
-    <rect x="16" y="55.8" width="24" height="4.4" rx="2.2" fill="url(#carelioBarBotGrad)" />
+    <!-- Row 6: Mid-Lower Dot + Capsule (Cyan Accent) -->
+    <circle cx="120" cy="110" r="5.2" fill="#00C4EE" />
+    <rect x="130" y="104.8" width="44" height="10.4" rx="5.2" fill="url(#cyanGrad1)" />
 
-    <circle cx="12" cy="68" r="3.8" fill="#008DDC" />
-    <rect x="12" y="65.8" width="31" height="4.4" rx="2.2" fill="url(#carelioBarBotGrad)" />
+    <!-- Row 7: Lower Dot + Capsule (Cyan Accent) -->
+    <circle cx="129" cy="126" r="5" fill="#00B4E8" />
+    <rect x="139" y="121" width="56" height="10" rx="5" fill="url(#cyanGrad2)" />
 
-    <circle cx="18" cy="78.5" r="3.8" fill="#0046A8" />
-    <rect x="18" y="76.3" width="28" height="4.4" rx="2.2" fill="url(#carelioBarBotGrad)" />
-
-    <circle cx="28" cy="89" r="3.8" fill="#0046A8" />
-    <rect x="28" y="86.8" width="22" height="4.4" rx="2.2" fill="url(#carelioBarBotGrad)" />
+    <!-- Row 8: BOTTOM ARM OF THE C (Starts with dot, sweeps down and curves UP to the right) -->
+    <circle cx="140" cy="142" r="5" fill="#00AEEF" />
+    <path d="M 148,137
+             C 168,137 186,139 201,130
+             C 208,126 216,125 220,131
+             C 225,138 219,147 212,151
+             C 193,161 168,158 147,148
+             C 140,144 141,138 148,137 Z" fill="url(#botArmGrad)" />
   </g>
 
-  <!-- Typography: Centered CarelioEMR Wordmark -->
-  <text x="160" y="222" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="44" letter-spacing="-0.8px">
+  <!-- ==================== TYPOGRAPHY ==================== -->
+  <!-- CarelioEMR Wordmark -->
+  <text x="160" y="214" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="44" letter-spacing="-0.8px">
     <tspan fill="#0B2D5B">Carelio</tspan><tspan fill="#0078F0">EMR</tspan>
   </text>
 
-  <!-- Typography: Centered Tagline -->
-  <text x="160" y="258" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="10.5" fill="#0B2D5B" letter-spacing="3px">
+  <!-- Tagline -->
+  <text x="160" y="246" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="10.5" fill="#0B2D5B" letter-spacing="3px">
     CONNECTED DATA. BETTER CARE.
   </text>
 </svg>
