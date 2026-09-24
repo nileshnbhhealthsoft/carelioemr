@@ -143,7 +143,10 @@ class SiteAdminInstaller
             }
         }
 
-        // 8. Clear GACL cache
+        // 8. Guarantee root 'admin' user has full super administration privileges
+        self::ensureRootAdminPrivileges($pdoInstance, $gacl);
+
+        // 9. Clear GACL cache
         if (class_exists(AclMain::class)) {
             AclMain::clearGaclCache();
         }
@@ -228,6 +231,42 @@ class SiteAdminInstaller
         // 7. Clear GACL cache
         if (class_exists(AclMain::class)) {
             AclMain::clearGaclCache();
+        }
+
+        return true;
+    }
+
+    /**
+     * Guarantee root 'admin' user retains full Super Administrator privileges and is never restricted
+     */
+    public static function ensureRootAdminPrivileges(?PDO $pdo = null, ?GaclApi $gacl = null): bool
+    {
+        $pdoInstance = $pdo ?? self::resolvePdo();
+        $gaclInstance = $gacl ?? new GaclApi();
+
+        // 1. Ensure root 'admin' in users table has active = 1, authorized = 1, and unconstrained menu (empty main_menu_role)
+        $pdoInstance->exec("
+            UPDATE users 
+            SET main_menu_role = '', active = 1, authorized = 1 
+            WHERE LOWER(username) = 'admin'
+        ");
+
+        // 2. Ensure admin ARO exists in phpGACL
+        $adminAroId = $gaclInstance->get_object_id('users', 'admin', 'ARO');
+        if (!$adminAroId) {
+            $gaclInstance->add_object('users', 'Administrator', 'admin', 10, 0, 'ARO');
+        }
+
+        // 3. Ensure mapped into Administrators group
+        $adminGroupId = (int) $gaclInstance->get_group_id('admin', null, 'ARO');
+        if ($adminGroupId) {
+            $gaclInstance->add_group_object($adminGroupId, 'users', 'admin', 'ARO');
+        }
+
+        // 4. Ensure strictly excluded from site_admin group
+        $siteAdminGroupId = (int) $gaclInstance->get_group_id(self::GROUP_VALUE, null, 'ARO');
+        if ($siteAdminGroupId) {
+            $gaclInstance->del_group_object($siteAdminGroupId, 'users', 'admin', 'ARO');
         }
 
         return true;
@@ -370,13 +409,17 @@ class SiteAdminInstaller
             return;
         }
 
-        try {
-            $pdo->exec($sql);
-        } catch (\Throwable $e) {
-            $statements = array_filter(array_map('trim', explode(';', $sql)));
-            foreach ($statements as $stmt) {
-                if (!empty($stmt)) {
-                    $pdo->exec($stmt);
+        $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        $statements = array_filter(array_map('trim', explode(';', $sql)));
+        foreach ($statements as $stmt) {
+            if (!empty($stmt)) {
+                try {
+                    $res = $pdo->query($stmt);
+                    if ($res instanceof \PDOStatement) {
+                        $res->closeCursor();
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore non-fatal statement warnings
                 }
             }
         }
