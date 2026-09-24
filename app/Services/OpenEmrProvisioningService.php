@@ -188,7 +188,7 @@ class OpenEmrProvisioningService
                 File::copy($sourceFavicon, $destFavDir . '/favicon.ico');
             }
 
-            // 2. Primary Login Logo (SVG & PNG)
+            // 2. Primary Login Logo (SVG & PNG) - Concept 3 Horizontal Lockup
             $sourceLogoSvg = public_path('images/carelio_logo.svg');
             $sourceLogoPng = public_path('images/carelio_logo.png');
             $destLoginDir = $destBase . '/core/login/primary';
@@ -202,14 +202,42 @@ class OpenEmrProvisioningService
                 File::copy($sourceLogoPng, $destLoginDir . '/logo.png');
             }
 
-            // 3. Menu / Header Logo (SVG)
-            $sourceIconSvg = public_path('images/carelio_icon.svg');
+            // 3. Menu / Header Logo (SVG & PNG)
             $destMenuDir = $destBase . '/core/menu/primary';
             if (!File::isDirectory($destMenuDir)) {
                 File::makeDirectory($destMenuDir, 0755, true, true);
             }
-            if (File::exists($sourceIconSvg)) {
-                File::copy($sourceIconSvg, $destMenuDir . '/logo.svg');
+            if (File::exists($sourceLogoSvg)) {
+                File::copy($sourceLogoSvg, $destMenuDir . '/logo.svg');
+            }
+            if (File::exists($sourceLogoPng)) {
+                File::copy($sourceLogoPng, $destMenuDir . '/logo.png');
+            }
+
+            // 4. Portal Login & Menu
+            $destPortalLoginDir = $destBase . '/portal/login/primary';
+            $destPortalMenuDir = $destBase . '/portal/menu/primary';
+            File::ensureDirectoryExists($destPortalLoginDir);
+            File::ensureDirectoryExists($destPortalMenuDir);
+            if (File::exists($sourceLogoSvg)) {
+                File::copy($sourceLogoSvg, $destPortalLoginDir . '/logo.svg');
+                File::copy($sourceLogoSvg, $destPortalMenuDir . '/logo.svg');
+            }
+            if (File::exists($sourceLogoPng)) {
+                File::copy($sourceLogoPng, $destPortalLoginDir . '/logo.png');
+                File::copy($sourceLogoPng, $destPortalMenuDir . '/logo.png');
+            }
+
+            // 5. Legacy screen fallbacks
+            $destSiteImages = $sitePath . '/images';
+            File::ensureDirectoryExists($destSiteImages);
+            $customAssets = base_path('oemr/interface/modules/custom_modules/site_admin_config/assets');
+            if (File::exists($customAssets . '/login_logo.gif')) {
+                File::copy($customAssets . '/login_logo.gif', $destSiteImages . '/login_logo.gif');
+            }
+            if (File::exists($sourceLogoPng)) {
+                File::copy($sourceLogoPng, $destSiteImages . '/logo_1.png');
+                File::copy($sourceLogoPng, $destSiteImages . '/logo_2.png');
             }
         } catch (Throwable $e) {
             Log::error("Failed to deploy Carelio brand assets to tenant site at {$sitePath}: " . $e->getMessage());
@@ -401,14 +429,14 @@ class OpenEmrProvisioningService
             'phone' => $subscription->phone ?? '',
             'css_header' => 'style_light.css',
             'show_primary_logo' => '1',
-            'primary_logo_width' => 'w-50',
+            'primary_logo_width' => 'w-100',
             'logo_position' => 'flex-column',
             'show_tagline_on_login' => '1',
-            'login_tagline_text' => 'CarelioEMR - Advanced Clinical & Medical Practice Management EHR',
+            'login_tagline_text' => 'CarelioEMR - Connected Data. Better Care.',
             'show_labels_on_login_form' => '1',
             'language_menu_login' => '1',
             'language_menu_showall' => '1',
-            'display_acknowledgements_on_login' => '1',
+            'display_acknowledgements_on_login' => '0',
             'login_page_layout' => 'login/layouts/vertical_band.html.twig',
             'timeout' => '14400',
             'portal_timeout' => '1800',
@@ -416,6 +444,13 @@ class OpenEmrProvisioningService
             'calendar_interval' => '15',
             'schedule_start' => '8',
             'schedule_end' => '18',
+            'online_support_link' => '',
+            'user_manual_link' => '',
+            'main_menu_logo_link' => '',
+            'main_menu_logo_title' => 'CarelioEMR',
+            'display_acknowledgements' => '0',
+            'display_donations_link' => '0',
+            'display_review_link' => '0',
         ];
 
         $stmtOverride = $pdo->prepare("REPLACE INTO globals (gl_name, gl_index, gl_value) VALUES (?, 0, ?)");

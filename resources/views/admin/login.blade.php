@@ -11,13 +11,11 @@
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-500"></div>
 
         <div class="text-center space-y-2">
-            <img src="{{ asset('images/carelio_icon.svg') }}" alt="CarelioEMR" class="w-14 h-14 mx-auto mb-2 drop-shadow-md">
+            <a href="{{ url('/') }}" class="inline-block">
+                <img src="{{ asset('images/carelio_logo.svg') }}" alt="CarelioEMR" class="h-12 mx-auto mb-1 drop-shadow-sm">
+            </a>
             <div>
-                <h2 class="text-2xl font-black text-[#0B2D5B]">Carelio<span class="text-[#0078F0]">EMR</span> <span class="text-slate-600 text-lg font-bold">Portal</span></h2>
-                <p class="text-[10px] text-[#0B2D5B] font-extrabold tracking-[0.16em] uppercase mt-1">
-                    Connected Data. Better Care.
-                </p>
-                <p class="text-[11px] text-slate-500 font-medium mt-1">
+                <p class="text-[11px] text-slate-500 font-semibold tracking-wide uppercase">
                     Authorized Management &amp; Subscriber Console
                 </p>
             </div>

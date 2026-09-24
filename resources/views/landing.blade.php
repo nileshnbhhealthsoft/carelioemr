@@ -19,22 +19,9 @@
 <header class="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-2 sm:gap-4">
         
-        <!-- Brand Logo -->
-        <a href="{{ url('/') }}" class="flex items-center space-x-2.5 sm:space-x-3 shrink-0">
-            <img src="{{ asset('images/carelio_icon.svg') }}" alt="CarelioEMR" class="w-10 h-10 shrink-0">
-            <div class="flex flex-col justify-center">
-                <div class="flex items-center space-x-1.5 sm:space-x-2">
-                    <span class="text-lg sm:text-xl font-black tracking-tight text-[#0B2D5B] leading-none">
-                        Carelio<span class="text-[#0078F0]">EMR</span>
-                    </span>
-                    <span class="text-[10px] uppercase font-extrabold tracking-wider px-1.5 sm:px-2 py-0.5 rounded-md bg-blue-50 text-[#0078F0] border border-blue-200/80 shrink-0">
-                        Cloud
-                    </span>
-                </div>
-                <span class="text-[9px] sm:text-[10px] text-[#0B2D5B] font-bold tracking-[0.18em] uppercase mt-1 hidden xs:block">
-                    Connected Data. Better Care.
-                </span>
-            </div>
+        <!-- Brand Logo (Concept 3 Primary Stacked Lockup) -->
+        <a href="{{ url('/') }}" class="flex items-center shrink-0">
+            <img src="{{ asset('images/carelio_logo.svg') }}" alt="CarelioEMR" class="h-14 sm:h-16 w-auto">
         </a>
 
         <!-- Center Nav Links (Desktop xl+) -->
@@ -1008,7 +995,10 @@
 <footer class="bg-slate-900 text-white py-12 border-t border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-800 text-xs text-slate-400">
-            <div class="text-center md:text-left space-y-2">
+            <div class="text-center md:text-left space-y-3">
+                <a href="{{ url('/') }}" class="inline-block">
+                    <img src="{{ asset('images/carelio_logo_white.svg') }}" alt="CarelioEMR" class="h-9 w-auto">
+                </a>
                 <div class="font-semibold text-slate-200">
                     &copy; 2026 CarelioEMR Cloud Healthcare Suite. All rights reserved.
                 </div>
@@ -1048,9 +1038,10 @@
     <div class="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-auto p-5 sm:p-8 space-y-6">
         
         <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-            <div>
-                <h3 class="text-lg font-bold text-slate-900">CarelioEMR Stripe Subscription Checkout</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Plan Rate: $80.00 / month</p>
+            <div class="space-y-1">
+                <img src="{{ asset('images/carelio_logo.svg') }}" alt="CarelioEMR" class="h-8 w-auto mb-1">
+                <h3 class="text-base font-bold text-slate-900">Stripe Subscription Checkout</h3>
+                <p class="text-xs text-slate-500">Plan Rate: $80.00 / month</p>
             </div>
             <button onclick="closeCheckoutModal()" class="p-2 text-slate-400 hover:text-slate-800 rounded-lg">
                 <i data-lucide="x" class="w-5 h-5"></i>

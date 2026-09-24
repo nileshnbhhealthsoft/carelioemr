@@ -11,12 +11,8 @@
         
         <div class="p-6 space-y-6 overflow-y-auto">
             
-            <a href="{{ url('/') }}" class="flex items-center space-x-3 cursor-pointer">
-                <img src="{{ asset('images/carelio_icon.svg') }}" alt="CarelioEMR" class="w-10 h-10 shrink-0">
-                <div>
-                    <div class="text-lg font-black text-[#0B2D5B] leading-none tracking-tight">Carelio<span class="text-[#0078F0]">Admin</span></div>
-                    <div class="text-[9px] text-[#0B2D5B]/70 font-bold uppercase tracking-[0.14em] mt-1">Connected Data. Better Care.</div>
-                </div>
+            <a href="{{ url('/') }}" class="flex items-center cursor-pointer">
+                <img src="{{ asset('images/carelio_logo.svg') }}" alt="CarelioEMR" class="h-10 w-auto">
             </a>
 
             <div class="space-y-1">
