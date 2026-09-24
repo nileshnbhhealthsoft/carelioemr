@@ -291,20 +291,34 @@ class SiteAdminInstaller
         }
 
         $targets = [
-            'core/login/primary' => [
+            'images/logos/core/login/primary' => [
                 'carelio_logo.svg' => 'logo.svg',
                 'carelio_logo.png' => 'logo.png',
             ],
-            'core/favicon' => [
+            'images/logos/core/favicon' => [
                 'favicon.ico' => 'favicon.ico',
             ],
-            'core/menu/primary' => [
-                'carelio_icon.svg' => 'logo.svg',
+            'images/logos/core/menu/primary' => [
+                'carelio_logo.svg' => 'logo.svg',
+                'carelio_logo.png' => 'logo.png',
+            ],
+            'images/logos/portal/login/primary' => [
+                'carelio_logo.svg' => 'logo.svg',
+                'carelio_logo.png' => 'logo.png',
+            ],
+            'images/logos/portal/menu/primary' => [
+                'carelio_logo.svg' => 'logo.svg',
+                'carelio_logo.png' => 'logo.png',
+            ],
+            'images' => [
+                'login_logo.gif' => 'login_logo.gif',
+                'carelio_logo.png' => 'logo_1.png',
+                'carelio_logo.png' => 'logo_2.png',
             ],
         ];
 
         foreach ($targets as $subpath => $fileMap) {
-            $destDir = $targetDir . '/images/logos/' . $subpath;
+            $destDir = $targetDir . '/' . $subpath;
             if (!is_dir($destDir)) {
                 @mkdir($destDir, 0755, true);
             }

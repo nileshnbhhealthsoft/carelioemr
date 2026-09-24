@@ -46,11 +46,9 @@ tailwind.config = {
 <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-blue-950/30 to-slate-950 p-4">
   <div class="w-full max-w-md">
 
-    {{-- Logo --}}
+    {{-- Logo (Concept 3 Horizontal Lockup) --}}
     <div class="text-center mb-8">
-      <img src="{{ asset('images/carelio_icon.svg') }}" alt="CarelioEMR" class="w-16 h-16 mx-auto mb-3 drop-shadow-2xl">
-      <h1 class="text-2xl font-black text-white">Carelio<span class="text-[#009FF0]">EMR</span> <span class="text-blue-400 text-lg font-bold">Cloud</span></h1>
-      <p class="text-[#38BDF8] text-[10px] mt-1 font-extrabold tracking-[0.16em] uppercase">Connected Data. Better Care.</p>
+      <img src="{{ asset('images/carelio_logo_white.svg') }}" alt="CarelioEMR" class="h-14 mx-auto mb-3 drop-shadow-2xl">
       <div class="flex items-center justify-center gap-2 mt-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
         <span class="text-xs text-emerald-400 font-semibold">Tenant: <span class="font-mono">{{ $tenant_slug }}</span></span>
@@ -121,13 +119,11 @@ tailwind.config = {
   {{-- Top Navbar --}}
   <nav class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between shrink-0 z-10">
     <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-      </div>
-      <div>
-        <span class="font-black text-white text-sm">Carelio<span class="text-blue-400">EMR</span></span>
-        <span class="ml-2 text-[10px] bg-blue-900/60 text-blue-300 border border-blue-700/50 px-1.5 py-0.5 rounded font-bold uppercase">Workstation v8.3.0</span>
-      </div>
+      <a href="{{ url('/') }}" class="flex items-center">
+        <img src="{{ asset('images/carelio_logo_white.svg') }}" alt="CarelioEMR" class="h-6.5 w-auto">
+      </a>
+      <span class="ml-2 text-[10px] bg-blue-900/60 text-blue-300 border border-blue-700/50 px-1.5 py-0.5 rounded font-bold uppercase">Workstation v8.3.0</span>
+    </div>
 
       {{-- Search bar --}}
       <div class="hidden md:flex items-center gap-1.5 ml-4 bg-slate-800 rounded-lg px-3 py-1.5 border border-slate-700/60">
