@@ -1,50 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 72" width="380" height="72" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 300" width="320" height="300" fill="none">
   <defs>
-    <linearGradient id="carelioLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="carelioCrescentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#00ACD7" />
       <stop offset="35%" stop-color="#009FF0" />
       <stop offset="70%" stop-color="#0078F0" />
       <stop offset="100%" stop-color="#0046A8" />
     </linearGradient>
-    <linearGradient id="barTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <linearGradient id="carelioBarTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#00ACDF" />
       <stop offset="100%" stop-color="#009FF0" />
     </linearGradient>
-    <linearGradient id="barBotGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <linearGradient id="carelioBarBotGrad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#008DDC" />
       <stop offset="100%" stop-color="#0046A8" />
     </linearGradient>
   </defs>
 
-  <!-- Emblem Mark (Scaled and Centered Vertically) -->
-  <g transform="translate(6, 4) scale(0.64)">
-    <path d="M 50,3 C 76,3 97,24 97,50 C 97,76 76,97 50,97 C 42,97 34.5,94.8 28,90.8 L 34.2,80.5 C 39,83.2 44.3,84.8 50,84.8 C 69.2,84.8 84.8,69.2 84.8,50 C 84.8,30.8 69.2,15.2 50,15.2 C 44.3,15.2 39,16.8 34.2,19.5 L 28,9.2 C 34.5,5.2 42,3 50,3 Z" fill="url(#carelioLogoGrad)" />
+  <!-- Centered Emblem Mark (150x150 scaled from 100x100) -->
+  <g transform="translate(85, 12) scale(1.5)">
+    <!-- Main Curved Crescent Arc -->
+    <path d="M 50,3 C 76,3 97,24 97,50 C 97,76 76,97 50,97 C 42,97 34.5,94.8 28,90.8 L 34.2,80.5 C 39,83.2 44.3,84.8 50,84.8 C 69.2,84.8 84.8,69.2 84.8,50 C 84.8,30.8 69.2,15.2 50,15.2 C 44.3,15.2 39,16.8 34.2,19.5 L 28,9.2 C 34.5,5.2 42,3 50,3 Z" fill="url(#carelioCrescentGrad)" />
+
+    <!-- Upper Data Stream Nodes & Bars -->
     <circle cx="28" cy="11" r="3.8" fill="#00ACDF" />
-    <rect x="28" y="8.8" width="22" height="4.4" rx="2.2" fill="url(#barTopGrad)" />
+    <rect x="28" y="8.8" width="22" height="4.4" rx="2.2" fill="url(#carelioBarTopGrad)" />
+
     <circle cx="18" cy="21.5" r="3.8" fill="#00ACDF" />
-    <rect x="18" y="19.3" width="28" height="4.4" rx="2.2" fill="url(#barTopGrad)" />
+    <rect x="18" y="19.3" width="28" height="4.4" rx="2.2" fill="url(#carelioBarTopGrad)" />
+
     <circle cx="12" cy="32" r="3.8" fill="#00ACDF" />
-    <rect x="12" y="29.8" width="31" height="4.4" rx="2.2" fill="url(#barTopGrad)" />
+    <rect x="12" y="29.8" width="31" height="4.4" rx="2.2" fill="url(#carelioBarTopGrad)" />
+
     <circle cx="16" cy="42" r="3.8" fill="#00ACDF" />
-    <rect x="16" y="39.8" width="24" height="4.4" rx="2.2" fill="url(#barTopGrad)" />
+    <rect x="16" y="39.8" width="24" height="4.4" rx="2.2" fill="url(#carelioBarTopGrad)" />
+
+    <!-- Lower Data Stream Nodes & Bars -->
     <circle cx="16" cy="58" r="3.8" fill="#008DDC" />
-    <rect x="16" y="55.8" width="24" height="4.4" rx="2.2" fill="url(#barBotGrad)" />
+    <rect x="16" y="55.8" width="24" height="4.4" rx="2.2" fill="url(#carelioBarBotGrad)" />
+
     <circle cx="12" cy="68" r="3.8" fill="#008DDC" />
-    <rect x="12" y="65.8" width="31" height="4.4" rx="2.2" fill="url(#barBotGrad)" />
+    <rect x="12" y="65.8" width="31" height="4.4" rx="2.2" fill="url(#carelioBarBotGrad)" />
+
     <circle cx="18" cy="78.5" r="3.8" fill="#0046A8" />
-    <rect x="18" y="76.3" width="28" height="4.4" rx="2.2" fill="url(#barBotGrad)" />
+    <rect x="18" y="76.3" width="28" height="4.4" rx="2.2" fill="url(#carelioBarBotGrad)" />
+
     <circle cx="28" cy="89" r="3.8" fill="#0046A8" />
-    <rect x="28" y="86.8" width="22" height="4.4" rx="2.2" fill="url(#barBotGrad)" />
+    <rect x="28" y="86.8" width="22" height="4.4" rx="2.2" fill="url(#carelioBarBotGrad)" />
   </g>
 
-  <!-- Typography: Wordmark + Tagline -->
-  <g transform="translate(80, 42)">
-    <text x="0" y="0" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="34" letter-spacing="-0.5px">
-      <tspan fill="#0B2D5B">Carelio</tspan><tspan fill="#0078F0">EMR</tspan>
-    </text>
-    <text x="1.5" y="19" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="8.8" fill="#0B2D5B" letter-spacing="2.2px">
-      CONNECTED DATA. BETTER CARE.
-    </text>
-  </g>
+  <!-- Typography: Centered CarelioEMR Wordmark -->
+  <text x="160" y="222" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="44" letter-spacing="-0.8px">
+    <tspan fill="#0B2D5B">Carelio</tspan><tspan fill="#0078F0">EMR</tspan>
+  </text>
+
+  <!-- Typography: Centered Tagline -->
+  <text x="160" y="258" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="10.5" fill="#0B2D5B" letter-spacing="3px">
+    CONNECTED DATA. BETTER CARE.
+  </text>
 </svg>
-

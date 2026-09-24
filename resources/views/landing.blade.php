@@ -19,9 +19,9 @@
 <header class="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-2 sm:gap-4">
         
-        <!-- Brand Logo (Concept 3 Horizontal Lockup) -->
+        <!-- Brand Logo (Concept 3 Primary Stacked Lockup) -->
         <a href="{{ url('/') }}" class="flex items-center shrink-0">
-            <img src="{{ asset('images/carelio_logo.svg') }}" alt="CarelioEMR" class="h-10 sm:h-12 w-auto">
+            <img src="{{ asset('images/carelio_logo.svg') }}" alt="CarelioEMR" class="h-14 sm:h-16 w-auto">
         </a>
 
         <!-- Center Nav Links (Desktop xl+) -->
