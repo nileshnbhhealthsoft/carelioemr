@@ -436,7 +436,7 @@ class OpenEmrProvisioningService
             'show_labels_on_login_form' => '1',
             'language_menu_login' => '1',
             'language_menu_showall' => '1',
-            'display_acknowledgements_on_login' => '1',
+            'display_acknowledgements_on_login' => '0',
             'login_page_layout' => 'login/layouts/vertical_band.html.twig',
             'timeout' => '14400',
             'portal_timeout' => '1800',
@@ -444,6 +444,13 @@ class OpenEmrProvisioningService
             'calendar_interval' => '15',
             'schedule_start' => '8',
             'schedule_end' => '18',
+            'online_support_link' => '',
+            'user_manual_link' => '',
+            'main_menu_logo_link' => '',
+            'main_menu_logo_title' => 'CarelioEMR',
+            'display_acknowledgements' => '0',
+            'display_donations_link' => '0',
+            'display_review_link' => '0',
         ];
 
         $stmtOverride = $pdo->prepare("REPLACE INTO globals (gl_name, gl_index, gl_value) VALUES (?, 0, ?)");

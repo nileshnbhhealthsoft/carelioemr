@@ -492,3 +492,16 @@ INSERT INTO `layout_options` (
   `data_type` = VALUES(`data_type`),
   `uor` = VALUES(`uor`),
   `description` = VALUES(`description`);
+
+-- ============================================================================
+-- 18. Whitelabel Branding Globals (CarelioEMR External Links & About Page)
+-- ============================================================================
+INSERT INTO `globals` (`gl_name`, `gl_index`, `gl_value`) VALUES
+  ('online_support_link', 0, ''),
+  ('user_manual_link', 0, ''),
+  ('main_menu_logo_link', 0, ''),
+  ('main_menu_logo_title', 0, 'CarelioEMR'),
+  ('display_acknowledgements', 0, '0'),
+  ('display_donations_link', 0, '0'),
+  ('display_review_link', 0, '0')
+ON DUPLICATE KEY UPDATE `gl_value` = VALUES(`gl_value`);
