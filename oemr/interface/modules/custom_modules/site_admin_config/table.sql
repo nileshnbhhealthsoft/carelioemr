@@ -732,3 +732,7 @@ ON DUPLICATE KEY UPDATE
   `region_type` = VALUES(`region_type`), 
   `state_label` = VALUES(`state_label`), 
   `county_label` = VALUES(`county_label`);
+
+UPDATE layout_options SET title = "Parish / District" WHERE form_id='DEM' AND title="State" AND field_id ="state" AND group_id = 2;
+
+UPDATE layout_options SET title = "Community" WHERE form_id='DEM' AND title="County" AND field_id ="county" AND group_id = 2;
