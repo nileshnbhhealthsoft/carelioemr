@@ -686,13 +686,15 @@ INSERT INTO `layout_options` (
   `description` = VALUES(`description`);
 
 -- ============================================================================
--- 18. Whitelabel Branding Globals (CarelioEMR External Links & About Page)
+-- 18. Whitelabel Branding Globals (CarelioEMR Branding, External Links & About Page)
 -- ============================================================================
 INSERT INTO `globals` (`gl_name`, `gl_index`, `gl_value`) VALUES
+  ('openemr_name', 0, 'CarelioEMR'),
+  ('main_menu_logo_title', 0, 'CarelioEMR'),
+  ('portal_custom_title', 0, 'CarelioEMR Patient Portal'),
   ('online_support_link', 0, ''),
   ('user_manual_link', 0, ''),
   ('main_menu_logo_link', 0, ''),
-  ('main_menu_logo_title', 0, 'CarelioEMR'),
   ('display_acknowledgements', 0, '0'),
   ('display_donations_link', 0, '0'),
   ('display_review_link', 0, '0')
