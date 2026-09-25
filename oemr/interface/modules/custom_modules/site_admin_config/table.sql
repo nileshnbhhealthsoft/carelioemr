@@ -236,8 +236,8 @@ WHERE `form_id` = 'DEM'
 -- ============================================================================
 UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'country', `uor` = 1, `seq` = 4, `title` = 'Country' WHERE `form_id` = 'DEM' AND `field_id` = 'country_code';
 UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'country', `uor` = 1, `seq` = 4, `title` = 'Country' WHERE `form_id` = 'DEM' AND `field_id` = 'country';
-UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'state', `uor` = 1, `seq` = 5, `title` = 'State' WHERE `form_id` = 'DEM' AND `field_id` = 'state';
-UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'county', `uor` = 1, `seq` = 6, `title` = 'County' WHERE `form_id` = 'DEM' AND `field_id` = 'county';
+UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'state', `uor` = 1, `seq` = 5, `title` = 'State / Parish / District' WHERE `form_id` = 'DEM' AND `field_id` = 'state';
+UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'county', `uor` = 1, `seq` = 6, `title` = 'County / Community' WHERE `form_id` = 'DEM' AND `field_id` = 'county';
 UPDATE `layout_options` SET `seq` = 7 WHERE `form_id` = 'DEM' AND `field_id` = 'postal_code';
 
 -- ============================================================================
@@ -686,13 +686,15 @@ INSERT INTO `layout_options` (
   `description` = VALUES(`description`);
 
 -- ============================================================================
--- 18. Whitelabel Branding Globals (CarelioEMR External Links & About Page)
+-- 18. Whitelabel Branding Globals (CarelioEMR Branding, External Links & About Page)
 -- ============================================================================
 INSERT INTO `globals` (`gl_name`, `gl_index`, `gl_value`) VALUES
+  ('openemr_name', 0, 'CarelioEMR'),
+  ('main_menu_logo_title', 0, 'CarelioEMR'),
+  ('portal_custom_title', 0, 'CarelioEMR Patient Portal'),
   ('online_support_link', 0, ''),
   ('user_manual_link', 0, ''),
   ('main_menu_logo_link', 0, ''),
-  ('main_menu_logo_title', 0, 'CarelioEMR'),
   ('display_acknowledgements', 0, '0'),
   ('display_donations_link', 0, '0'),
   ('display_review_link', 0, '0')
