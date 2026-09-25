@@ -236,8 +236,8 @@ WHERE `form_id` = 'DEM'
 -- ============================================================================
 UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'country', `uor` = 1, `seq` = 4, `title` = 'Country' WHERE `form_id` = 'DEM' AND `field_id` = 'country_code';
 UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'country', `uor` = 1, `seq` = 4, `title` = 'Country' WHERE `form_id` = 'DEM' AND `field_id` = 'country';
-UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'state', `uor` = 1, `seq` = 5, `title` = 'State / Parish / District' WHERE `form_id` = 'DEM' AND `field_id` = 'state';
-UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'county', `uor` = 1, `seq` = 6, `title` = 'County / Community' WHERE `form_id` = 'DEM' AND `field_id` = 'county';
+UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'state', `uor` = 1, `seq` = 5, `title` = 'Parish / District' WHERE `form_id` = 'DEM' AND `field_id` = 'state';
+UPDATE `layout_options` SET `data_type` = 26, `list_id` = 'county', `uor` = 1, `seq` = 6, `title` = 'Community' WHERE `form_id` = 'DEM' AND `field_id` = 'county';
 UPDATE `layout_options` SET `seq` = 7 WHERE `form_id` = 'DEM' AND `field_id` = 'postal_code';
 
 -- ============================================================================
@@ -733,6 +733,6 @@ ON DUPLICATE KEY UPDATE
   `state_label` = VALUES(`state_label`), 
   `county_label` = VALUES(`county_label`);
 
-UPDATE layout_options SET title = "Parish / District" WHERE form_id='DEM' AND title="State" AND field_id ="state" AND group_id = 2;
+UPDATE `layout_options` SET `title` = 'Parish / District' WHERE `form_id` = 'DEM' AND `field_id` = 'state';
 
-UPDATE layout_options SET title = "Community" WHERE form_id='DEM' AND title="County" AND field_id ="county" AND group_id = 2;
+UPDATE `layout_options` SET `title` = 'Community' WHERE `form_id` = 'DEM' AND `field_id` = 'county';

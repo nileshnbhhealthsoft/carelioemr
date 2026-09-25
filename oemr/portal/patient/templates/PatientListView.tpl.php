@@ -210,11 +210,11 @@ if ($this->exclude) {
                     </div>
                 </div>
             <div class="col-sm-auto px-3 form-group plist-group" id="stateInputContainer">
-                <label class="plist-label" for="state"><?php echo xlt('State')?></label><br />
+                <label class="plist-label" for="state"><?php echo xlt('Parish / District')?></label><br />
                 <div class="controls inline-inputs">
                     <?php
                   # Generate drop down list for State
-                    echo generate_select_list('state', 'state', $row['state'], xl('State'), 'Unassigned', "form-control");
+                    echo generate_select_list('state', 'state', $row['state'], xl('Parish / District'), 'Unassigned', "form-control");
                     ?>
                  <span class="help-inline"></span>
                 </div>
@@ -227,9 +227,9 @@ if ($this->exclude) {
                     </div>
                 </div>
                 <div class="col-sm-auto px-3 form-group plist-group" id="countyInputContainer">
-                    <label class="plist-label" for="county"><?php echo xlt('County')?></label>
+                    <label class="plist-label" for="county"><?php echo xlt('Community')?></label>
                     <div class="controls inline-inputs">
-                        <input type="text" class="form-control" id="county" placeholder="<?php echo xla('County'); ?>" value="<%= _.escape(item.get('county') || '') %>">
+                        <input type="text" class="form-control" id="county" placeholder="<?php echo xla('Community'); ?>" value="<%= _.escape(item.get('county') || '') %>">
                         <span class="help-inline"></span>
                     </div>
                 </div>
