@@ -58,10 +58,13 @@ class SiteAdminInstaller
         // 2. Deploy standard Carelio brand assets (logos, favicon) natively to tenant site directory
         self::deployBrandAssets($siteDir);
 
-        // 3. Initialize native OpenEMR GaclApi to sync sequences and clear cache
+        // 3. Ensure Caribbean Geographic Demographics and list_options are synchronized
+        CaribbeanDemographicsLoader::sync($pdoInstance);
+
+        // 4. Initialize native OpenEMR GaclApi to sync sequences and clear cache
         $gacl = new GaclApi();
 
-        // 4. Resolve Physicians parent group dynamically
+        // 5. Resolve Physicians parent group dynamically
         $parentGroupId = $gacl->get_group_id(self::PARENT_GROUP_VALUE, null, 'ARO');
         if (!$parentGroupId) {
             $parentGroupId = $pdoInstance->query("SELECT id FROM gacl_aro_groups WHERE value = 'doc' LIMIT 1")->fetchColumn();

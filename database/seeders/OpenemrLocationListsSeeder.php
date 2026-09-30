@@ -434,6 +434,10 @@ class OpenemrLocationListsSeeder extends Seeder
             ['list_id' => 'state', 'option_id' => 'LC_SOU', 'title' => 'Soufrière', 'seq' => 4, 'mapping' => 'LC'],
             ['list_id' => 'state', 'option_id' => 'LC_DEN', 'title' => 'Dennery', 'seq' => 5, 'mapping' => 'LC'],
             ['list_id' => 'state', 'option_id' => 'LC_MIC', 'title' => 'Micoud', 'seq' => 6, 'mapping' => 'LC'],
+            ['list_id' => 'state', 'option_id' => 'LC_ALR', 'title' => 'Anse La Raye', 'seq' => 7, 'mapping' => 'LC'],
+            ['list_id' => 'state', 'option_id' => 'LC_CAN', 'title' => 'Canaries', 'seq' => 8, 'mapping' => 'LC'],
+            ['list_id' => 'state', 'option_id' => 'LC_CHO', 'title' => 'Choiseul', 'seq' => 9, 'mapping' => 'LC'],
+            ['list_id' => 'state', 'option_id' => 'LC_LAB', 'title' => 'Laborie', 'seq' => 10, 'mapping' => 'LC'],
             // Jamaica (JM)
             ['list_id' => 'state', 'option_id' => 'JM_KIN', 'title' => 'Kingston', 'seq' => 10, 'mapping' => 'JM'],
             ['list_id' => 'state', 'option_id' => 'JM_AND', 'title' => 'St. Andrew', 'seq' => 11, 'mapping' => 'JM'],
