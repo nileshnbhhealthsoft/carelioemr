@@ -47,9 +47,17 @@ class SiteAdminInstaller
      * @param PDO|null $pdo Optional PDO instance for direct SQL execution
      * @return array Status information
      */
+    /**
+     * Install or update the Site Administrator group, ACLs, and module registration.
+     * Idempotent: can be executed multiple times safely.
+     *
+     * @param PDO|null $pdo Optional PDO instance for direct SQL execution
+     * @param string|null $siteDir Optional site directory path
+     * @return array Status information
+     */
     public static function install(?PDO $pdo = null, ?string $siteDir = null): array
     {
-        $pdoInstance = $pdo ?? self::resolvePdo();
+        $pdoInstance = $pdo ?? self::resolvePdo($siteDir);
         self::ensureCliEnvironment($pdoInstance, $siteDir);
 
         // 1. Ensure module schema and defaults exist via table.sql
@@ -147,7 +155,7 @@ class SiteAdminInstaller
         }
 
         // 8. Guarantee root 'admin' user has full super administration privileges
-        self::ensureRootAdminPrivileges($pdoInstance, $gacl);
+        self::ensureRootAdminPrivileges($pdoInstance, $gacl, $siteDir);
 
         // 9. Clear GACL cache
         if (class_exists(AclMain::class)) {
@@ -172,11 +180,12 @@ class SiteAdminInstaller
      * @param string $username User login name
      * @param string|null $fullName User full name
      * @param PDO|null $pdo Optional PDO instance
+     * @param string|null $siteDir Optional site directory path
      * @return bool
      */
     public static function assignUser(string $username, ?string $fullName = null, ?PDO $pdo = null, ?string $siteDir = null): bool
     {
-        $pdoInstance = $pdo ?? self::resolvePdo();
+        $pdoInstance = $pdo ?? self::resolvePdo($siteDir);
         self::ensureCliEnvironment($pdoInstance, $siteDir);
         if (empty($username)) {
             throw new InvalidArgumentException("Username cannot be empty.");
@@ -186,13 +195,12 @@ class SiteAdminInstaller
             throw new InvalidArgumentException("Safety Guard: Root administrator 'admin' cannot be assigned to Site Administrator.");
         }
 
-        $pdoInstance = $pdo ?? self::resolvePdo();
         $gacl = new GaclApi();
 
         // 1. Ensure Site Administrator group is installed
         $siteAdminGroupId = (int) $gacl->get_group_id(self::GROUP_VALUE, null, 'ARO');
         if (!$siteAdminGroupId) {
-            self::install($pdoInstance);
+            self::install($pdoInstance, $siteDir);
             $siteAdminGroupId = (int) $gacl->get_group_id(self::GROUP_VALUE, null, 'ARO');
         }
 
@@ -242,9 +250,9 @@ class SiteAdminInstaller
     /**
      * Guarantee root 'admin' user retains full Super Administrator privileges and is never restricted
      */
-    public static function ensureRootAdminPrivileges(?PDO $pdo = null, ?GaclApi $gacl = null): bool
+    public static function ensureRootAdminPrivileges(?PDO $pdo = null, ?GaclApi $gacl = null, ?string $siteDir = null): bool
     {
-        $pdoInstance = $pdo ?? self::resolvePdo();
+        $pdoInstance = $pdo ?? self::resolvePdo($siteDir);
         $gaclInstance = $gacl ?? new GaclApi();
 
         // 1. Ensure root 'admin' in users table has active = 1, authorized = 1, and unconstrained menu (empty main_menu_role)
@@ -280,10 +288,7 @@ class SiteAdminInstaller
      */
     public static function deployBrandAssets(?string $siteDir = null): void
     {
-        $targetDir = $siteDir;
-        if (empty($targetDir) && class_exists(\OpenEMR\Core\OEGlobalsBag::class)) {
-            $targetDir = \OpenEMR\Core\OEGlobalsBag::getInstance()->get('OE_SITE_DIR');
-        }
+        $targetDir = self::resolveSiteDir($siteDir);
         if (empty($targetDir) || !is_dir($targetDir)) {
             return;
         }
@@ -341,27 +346,31 @@ class SiteAdminInstaller
      */
     public static function ensureCliEnvironment(?PDO $pdo = null, ?string $siteDir = null): void
     {
+        $resolvedSiteDir = self::resolveSiteDir($siteDir);
+
         if (class_exists(\OpenEMR\Core\OEGlobalsBag::class)) {
             \OpenEMR\Core\OEGlobalsBag::getInstance()->set('connection_pooling_off', true);
 
-            if (!empty($siteDir)) {
-                \OpenEMR\Core\OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $siteDir);
+            if (!empty($resolvedSiteDir)) {
+                \OpenEMR\Core\OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $resolvedSiteDir);
+                $GLOBALS['OE_SITE_DIR'] = $resolvedSiteDir;
             } elseif (empty(\OpenEMR\Core\OEGlobalsBag::getInstance()->get('OE_SITE_DIR')) && $pdo) {
                 try {
                     $dbName = $pdo->query("SELECT DATABASE()")->fetchColumn();
                     if ($dbName) {
-                        $baseSites = dirname(__DIR__, 6) . '/sites';
-                        $cleanSlug = str_replace('openemr_site_', '', $dbName);
+                        $baseSites = dirname(__DIR__, 6) . DIRECTORY_SEPARATOR . 'sites';
+                        $cleanSlug = str_replace('openemr_site_', '', (string)$dbName);
                         $candidates = [
-                            $baseSites . '/' . $dbName,
-                            $baseSites . '/site-' . str_replace('_', '-', $cleanSlug),
-                            $baseSites . '/site_' . $cleanSlug,
-                            $baseSites . '/' . $cleanSlug,
-                            $baseSites . '/default',
+                            $baseSites . DIRECTORY_SEPARATOR . $dbName,
+                            $baseSites . DIRECTORY_SEPARATOR . 'site-' . str_replace('_', '-', $cleanSlug),
+                            $baseSites . DIRECTORY_SEPARATOR . 'site_' . $cleanSlug,
+                            $baseSites . DIRECTORY_SEPARATOR . $cleanSlug,
+                            $baseSites . DIRECTORY_SEPARATOR . 'default',
                         ];
                         foreach ($candidates as $cand) {
                             if (file_exists($cand . '/sqlconf.php')) {
                                 \OpenEMR\Core\OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $cand);
+                                $GLOBALS['OE_SITE_DIR'] = $cand;
                                 break;
                             }
                         }
@@ -391,12 +400,56 @@ class SiteAdminInstaller
     }
 
     /**
-     * Resolve PDO instance from OpenEMR globals or Active Connection
+     * Resolve site directory path dynamically across all runtime environments
+     */
+    public static function resolveSiteDir(?string $siteDir = null): ?string
+    {
+        if (!empty($siteDir) && is_dir($siteDir) && file_exists($siteDir . '/sqlconf.php')) {
+            return realpath($siteDir) ?: $siteDir;
+        }
+
+        if (class_exists(\OpenEMR\Core\OEGlobalsBag::class)) {
+            $bagSiteDir = \OpenEMR\Core\OEGlobalsBag::getInstance()->get('OE_SITE_DIR');
+            if (!empty($bagSiteDir) && is_dir($bagSiteDir) && file_exists($bagSiteDir . '/sqlconf.php')) {
+                return realpath($bagSiteDir) ?: $bagSiteDir;
+            }
+        }
+
+        if (!empty($GLOBALS['OE_SITE_DIR']) && is_dir($GLOBALS['OE_SITE_DIR']) && file_exists($GLOBALS['OE_SITE_DIR'] . '/sqlconf.php')) {
+            return realpath($GLOBALS['OE_SITE_DIR']) ?: $GLOBALS['OE_SITE_DIR'];
+        }
+
+        $baseSites = dirname(__DIR__, 6) . DIRECTORY_SEPARATOR . 'sites';
+
+        if (!empty($_SESSION['site_id'])) {
+            $cleanSite = preg_replace('/[^a-zA-Z0-9_-]/', '', (string)$_SESSION['site_id']);
+            $sessionSite = $baseSites . DIRECTORY_SEPARATOR . $cleanSite;
+            if (is_dir($sessionSite) && file_exists($sessionSite . '/sqlconf.php')) {
+                return realpath($sessionSite) ?: $sessionSite;
+            }
+        }
+
+        if (is_dir($baseSites . DIRECTORY_SEPARATOR . 'default') && file_exists($baseSites . DIRECTORY_SEPARATOR . 'default/sqlconf.php')) {
+            return realpath($baseSites . DIRECTORY_SEPARATOR . 'default') ?: ($baseSites . DIRECTORY_SEPARATOR . 'default');
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolve PDO instance from OpenEMR Doctrine DBAL, globals, or site configuration.
+     * Robust against all runtime contexts (Web UI, Zend Module Manager, CLI, Laravel Seeder).
      *
+     * @param string|null $siteDir
      * @return PDO
      */
-    private static function resolvePdo(): PDO
+    public static function resolvePdo(?string $siteDir = null): PDO
     {
+        // 1. Direct PDO from global variables
+        if (isset($GLOBALS['dbh']) && $GLOBALS['dbh'] instanceof PDO) {
+            return $GLOBALS['dbh'];
+        }
+
         if (isset($GLOBALS['adodb']['db']) && is_object($GLOBALS['adodb']['db'])) {
             $connection = $GLOBALS['adodb']['db']->_connectionID;
             if ($connection instanceof PDO) {
@@ -404,11 +457,135 @@ class SiteAdminInstaller
             }
         }
 
-        if (isset($GLOBALS['dbh']) && $GLOBALS['dbh'] instanceof PDO) {
-            return $GLOBALS['dbh'];
+        // 2. Resolve target site directory and ensure OE_SITE_DIR is registered
+        $resolvedSiteDir = self::resolveSiteDir($siteDir);
+        if (!empty($resolvedSiteDir)) {
+            if (class_exists(\OpenEMR\Core\OEGlobalsBag::class)) {
+                \OpenEMR\Core\OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $resolvedSiteDir);
+            }
+            $GLOBALS['OE_SITE_DIR'] = $resolvedSiteDir;
         }
 
-        throw new RuntimeException("Unable to resolve active PDO database connection.");
+        // 3. Try to resolve via OpenEMR native Doctrine DBAL connection
+        if (class_exists(\OpenEMR\BC\Database::class)) {
+            try {
+                $dbal = \OpenEMR\BC\Database::instance()->getDbalConnection();
+                if (method_exists($dbal, 'getNativeConnection')) {
+                    $native = $dbal->getNativeConnection();
+                    if ($native instanceof PDO) {
+                        return $native;
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Proceed to next fallback
+            }
+        }
+
+        // 4. Try via DatabaseConnectionOptions and DatabaseConnectionFactory
+        if (!empty($resolvedSiteDir) && file_exists($resolvedSiteDir . '/sqlconf.php')) {
+            if (class_exists(\OpenEMR\BC\DatabaseConnectionOptions::class) && class_exists(\OpenEMR\BC\DatabaseConnectionFactory::class)) {
+                try {
+                    $options = \OpenEMR\BC\DatabaseConnectionOptions::forSite($resolvedSiteDir);
+                    $dbal = \OpenEMR\BC\DatabaseConnectionFactory::createDbal($options, false);
+                    if (method_exists($dbal, 'getNativeConnection')) {
+                        $native = $dbal->getNativeConnection();
+                        if ($native instanceof PDO) {
+                            return $native;
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    // Proceed to next fallback
+                }
+            }
+        }
+
+        // 5. Direct PDO creation from sqlconf.php or globals
+        $dbHost = $GLOBALS['host'] ?? null;
+        $dbPort = $GLOBALS['port'] ?? null;
+        $dbUser = $GLOBALS['login'] ?? null;
+        $dbPass = $GLOBALS['pass'] ?? null;
+        $dbName = $GLOBALS['dbase'] ?? null;
+        $dbSocket = $GLOBALS['socket'] ?? null;
+
+        if ((empty($dbUser) || empty($dbName)) && !empty($resolvedSiteDir) && file_exists($resolvedSiteDir . '/sqlconf.php')) {
+            $conf = self::loadSqlconfVars($resolvedSiteDir . '/sqlconf.php');
+            $dbName = $conf['dbase'] ?? $dbName;
+            $dbUser = $conf['login'] ?? $dbUser;
+            $dbPass = $conf['pass'] ?? $dbPass;
+            $dbHost = $conf['host'] ?? $dbHost;
+            $dbPort = $conf['port'] ?? $dbPort;
+            $dbSocket = $conf['socket'] ?? $dbSocket;
+        }
+
+        if (!empty($dbUser) && !empty($dbName)) {
+            $dsn = "mysql:dbname={$dbName};charset=utf8mb4";
+            if (!empty($dbHost)) {
+                $dsn .= ";host={$dbHost}";
+                if (!empty($dbPort)) {
+                    $dsn .= ";port={$dbPort}";
+                }
+            } elseif (!empty($dbSocket)) {
+                $dsn .= ";unix_socket={$dbSocket}";
+            } else {
+                $dsn .= ";host=localhost;port=3306";
+            }
+
+            try {
+                $pdo = new PDO($dsn, $dbUser, $dbPass ?? '', [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                ]);
+                try {
+                    $pdo->exec("SET NAMES 'utf8mb4', sql_mode = ''");
+                } catch (\Throwable $e) {
+                }
+                return $pdo;
+            } catch (\Throwable $e) {
+                throw new RuntimeException("Unable to connect to database '{$dbName}' on '{$dbHost}': " . $e->getMessage(), 0, $e);
+            }
+        }
+
+        throw new RuntimeException("Unable to resolve active PDO database connection: missing site credentials or configuration.");
+    }
+
+    /**
+     * Load variables from sqlconf.php cleanly in an isolated scope
+     */
+    private static function loadSqlconfVars(string $filePath): array
+    {
+        if (!file_exists($filePath)) {
+            return [];
+        }
+
+        $sqlconf = null;
+        $host = null;
+        $port = null;
+        $login = null;
+        $pass = null;
+        $dbase = null;
+        $socket = null;
+
+        require $filePath;
+
+        if (isset($sqlconf) && is_array($sqlconf)) {
+            return [
+                'dbase' => $sqlconf['dbase'] ?? ($dbase ?? null),
+                'login' => $sqlconf['login'] ?? ($login ?? null),
+                'pass' => $sqlconf['pass'] ?? ($pass ?? null),
+                'host' => $sqlconf['host'] ?? ($host ?? null),
+                'port' => $sqlconf['port'] ?? ($port ?? 3306),
+                'socket' => $sqlconf['socket'] ?? ($socket ?? null),
+            ];
+        }
+
+        return [
+            'dbase' => $dbase ?? null,
+            'login' => $login ?? null,
+            'pass' => $pass ?? null,
+            'host' => $host ?? null,
+            'port' => $port ?? 3306,
+            'socket' => $socket ?? null,
+        ];
     }
 
     /**
@@ -429,7 +606,10 @@ class SiteAdminInstaller
             return;
         }
 
-        $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        try {
+            $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        } catch (\Throwable $e) {
+        }
 
         // Robust statement splitting respecting quoted strings and comments
         $tokens = preg_split('/(\'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*\'|"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|--[^\r\n]*|;)/', $sql, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -472,7 +652,7 @@ class SiteAdminInstaller
      */
     public static function disable(?PDO $pdo = null, ?string $siteDir = null): array
     {
-        $pdoInstance = $pdo ?? self::resolvePdo();
+        $pdoInstance = $pdo ?? self::resolvePdo($siteDir);
         self::ensureCliEnvironment($pdoInstance, $siteDir);
 
         // Deactivate layout cascading script and reset labels
