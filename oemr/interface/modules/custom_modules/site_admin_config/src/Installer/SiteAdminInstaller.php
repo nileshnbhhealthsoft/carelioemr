@@ -418,6 +418,9 @@ class SiteAdminInstaller
     {
         $sqlPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'table.sql';
         if (!file_exists($sqlPath)) {
+            $sqlPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'sql' . DIRECTORY_SEPARATOR . 'table.sql';
+        }
+        if (!file_exists($sqlPath)) {
             return;
         }
 
@@ -427,18 +430,57 @@ class SiteAdminInstaller
         }
 
         $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-        $statements = array_filter(array_map('trim', explode(';', $sql)));
-        foreach ($statements as $stmt) {
-            if (!empty($stmt)) {
-                try {
-                    $res = $pdo->query($stmt);
-                    if ($res instanceof \PDOStatement) {
-                        $res->closeCursor();
+
+        // Robust statement splitting respecting quoted strings and comments
+        $tokens = preg_split('/(\'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*\'|"[^"\\\\]*(?:\\\\.[^"\\\\]*)*"|--[^\r\n]*|;)/', $sql, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $stmtBuffer = '';
+        foreach ($tokens as $token) {
+            if ($token === ';') {
+                $trimmed = trim($stmtBuffer);
+                if (!empty($trimmed)) {
+                    try {
+                        $res = $pdo->query($trimmed);
+                        if ($res instanceof \PDOStatement) {
+                            $res->closeCursor();
+                        }
+                    } catch (\Throwable $e) {
+                        // Ignore non-fatal statement warnings
                     }
-                } catch (\Throwable $e) {
-                    // Ignore non-fatal statement warnings
                 }
+                $stmtBuffer = '';
+            } else {
+                $stmtBuffer .= $token;
             }
         }
+        $trimmed = trim($stmtBuffer);
+        if (!empty($trimmed)) {
+            try {
+                $res = $pdo->query($trimmed);
+                if ($res instanceof \PDOStatement) {
+                    $res->closeCursor();
+                }
+            } catch (\Throwable $e) {}
+        }
+    }
+
+    /**
+     * Disable module hook: deactivate layout script and restore standard labels
+     *
+     * @param PDO|null $pdo
+     * @param string|null $siteDir
+     * @return array
+     */
+    public static function disable(?PDO $pdo = null, ?string $siteDir = null): array
+    {
+        $pdoInstance = $pdo ?? self::resolvePdo();
+        self::ensureCliEnvironment($pdoInstance, $siteDir);
+
+        // Deactivate layout cascading script and reset labels
+        CaribbeanDemographicsLoader::deactivate($pdoInstance);
+
+        return [
+            'status' => 'success',
+            'message' => 'Site Admin Config disabled successfully.',
+        ];
     }
 }

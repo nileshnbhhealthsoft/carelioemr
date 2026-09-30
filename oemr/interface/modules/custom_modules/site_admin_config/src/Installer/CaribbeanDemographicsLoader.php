@@ -672,6 +672,32 @@ class CaribbeanDemographicsLoader
     }
 
     /**
+     * Gracefully deactivate cascading script and reset labels when module is disabled
+     */
+    public static function deactivate(PDO $pdo): void
+    {
+        // 1. Deactivate layout script (set uor = 0 so it does not render on demographics form)
+        $pdo->exec("UPDATE layout_options SET uor = 0 WHERE form_id = 'DEM' AND field_id = 'location_cascading_script'");
+
+        // 2. Reset demographics labels to standard OpenEMR labels
+        $pdo->exec("UPDATE layout_options SET title = 'State' WHERE form_id = 'DEM' AND field_id = 'state'");
+        $pdo->exec("UPDATE layout_options SET title = 'County' WHERE form_id = 'DEM' AND field_id = 'county'");
+        $pdo->exec("UPDATE layout_options SET title = 'Country' WHERE form_id = 'DEM' AND field_id = 'country'");
+    }
+
+    /**
+     * Re-activate cascading script and terminology when module is enabled
+     */
+    public static function activate(PDO $pdo): void
+    {
+        // 1. Re-activate layout script (set uor = 1)
+        $pdo->exec("UPDATE layout_options SET uor = 1 WHERE form_id = 'DEM' AND field_id = 'location_cascading_script'");
+
+        // 2. Ensure cascading script and terminology are up-to-date
+        self::syncCascadingScript($pdo);
+    }
+
+    /**
      * Helper to format community/locality title into clean Title Case
      */
     public static function formatTitle(string $raw): string
