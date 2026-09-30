@@ -441,4 +441,25 @@ class SiteAdminInstaller
             }
         }
     }
+
+    /**
+     * Disable module hook: deactivate layout script and restore standard labels
+     *
+     * @param PDO|null $pdo
+     * @param string|null $siteDir
+     * @return array
+     */
+    public static function disable(?PDO $pdo = null, ?string $siteDir = null): array
+    {
+        $pdoInstance = $pdo ?? self::resolvePdo();
+        self::ensureCliEnvironment($pdoInstance, $siteDir);
+
+        // Deactivate layout cascading script and reset labels
+        CaribbeanDemographicsLoader::deactivate($pdoInstance);
+
+        return [
+            'status' => 'success',
+            'message' => 'Site Admin Config disabled successfully.',
+        ];
+    }
 }
