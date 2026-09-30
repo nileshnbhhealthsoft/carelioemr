@@ -36,7 +36,10 @@ class CaribbeanDemographicsLoader
      */
     public static function sync(PDO $pdo, ?string $sqlFilePath = null): array
     {
-        $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        try {
+            $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        } catch (\Throwable $e) {
+        }
 
         // 1. Ensure core schema exists
         self::ensureSchema($pdo);
