@@ -1,0 +1,6 @@
+Carelio Subscription
+
+Independent OpenEMR custom module for CarelioEMR subscription management.
+
+This module is intentionally separate from Site Admin Config and does not depend
+on, modify, or install into that module.

@@ -858,27 +858,43 @@
     </div>
 </section>
 
-<!-- 4 & 5. Pricing Section ($80/month + Setup Cost Note & Custom Pricing) -->
+<!-- 4 & 5. Pricing Section ($80/month + Yearly Discount + Setup Cost Note & Custom Pricing) -->
 <section id="pricing" class="py-20 bg-white border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div class="text-center max-w-3xl mx-auto space-y-3">
             <span class="text-xs uppercase font-extrabold tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Simple &amp; Transparent Pricing</span>
-            <h2 class="text-3xl sm:text-4xl font-black text-slate-900">Standard Monthly Plan</h2>
-            <p class="text-sm text-slate-600 font-medium">Predictable monthly billing per practice node with complete platform access.</p>
+            <h2 class="text-3xl sm:text-4xl font-black text-slate-900">Monthly or Yearly Subscription</h2>
+            <p class="text-sm text-slate-600 font-medium">Choose monthly billing or pay yearly and save $80 on the same complete platform access.</p>
         </div>
 
-        <div class="max-w-xl mx-auto rounded-3xl border-2 border-blue-600 bg-white p-6 sm:p-8 shadow-2xl relative">
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg relative">
+                <div class="text-center space-y-4 pt-2">
+                    <h3 class="text-2xl font-black text-slate-900">Monthly Plan</h3>
+                    <div class="flex items-baseline justify-center space-x-1">
+                        <span class="text-5xl font-black text-blue-600">$80</span>
+                        <span class="text-sm font-bold text-slate-500">/ month</span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-semibold">Flexible month-to-month CarelioEMR cloud access.</p>
+                    <button onclick="openCheckoutModal('monthly')" class="w-full py-4 rounded-2xl bg-blue-600 text-white font-black text-sm shadow-xl shadow-blue-600/25 hover:bg-blue-700 transition-all cursor-pointer">
+                        Subscribe Monthly
+                    </button>
+                </div>
+            </div>
+
+            <div class="rounded-3xl border-2 border-emerald-600 bg-white p-6 sm:p-8 shadow-2xl relative">
             <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-blue-600 text-white font-extrabold text-xs uppercase tracking-wider">
-                Most Popular Subscription
+                Save $80 Yearly
             </div>
 
             <div class="text-center space-y-4 pt-2">
-                <h3 class="text-2xl font-black text-slate-900">CarelioEMR Cloud Monthly Subscription</h3>
+                <h3 class="text-2xl font-black text-slate-900">Yearly Plan</h3>
                 <div class="flex items-baseline justify-center space-x-1">
-                    <span class="text-5xl font-black text-blue-600">$80</span>
-                    <span class="text-sm font-bold text-slate-500">/ month</span>
+                    <span class="text-5xl font-black text-emerald-600">$880</span>
+                    <span class="text-sm font-bold text-slate-500">/ year</span>
                 </div>
+                <p class="text-xs text-emerald-700 font-extrabold">$960 value with $80 yearly subscription discount.</p>
 
                 <!-- Setup Assistance Note (Clarified) -->
                 <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200/90 text-left space-y-1">
@@ -910,9 +926,10 @@
                     </li>
                 </ul>
 
-                <button onclick="openCheckoutModal()" class="w-full py-4 rounded-2xl bg-blue-600 text-white font-black text-sm shadow-xl shadow-blue-600/25 hover:bg-blue-700 transition-all cursor-pointer">
-                    Subscribe Now – $80 / Month
+                <button onclick="openCheckoutModal('yearly')" class="w-full py-4 rounded-2xl bg-emerald-600 text-white font-black text-sm shadow-xl shadow-emerald-600/25 hover:bg-emerald-700 transition-all cursor-pointer">
+                    Subscribe Yearly - Save $80
                 </button>
+            </div>
             </div>
         </div>
 
@@ -1041,7 +1058,7 @@
             <div class="space-y-1">
                 <img src="{{ asset('images/carelio_logo.svg') }}" alt="CarelioEMR" class="h-8 w-auto mb-1">
                 <h3 class="text-base font-bold text-slate-900">Stripe Subscription Checkout</h3>
-                <p class="text-xs text-slate-500">Plan Rate: $80.00 / month</p>
+                <p id="selectedPlanSummary" class="text-xs text-slate-500">Plan Rate: $80.00 / month</p>
             </div>
             <button onclick="closeCheckoutModal()" class="p-2 text-slate-400 hover:text-slate-800 rounded-lg">
                 <i data-lucide="x" class="w-5 h-5"></i>
@@ -1064,6 +1081,24 @@
                         <span id="email-error-text"></span>
                     </p>
                 </div>
+            </div>
+
+            <div>
+                <label class="text-xs font-bold text-slate-700 block mb-1">CarelioEMR Site Name</label>
+                <input type="text" id="site_name" name="site_name" required placeholder="e.g. Sunrise Family Clinic" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:border-blue-600 focus:outline-none">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Billing cycle">
+                <label class="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs font-bold text-slate-700 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+                    <input type="radio" name="billing_cycle" value="monthly" class="sr-only" checked onchange="updateBillingCycle('monthly')">
+                    <span class="block text-slate-900">Monthly</span>
+                    <span class="block text-slate-500 mt-1">$80 / month</span>
+                </label>
+                <label class="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs font-bold text-slate-700 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50">
+                    <input type="radio" name="billing_cycle" value="yearly" class="sr-only" onchange="updateBillingCycle('yearly')">
+                    <span class="block text-slate-900">Yearly</span>
+                    <span class="block text-emerald-700 mt-1">$880 / year, save $80</span>
+                </label>
             </div>
 
             <div>
@@ -1116,8 +1151,36 @@
     let elements = stripe.elements();
     let card = elements.create('card');
     card.mount('#card-element');
+    let selectedBillingCycle = 'monthly';
 
-    function openCheckoutModal() {
+    function getSubmitLabel() {
+        return selectedBillingCycle === 'yearly'
+            ? 'Confirm & Subscribe ($880/year - save $80)'
+            : 'Confirm & Subscribe ($80/month)';
+    }
+
+    function updateBillingCycle(cycle) {
+        selectedBillingCycle = cycle === 'yearly' ? 'yearly' : 'monthly';
+
+        document.querySelectorAll('input[name="billing_cycle"]').forEach(input => {
+            input.checked = input.value === selectedBillingCycle;
+        });
+
+        const planSummary = document.getElementById('selectedPlanSummary');
+        if (planSummary) {
+            planSummary.innerText = selectedBillingCycle === 'yearly'
+                ? 'Plan Rate: $880.00 / year ($80 discount applied)'
+                : 'Plan Rate: $80.00 / month';
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn && !submitBtn.disabled) {
+            submitBtn.innerText = getSubmitLabel();
+        }
+    }
+
+    function openCheckoutModal(plan = 'monthly') {
+        updateBillingCycle(plan);
         document.getElementById('checkoutModal').classList.remove('hidden');
     }
 
@@ -1129,6 +1192,7 @@
         if (emailInput) emailInput.classList.remove('border-rose-500', 'bg-rose-50/40');
         const cardErrors = document.getElementById('card-errors');
         if (cardErrors) cardErrors.innerText = '';
+        updateBillingCycle(selectedBillingCycle);
     }
 
     document.getElementById('email')?.addEventListener('input', function() {
@@ -1179,6 +1243,7 @@
         const doctorName = document.getElementById('doctor_name').value;
         const emailInput = document.getElementById('email');
         const email = emailInput ? emailInput.value.trim() : '';
+        const siteName = document.getElementById('site_name').value;
         const practiceType = document.getElementById('practice_type').value;
         const region = document.getElementById('region').value;
 
@@ -1193,14 +1258,21 @@
             const res = await fetch('{{ url("/api/stripe/create-intent") }}', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ doctor_name: doctorName, email: email, practice_type: practiceType, region: region })
+                body: JSON.stringify({
+                    doctor_name: doctorName,
+                    site_name: siteName,
+                    email: email,
+                    practice_type: practiceType,
+                    region: region,
+                    billing_cycle: selectedBillingCycle
+                })
             });
             const data = await res.json();
 
             // Handle duplicate email or validation errors (HTTP 422)
             if (res.status === 422 || !res.ok) {
                 submitBtn.disabled = false;
-                submitBtn.innerText = 'Confirm & Subscribe ($80/month)';
+                submitBtn.innerText = getSubmitLabel();
 
                 let errorMsg = data.message || 'Validation failed. Please verify your details.';
                 if (data.errors && data.errors.email && data.errors.email.length > 0) {
@@ -1232,12 +1304,12 @@
                 if (result.error) {
                     document.getElementById('card-errors').innerText = result.error.message;
                     submitBtn.disabled = false;
-                    submitBtn.innerText = 'Confirm & Subscribe ($80/month)';
+                    submitBtn.innerText = getSubmitLabel();
                 } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
                     await fetch('{{ url("/api/stripe/confirm") }}', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                        body: JSON.stringify({ payment_intent_id: result.paymentIntent.id, doctor_name: doctorName, email: email })
+                        body: JSON.stringify({ payment_intent_id: result.paymentIntent.id, doctor_name: doctorName, site_name: siteName, email: email })
                     });
                     alert('Subscription Confirmed! CarelioEMR Tenant Site Provisioned & Email Sent.');
                     closeCheckoutModal();
@@ -1246,7 +1318,7 @@
             }
         } catch (err) {
             submitBtn.disabled = false;
-            submitBtn.innerText = 'Confirm & Subscribe ($80/month)';
+            submitBtn.innerText = getSubmitLabel();
             if (cardErrors) {
                 cardErrors.innerText = err.message || 'An unexpected error occurred during payment processing.';
             } else {

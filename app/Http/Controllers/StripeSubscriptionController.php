@@ -101,12 +101,18 @@ class StripeSubscriptionController extends Controller
                     }
                 },
             ],
+            'site_name' => 'nullable|string|max:255',
             'practice_type' => 'nullable|string',
             'region' => 'nullable|string',
+            'billing_cycle' => 'nullable|in:monthly,yearly',
         ]);
 
         try {
-            $amount = 8000; // $80.00 in cents
+            $billingCycle = $request->billing_cycle === 'yearly' ? 'yearly' : 'monthly';
+            $plan = $this->getSubscriptionPlan($billingCycle);
+            $siteName = trim((string) $request->site_name) ?: (($request->doctor_name ?? 'Doctor') . ' Practice');
+
+            $amount = $plan['amount_cents'];
             $currency = 'usd';
 
             // 1. Create or Find Stripe Customer dynamically
@@ -118,6 +124,7 @@ class StripeSubscriptionController extends Controller
                     'email' => $request->email,
                     'name' => $request->doctor_name,
                     'metadata' => [
+                        'site_name' => $siteName,
                         'practice_type' => $request->practice_type ?? 'General Practice',
                         'region' => $request->region ?? 'LC',
                     ]
@@ -130,11 +137,15 @@ class StripeSubscriptionController extends Controller
                 'currency' => $currency,
                 'customer' => $customer->id,
                 'receipt_email' => $request->email,
-                'description' => "CarelioEMR Monthly Subscription ($80/mo) - {$request->doctor_name}",
+                'description' => $plan['description'] . " - {$request->doctor_name}",
                 'metadata' => [
                     'subscriber_name' => $request->doctor_name,
+                    'site_name' => $siteName,
                     'practice_type' => $request->practice_type ?? 'General Practice',
                     'region' => $request->region ?? 'LC',
+                    'billing_cycle' => $billingCycle,
+                    'billing_interval_months' => (string) $plan['interval_months'],
+                    'discount_amount' => number_format($plan['discount_amount'], 2, '.', ''),
                     'setup_cost_note' => 'Setup cost will be an additional cost'
                 ],
                 'automatic_payment_methods' => [
@@ -150,25 +161,34 @@ class StripeSubscriptionController extends Controller
             if ($subscription) {
                 $subscription->update([
                     'doctor_name' => $request->doctor_name,
+                    'site_name' => $siteName,
                     'practice_type' => $request->practice_type ?? 'General Practice',
                     'region' => $request->region ?? 'LC',
                     'stripe_customer_id' => $customer->id,
                     'stripe_payment_intent_id' => $intent->id,
+                    'amount' => $plan['amount_decimal'],
+                    'billing_cycle' => $billingCycle,
+                    'billing_interval_months' => $plan['interval_months'],
+                    'discount_amount' => $plan['discount_amount'],
                     'updated_at' => Carbon::now(),
                 ]);
             } else {
                 $subscription = Subscription::create([
                     'doctor_name' => $request->doctor_name,
+                    'site_name' => $siteName,
                     'email' => $request->email,
                     'practice_type' => $request->practice_type ?? 'General Practice',
                     'region' => $request->region ?? 'LC',
                     'stripe_customer_id' => $customer->id,
                     'stripe_payment_intent_id' => $intent->id,
-                    'amount' => 80.00,
+                    'amount' => $plan['amount_decimal'],
                     'currency' => 'usd',
                     'payment_status' => 'pending',
                     'provision_status' => 'pending',
                     'setup_cost_status' => 'setup_cost_additional_billed_separately',
+                    'billing_cycle' => $billingCycle,
+                    'billing_interval_months' => $plan['interval_months'],
+                    'discount_amount' => $plan['discount_amount'],
                 ]);
             }
 
@@ -207,22 +227,31 @@ class StripeSubscriptionController extends Controller
             if (!$subscription) {
                 $subscription = Subscription::create([
                     'doctor_name' => $intent->metadata->subscriber_name ?? $request->doctor_name ?? 'Doctor',
+                    'site_name' => $intent->metadata->site_name ?? $request->site_name ?? null,
                     'email' => $intent->receipt_email ?? $request->email,
                     'practice_type' => $intent->metadata->practice_type ?? 'General Practice',
                     'region' => $intent->metadata->region ?? 'LC',
                     'stripe_customer_id' => $intent->customer,
                     'stripe_payment_intent_id' => $intent->id,
-                    'amount' => 80.00,
+                    'amount' => ($intent->amount_received ?? $intent->amount ?? 8000) / 100,
                     'currency' => 'usd',
                     'payment_status' => $intent->status === 'succeeded' ? 'succeeded' : $intent->status,
                     'provision_status' => 'pending',
                     'setup_cost_status' => 'setup_cost_additional_billed_separately',
+                    'billing_cycle' => $intent->metadata->billing_cycle ?? 'monthly',
+                    'billing_interval_months' => (int) ($intent->metadata->billing_interval_months ?? 1),
+                    'discount_amount' => (float) ($intent->metadata->discount_amount ?? 0),
                     'paid_at' => $intent->status === 'succeeded' ? Carbon::now() : null,
                 ]);
             } else {
                 $subscription->update([
                     'stripe_payment_intent_id' => $intent->id,
+                    'site_name' => $subscription->site_name ?: ($intent->metadata->site_name ?? $request->site_name ?? null),
+                    'amount' => ($intent->amount_received ?? $intent->amount ?? ((float) $subscription->amount * 100)) / 100,
                     'payment_status' => $intent->status === 'succeeded' ? 'succeeded' : $intent->status,
+                    'billing_cycle' => $intent->metadata->billing_cycle ?? $subscription->billing_cycle ?? 'monthly',
+                    'billing_interval_months' => (int) ($intent->metadata->billing_interval_months ?? $subscription->billing_interval_months ?? 1),
+                    'discount_amount' => (float) ($intent->metadata->discount_amount ?? $subscription->discount_amount ?? 0),
                     'paid_at' => $intent->status === 'succeeded' ? Carbon::now() : $subscription->paid_at,
                 ]);
             }
@@ -273,5 +302,26 @@ class StripeSubscriptionController extends Controller
             'count' => $subscribers->count(),
             'subscribers' => $subscribers
         ]);
+    }
+
+    protected function getSubscriptionPlan(string $billingCycle): array
+    {
+        if ($billingCycle === 'yearly') {
+            return [
+                'amount_cents' => 88000,
+                'amount_decimal' => 880.00,
+                'discount_amount' => 80.00,
+                'interval_months' => 12,
+                'description' => 'CarelioEMR Yearly Subscription ($880/year, $80 discount)',
+            ];
+        }
+
+        return [
+            'amount_cents' => 8000,
+            'amount_decimal' => 80.00,
+            'discount_amount' => 0.00,
+            'interval_months' => 1,
+            'description' => 'CarelioEMR Monthly Subscription ($80/mo)',
+        ];
     }
 }

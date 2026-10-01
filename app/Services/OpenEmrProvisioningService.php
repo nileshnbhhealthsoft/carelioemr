@@ -57,7 +57,8 @@ class OpenEmrProvisioningService
      */
     public function provisionTenant(Subscription $subscription): bool
     {
-        $cleanSlug = Str::slug($subscription->doctor_name, '-');
+        $siteDisplayName = $subscription->getDisplaySiteName();
+        $cleanSlug = Str::slug($siteDisplayName, '-');
         $tenantSlug = 'site-' . ($cleanSlug ?: 'tenant') . '-' . $subscription->id;
         $dbName = 'openemr_' . str_replace('-', '_', $tenantSlug);
         $openEmrBasePath = $this->getOpenEmrBasePath();
@@ -435,9 +436,7 @@ class OpenEmrProvisioningService
             OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $sitePath);
         }
 
-        $clinicName = $subscription->practice_type 
-            ? ($subscription->practice_type . ' Clinic') 
-            : ($subscription->doctor_name ? ($subscription->doctor_name . ' Practice') : 'CarelioEMR Medical Practice');
+        $clinicName = $subscription->getDisplaySiteName();
 
         $overrides = [
             'practice_name' => $clinicName,
