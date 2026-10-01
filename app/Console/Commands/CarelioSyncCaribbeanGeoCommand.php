@@ -97,7 +97,7 @@ class CarelioSyncCaribbeanGeoCommand extends Command
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ]);
 
-        $sqlPath = base_path('oemr/interface/modules/custom_modules/site_admin_config/sql/carelio_caribbean_demographics_v1.0.sql');
+        $sqlPath = base_path('oemr/interface/modules/custom_modules/site_admin_config/table.sql');
         $res = CaribbeanDemographicsLoader::sync($pdo, $sqlPath);
 
         $this->info("  -> Done: Countries: {$res['list_options']['countries']}, States: {$res['list_options']['states']}, Communities: {$res['list_options']['counties']}");

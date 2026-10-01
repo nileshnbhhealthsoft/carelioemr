@@ -47,7 +47,7 @@ class CaribbeanDemographicsLoader
         // 2. Load dataset if not already installed
         $datasetLoaded = false;
         if (!self::isLoaded($pdo)) {
-            $path = $sqlFilePath ?? dirname(__DIR__, 2) . '/sql/carelio_caribbean_demographics_v1.0.sql';
+            $path = $sqlFilePath ?? dirname(__DIR__, 2) . '/table.sql';
             if (file_exists($path)) {
                 self::loadDataset($pdo, $path);
                 $datasetLoaded = true;
@@ -311,10 +311,17 @@ class CaribbeanDemographicsLoader
     }
 
     /**
-     * Synchronize Caribbean countries, admin areas, and Saint Lucia communities into list_options
+     * Synchronize Caribbean countries, admin areas, and localities into list_options.
+     *
+     * The demographics UI reads OpenEMR's country/state/county lists, so every
+     * imported admin area must be mapped as a state option and every locality as
+     * a county option. The option ids are deterministic to keep re-installs
+     * idempotent and avoid duplicate entries.
      */
     public static function syncListOptions(PDO $pdo): array
     {
+        self::purgeLegacyGeneratedLocationOptions($pdo);
+
         $stmtInsert = $pdo->prepare("
             INSERT INTO list_options (
                 list_id, option_id, title, seq, is_default, option_value,
@@ -335,7 +342,7 @@ class CaribbeanDemographicsLoader
         $stateCount = 0;
         $countyCount = 0;
 
-        // 1. Sync Countries (All 28 Caribbean Countries)
+        // 1. Sync Countries (All Caribbean Countries)
         $countries = $pdo->query("SELECT iso2, name FROM carelio_geo_countries ORDER BY (iso2 = 'LC') DESC, name ASC")->fetchAll(PDO::FETCH_ASSOC);
         $cSeq = 10;
         foreach ($countries as $c) {
@@ -343,34 +350,64 @@ class CaribbeanDemographicsLoader
             $countryCount++;
         }
 
-        // 2. Sync Saint Lucia Districts into state
-        foreach (self::SAINT_LUCIA_DISTRICTS as $sourceRef => $info) {
-            $stmtInsert->execute(['state', $info['id'], $info['title'], $info['seq'], 'LC']);
+        // 2. Sync top-level admin areas into state, mapped by country code
+        $adminRows = $pdo->query("
+            SELECT c.iso2, a.source_ref, a.name, a.admin_level, a.admin_code
+            FROM carelio_geo_admin_areas a
+            JOIN carelio_geo_countries c ON c.id = a.country_id
+            WHERE a.parent_admin_area_id IS NULL
+            ORDER BY c.iso2, a.name
+        ")->fetchAll(PDO::FETCH_ASSOC);
+
+        $adminOptionBySource = [];
+        $stateSeqByCountry = [];
+        foreach ($adminRows as $admin) {
+            $iso2 = (string) $admin['iso2'];
+            if (!isset($stateSeqByCountry[$iso2])) {
+                $stateSeqByCountry[$iso2] = 1;
+            }
+
+            if (isset(self::SAINT_LUCIA_DISTRICTS[$admin['source_ref']])) {
+                $optionId = self::SAINT_LUCIA_DISTRICTS[$admin['source_ref']]['id'];
+                $seq = self::SAINT_LUCIA_DISTRICTS[$admin['source_ref']]['seq'];
+                $title = self::SAINT_LUCIA_DISTRICTS[$admin['source_ref']]['title'];
+            } else {
+                $optionId = self::makeLocationOptionId($iso2, (string) $admin['source_ref']);
+                $seq = $stateSeqByCountry[$iso2]++;
+                $title = self::formatTitle((string) $admin['name']);
+            }
+
+            $adminOptionBySource[$admin['source_ref']] = $optionId;
+            $stmtInsert->execute(['state', $optionId, $title, $seq, $iso2]);
             $stateCount++;
         }
 
-        // 3. Sync Saint Lucia Communities into county
+        // 3. Sync localities into county, mapped by admin-area option id
         $stmtComm = $pdo->query("
-            SELECT l.id, l.name, a.source_ref as admin_ref
+            SELECT c.iso2, l.source_ref, l.name, a.source_ref AS admin_ref
             FROM carelio_geo_localities l
             JOIN carelio_geo_admin_areas a ON a.id = l.admin_area_id
-            WHERE l.country_id = (SELECT id FROM carelio_geo_countries WHERE iso2='LC')
-            ORDER BY a.name, l.name
+            JOIN carelio_geo_countries c ON c.id = l.country_id
+            ORDER BY c.iso2, a.name, l.name
         ");
         $rawCommunities = $stmtComm->fetchAll(PDO::FETCH_ASSOC);
 
-        $seq = 100;
+        $countySeqByAdmin = [];
         foreach ($rawCommunities as $comm) {
-            if (!isset(self::SAINT_LUCIA_DISTRICTS[$comm['admin_ref']])) {
+            $adminRef = (string) $comm['admin_ref'];
+            if (!isset($adminOptionBySource[$adminRef])) {
                 continue;
             }
-            $districtId = self::SAINT_LUCIA_DISTRICTS[$comm['admin_ref']]['id'];
-            $slug = strtoupper(preg_replace('/[^A-Za-z0-9]+/', '_', trim($comm['name'])));
-            $slug = trim($slug, '_');
-            $optId = $districtId . '_' . substr($slug, 0, 75);
+
+            $districtId = $adminOptionBySource[$adminRef];
+            if (!isset($countySeqByAdmin[$districtId])) {
+                $countySeqByAdmin[$districtId] = 1;
+            }
+
+            $optId = self::makeLocationOptionId((string) $comm['iso2'], (string) $comm['source_ref']);
             $title = self::formatTitle($comm['name']);
 
-            $stmtInsert->execute(['county', $optId, $title, $seq++, $districtId]);
+            $stmtInsert->execute(['county', $optId, $title, $countySeqByAdmin[$districtId]++, $districtId]);
             $countyCount++;
         }
 
@@ -379,6 +416,27 @@ class CaribbeanDemographicsLoader
             'states' => $stateCount,
             'counties' => $countyCount,
         ];
+    }
+
+    /**
+     * Remove IDs from an earlier generated format that exceeded mapping limits.
+     */
+    public static function purgeLegacyGeneratedLocationOptions(PDO $pdo): void
+    {
+        $pdo->exec("
+            DELETE FROM list_options
+            WHERE list_id = 'county'
+              AND (
+                option_id REGEXP '^[A-Z]{2}_GEONAMES_'
+                OR mapping REGEXP '^[A-Z]{2}_GEONAMES_'
+              )
+        ");
+
+        $pdo->exec("
+            DELETE FROM list_options
+            WHERE list_id = 'state'
+              AND option_id REGEXP '^[A-Z]{2}_GEONAMES_'
+        ");
     }
 
     /**
@@ -423,6 +481,8 @@ class CaribbeanDemographicsLoader
      */
     public static function syncCascadingScript(PDO $pdo): void
     {
+        self::ensureLayoutDescriptionCapacity($pdo);
+
         // Fetch states grouped by country
         $states = $pdo->query("
             SELECT list_id, option_id, title, mapping 
@@ -675,6 +735,29 @@ class CaribbeanDemographicsLoader
     }
 
     /**
+     * Full Caribbean locality maps can exceed MySQL TEXT capacity.
+     */
+    public static function ensureLayoutDescriptionCapacity(PDO $pdo): void
+    {
+        try {
+            $stmt = $pdo->query("
+                SELECT DATA_TYPE
+                FROM information_schema.columns
+                WHERE table_schema = DATABASE()
+                  AND table_name = 'layout_options'
+                  AND column_name = 'description'
+                LIMIT 1
+            ");
+            $type = strtolower((string) $stmt->fetchColumn());
+            if (!in_array($type, ['mediumtext', 'longtext'], true)) {
+                $pdo->exec("ALTER TABLE layout_options MODIFY description MEDIUMTEXT");
+            }
+        } catch (\Throwable $e) {
+            // If the schema inspection fails, let the insert below surface the real error.
+        }
+    }
+
+    /**
      * Gracefully deactivate cascading script and reset labels when module is disabled
      */
     public static function deactivate(PDO $pdo): void
@@ -710,5 +793,28 @@ class CaribbeanDemographicsLoader
             return ucwords(strtolower(trim($p)));
         }, $parts);
         return implode(' / ', $cleanParts);
+    }
+
+    /**
+     * Build a stable OpenEMR list_options option_id from a country and source ref.
+     */
+    public static function makeLocationOptionId(string $iso2, string $sourceRef): string
+    {
+        $iso2 = strtoupper(preg_replace('/[^A-Za-z0-9]+/', '', trim($iso2)));
+        $sourceRef = strtoupper(trim($sourceRef));
+
+        if (preg_match('/GEONAMES[^0-9]*([0-9]+)/', $sourceRef, $matches)) {
+            $suffix = 'G' . $matches[1];
+        } elseif (preg_match('/([0-9]{4,})/', $sourceRef, $matches)) {
+            $suffix = 'N' . $matches[1];
+        } else {
+            $clean = trim((string) preg_replace('/[^A-Z0-9]+/', '_', $sourceRef), '_');
+            $prefix = substr($clean, 0, 10);
+            $suffix = $prefix . '_' . strtoupper(substr(hash('crc32b', $sourceRef), 0, 8));
+        }
+
+        $optionId = $iso2 . '_' . $suffix;
+
+        return substr($optionId, 0, 31);
     }
 }

@@ -606,6 +606,12 @@ class SiteAdminInstaller
             return;
         }
 
+        $embeddedDatasetMarker = '-- CARELIO_EMBEDDED_CARIBBEAN_DEMOGRAPHICS_SQL_BEGIN';
+        $embeddedDatasetPosition = strpos($sql, $embeddedDatasetMarker);
+        if ($embeddedDatasetPosition !== false) {
+            $sql = substr($sql, 0, $embeddedDatasetPosition);
+        }
+
         try {
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         } catch (\Throwable $e) {
