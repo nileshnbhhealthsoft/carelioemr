@@ -47,6 +47,10 @@
                         <td style="font-weight:700; color:#0f172a; text-align:right;">{{ $subscription->doctor_name }}</td>
                     </tr>
                     <tr>
+                        <td style="color:#64748b; font-weight:500;">CarelioEMR Site Name:</td>
+                        <td style="font-weight:700; color:#0f172a; text-align:right;">{{ $subscription->getDisplaySiteName() }}</td>
+                    </tr>
+                    <tr>
                         <td style="color:#64748b; font-weight:500;">Practice Type:</td>
                         <td style="font-weight:700; color:#2563eb; text-align:right;">{{ $subscription->practice_type }}</td>
                     </tr>

@@ -40,6 +40,10 @@
                         <td style="font-weight:700; color:#0f172a; text-align:right;">{{ $subscription->doctor_name }}</td>
                     </tr>
                     <tr>
+                        <td style="color:#64748b; font-weight:500;">CarelioEMR Site Name:</td>
+                        <td style="font-weight:700; color:#0f172a; text-align:right;">{{ $subscription->getDisplaySiteName() }}</td>
+                    </tr>
+                    <tr>
                         <td style="color:#64748b; font-weight:500;">Email Address:</td>
                         <td style="font-weight:600; color:#0f172a; text-align:right;">{{ $subscription->email }}</td>
                     </tr>
@@ -50,6 +54,12 @@
                     <tr>
                         <td style="color:#64748b; font-weight:500;">Deployment Region:</td>
                         <td style="font-weight:700; color:#0f172a; text-align:right;">{{ $subscription->region }} Region Node</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#64748b; font-weight:500;">Subscription Plan:</td>
+                        <td style="font-weight:900; color:#059669; text-align:right;">
+                            {{ ($subscription->billing_cycle ?? 'monthly') === 'yearly' ? '$880.00 / year (saved $80)' : '$80.00 / month' }}
+                        </td>
                     </tr>
                 </table>
             </div>
