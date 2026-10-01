@@ -8,6 +8,17 @@ CREATE TABLE IF NOT EXISTS `mod_site_admin_config` (
   `version` VARCHAR(50) NOT NULL DEFAULT '1.0.0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `mod_site_admin_temp_passwords` (
+  `user_id` INT NOT NULL PRIMARY KEY,
+  `username` VARCHAR(255) NOT NULL,
+  `is_temporary` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cleared_at` DATETIME NULL,
+  `created_by` VARCHAR(255) NULL,
+  KEY `idx_temp_password_username` (`username`),
+  KEY `idx_temp_password_active` (`is_temporary`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 1.1 Carelio Caribbean Geographic Demographics Schema 1.0.0
 CREATE TABLE IF NOT EXISTS carelio_geo_countries (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,

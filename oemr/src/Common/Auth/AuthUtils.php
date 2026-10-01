@@ -786,6 +786,22 @@ class AuthUtils
             if ($changingOwnPassword) {
                 $session->set('authPass', $newHash);
             }
+
+            if (class_exists(\OpenEMR\Modules\SiteAdmin\Security\TemporaryPasswordService::class)) {
+                if ($changingOwnPassword) {
+                    \OpenEMR\Modules\SiteAdmin\Security\TemporaryPasswordService::clearTemporary((int) $targetUser);
+                } else {
+                    \OpenEMR\Modules\SiteAdmin\Security\TemporaryPasswordService::markTemporary(
+                        (int) $targetUser,
+                        null,
+                        (string) ($session->get('authUser') ?? 'admin_password_reset')
+                    );
+                    \OpenEMR\Modules\SiteAdmin\Security\TemporaryPasswordService::notifyTemporaryPassword(
+                        (int) $targetUser,
+                        (string) $newPwd
+                    );
+                }
+            }
         }
 
         // Done with $newPwd, so can clear it now
