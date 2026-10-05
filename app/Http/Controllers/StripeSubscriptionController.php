@@ -11,6 +11,7 @@ use Stripe\Customer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use App\Mail\SubscriptionConfirmationMail;
 use App\Mail\RegistrationAcknowledgementMail;
 use App\Mail\AdminTenantReadyForReviewMail;
@@ -70,34 +71,9 @@ class StripeSubscriptionController extends Controller
                 'email',
                 function ($attribute, $value, $fail) {
                     $normalized = strtolower(trim((string) $value));
-                    $hasCustomerEmail = \Illuminate\Support\Facades\Schema::hasColumn('subscriptions', 'customer_email');
-                    $hasStripeStatus = \Illuminate\Support\Facades\Schema::hasColumn('subscriptions', 'stripe_status');
 
-                    $exists = Subscription::where(function ($q) use ($normalized, $hasCustomerEmail) {
-                            $q->where('email', $normalized);
-                            if ($hasCustomerEmail) {
-                                $q->orWhere('customer_email', $normalized);
-                            }
-                        })
-                        ->where(function ($query) use ($hasStripeStatus) {
-                            if ($hasStripeStatus) {
-                                $query->whereIn('stripe_status', ['active', 'trialing', 'incomplete']);
-                            }
-                            $query->orWhereIn('provision_status', ['completed', 'provisioning'])
-                                  ->orWhereNotNull('openemr_database')
-                                  ->orWhereIn('payment_status', ['succeeded', 'paid', 'active', 'trialing'])
-                                  ->orWhere(function ($q2) {
-                                      $q2->where('provision_status', 'pending')
-                                         ->where(function ($q3) {
-                                             $q3->whereNotNull('paid_at')
-                                                ->orWhereIn('payment_status', ['succeeded', 'paid']);
-                                         });
-                                  });
-                        })
-                        ->exists();
-
-                    if ($exists) {
-                        $fail('An active account or subscription is already associated with this email address. Please log in to your tenant portal or contact support.');
+                    if ($this->findActiveSubscriptionByEmail($normalized)) {
+                        $fail($this->duplicateEmailMessage());
                     }
                 },
             ],
@@ -215,6 +191,21 @@ class StripeSubscriptionController extends Controller
 
         try {
             $intent = PaymentIntent::retrieve($request->payment_intent_id);
+            $receiptEmail = strtolower(trim((string) ($intent->receipt_email ?? $request->email ?? '')));
+
+            if ($intent->status === 'succeeded' && $receiptEmail !== '') {
+                $duplicateSubscription = $this->findActiveSubscriptionByEmail(
+                    $receiptEmail,
+                    (string) $request->payment_intent_id
+                );
+
+                if ($duplicateSubscription) {
+                    return response()->json([
+                        'error' => $this->duplicateEmailMessage(),
+                        'subscription_id' => $duplicateSubscription->id,
+                    ], 409);
+                }
+            }
 
             $subscription = Subscription::where('stripe_payment_intent_id', $request->payment_intent_id)->first();
 
@@ -264,23 +255,30 @@ class StripeSubscriptionController extends Controller
                     ->delete();
             }
 
-            // Send customer acknowledgement email immediately after payment confirmation and BEFORE provisioning
-            try {
-                if ($intent->status === 'succeeded' && $subscription->email) {
-                    Mail::to($subscription->email)->send(new RegistrationAcknowledgementMail($subscription));
-                }
-            } catch (\Exception $mailEx) {
-                \Log::warning('Registration acknowledgement mail error: ' . $mailEx->getMessage());
-            }
-
-            // Dispatch tenant provisioning job (sync in local dev, non-blocking queued database worker in production)
             if ($intent->status === 'succeeded') {
-                ProvisionOpenEmrTenantJob::dispatch($subscription);
+                $subscriptionId = $subscription->id;
+
+                app()->terminating(function () use ($subscriptionId) {
+                    $subscription = Subscription::find($subscriptionId);
+                    if (!$subscription) {
+                        return;
+                    }
+
+                    try {
+                        if ($subscription->email) {
+                            Mail::to($subscription->email)->send(new RegistrationAcknowledgementMail($subscription));
+                        }
+                    } catch (\Exception $mailEx) {
+                        \Log::warning('Registration acknowledgement mail error: ' . $mailEx->getMessage());
+                    }
+
+                    ProvisionOpenEmrTenantJob::dispatch($subscription);
+                });
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Payment confirmed and CarelioEMR tenant provisioning initiated successfully!',
+                'message' => 'Payment confirmed. CarelioEMR tenant provisioning has started.',
                 'subscriber' => $subscription->fresh(),
                 'openemr_site_url' => $subscription->openemr_site_url,
                 'tenant_slug' => $subscription->tenant_slug,
@@ -323,5 +321,48 @@ class StripeSubscriptionController extends Controller
             'interval_months' => 1,
             'description' => 'CarelioEMR Monthly Subscription ($80/mo)',
         ];
+    }
+
+    protected function findActiveSubscriptionByEmail(string $email, ?string $exceptPaymentIntentId = null): ?Subscription
+    {
+        $email = strtolower(trim($email));
+        if ($email === '') {
+            return null;
+        }
+
+        $hasCustomerEmail = Schema::hasColumn('subscriptions', 'customer_email');
+        $hasStripeStatus = Schema::hasColumn('subscriptions', 'stripe_status');
+
+        return Subscription::where(function ($query) use ($email, $hasCustomerEmail) {
+                $query->whereRaw('LOWER(email) = ?', [$email]);
+
+                if ($hasCustomerEmail) {
+                    $query->orWhereRaw('LOWER(customer_email) = ?', [$email]);
+                }
+            })
+            ->when($exceptPaymentIntentId, function ($query) use ($exceptPaymentIntentId) {
+                $query->where(function ($q) use ($exceptPaymentIntentId) {
+                    $q->whereNull('stripe_payment_intent_id')
+                      ->orWhere('stripe_payment_intent_id', '!=', $exceptPaymentIntentId);
+                });
+            })
+            ->where(function ($query) use ($hasStripeStatus) {
+                $query->whereIn('payment_status', ['succeeded', 'paid', 'active', 'trialing'])
+                    ->orWhereNotNull('paid_at')
+                    ->orWhereIn('provision_status', ['provisioning', 'completed'])
+                    ->orWhereNotNull('openemr_database')
+                    ->orWhereIn('review_status', ['pending_review', 'approved', 'rejected']);
+
+                if ($hasStripeStatus) {
+                    $query->orWhereIn('stripe_status', ['active', 'trialing', 'incomplete']);
+                }
+            })
+            ->orderByDesc('id')
+            ->first();
+    }
+
+    protected function duplicateEmailMessage(): string
+    {
+        return 'This email address already has a CarelioEMR subscription. Please use a different email address or contact support.';
     }
 }

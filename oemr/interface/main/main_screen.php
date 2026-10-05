@@ -422,6 +422,10 @@ if (isset($_POST['new_login_session_management'])) {
 //  At this time only used for lastupdate tracking
 SessionTracker::setupSessionDatabaseTracker();
 
+if (class_exists(\OpenEMR\Modules\SiteAdmin\Security\TemporaryPasswordService::class)) {
+    \OpenEMR\Modules\SiteAdmin\Security\TemporaryPasswordService::enforceCurrentRequest();
+}
+
 $session->set("encounter", '');
 
 if (OEGlobalsBag::getInstance()->getBoolean('login_into_facility')) {

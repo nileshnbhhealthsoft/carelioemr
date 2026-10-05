@@ -973,7 +973,9 @@
                 <h4 class="text-sm font-extrabold text-slate-900">Company Address</h4>
                 <p class="text-xs text-slate-600 font-medium leading-relaxed">
                     CarelioEMR Global Operations<br>
-                    <span class="text-slate-500">[Add Company Address]</span>
+                    PO Box 249<br>
+                    Vieux Fort<br>
+                    St Lucia Postal Code LC12 201
                 </p>
             </div>
 
@@ -985,7 +987,9 @@
                 <h4 class="text-sm font-extrabold text-slate-900">Contact Number</h4>
                 <p class="text-xs text-slate-600 font-medium leading-relaxed">
                     Support &amp; Inquiries<br>
-                    <span class="text-slate-800 font-semibold">[Add Contact Number]</span>
+                    <a href="tel:+17584874040" class="text-slate-800 font-semibold hover:text-blue-600">
+                        +1 758 487 4040
+                    </a>
                 </p>
             </div>
 
@@ -997,8 +1001,8 @@
                 <h4 class="text-sm font-extrabold text-slate-900">Email Address</h4>
                 <p class="text-xs text-slate-600 font-medium leading-relaxed">
                     General Inquiries &amp; Support<br>
-                    <a href="mailto:admin@carelioemr.com" class="text-blue-600 font-bold hover:underline break-all">
-                        admin@carelioemr.com
+                    <a href="mailto:Info@carelioemr.com" class="text-blue-600 font-bold hover:underline break-all">
+                        Info@carelioemr.com
                     </a>
                 </p>
             </div>
@@ -1306,14 +1310,29 @@
                     submitBtn.disabled = false;
                     submitBtn.innerText = getSubmitLabel();
                 } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
-                    await fetch('{{ url("/api/stripe/confirm") }}', {
+                    const confirmRes = await fetch('{{ url("/api/stripe/confirm") }}', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({ payment_intent_id: result.paymentIntent.id, doctor_name: doctorName, site_name: siteName, email: email })
                     });
-                    alert('Subscription Confirmed! CarelioEMR Tenant Site Provisioned & Email Sent.');
+                    const confirmData = await confirmRes.json();
+
+                    if (!confirmRes.ok) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = getSubmitLabel();
+                        const errorMsg = confirmData.error || confirmData.message || 'Subscription could not be confirmed. Please contact support.';
+                        if (cardErrors) {
+                            cardErrors.innerText = errorMsg;
+                        } else {
+                            alert(errorMsg);
+                        }
+                        return;
+                    }
+
+                    alert('Payment confirmed! CarelioEMR setup has started. It may take 1-2 minutes before the admin approval button appears.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = getSubmitLabel();
                     closeCheckoutModal();
-                    window.location.reload();
                 }
             }
         } catch (err) {

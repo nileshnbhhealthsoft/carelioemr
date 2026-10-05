@@ -57,6 +57,8 @@ class OpenEmrProvisioningService
      */
     public function provisionTenant(Subscription $subscription): bool
     {
+        @set_time_limit(0);
+
         $siteDisplayName = $subscription->getDisplaySiteName();
         $cleanSlug = Str::slug($siteDisplayName, '-');
         $tenantSlug = 'site-' . ($cleanSlug ?: 'tenant') . '-' . $subscription->id;
@@ -67,6 +69,11 @@ class OpenEmrProvisioningService
         $baseUrl = rtrim((string) config('app.url'), '/');
         $webPath = config('oemr.web_path') ? ('/' . trim((string) config('oemr.web_path'), '/')) : '';
         $siteUrl = $baseUrl . $webPath . '/interface/login/login.php?site=' . rawurlencode($tenantSlug);
+
+        if ($subscription->provision_status === 'completed' && !empty($subscription->openemr_database) && !empty($subscription->tenant_slug)) {
+            Log::info("Subscription #{$subscription->id} already provisioned with database {$subscription->openemr_database}. Skipping duplicate provisioning.");
+            return true;
+        }
 
         Log::info("Starting Canonical OpenEMR Tenant Provisioning for Subscription #{$subscription->id} ({$tenantSlug})");
 
@@ -280,7 +287,8 @@ class OpenEmrProvisioningService
         $driver = config('database.default', 'mysql');
 
         if ($driver === 'mysql') {
-            DB::statement("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            DB::statement("DROP DATABASE IF EXISTS `{$dbName}`");
+            DB::statement("CREATE DATABASE `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
         } else {
             $sqlitePath = database_path("{$dbName}.sqlite");
             if (!File::exists($sqlitePath)) {

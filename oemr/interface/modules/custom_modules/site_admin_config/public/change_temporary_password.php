@@ -16,9 +16,15 @@ use OpenEMR\Modules\SiteAdmin\Security\TemporaryPasswordService;
 
 $session = SessionWrapperFactory::getInstance()->getActiveSession();
 $userId = (int) ($session->get('authUserID') ?? 0);
+$siteId = (string) ($session->get('site_id') ?? ($_SESSION['site_id'] ?? ($_GET['site'] ?? 'default')));
+$loginUrl = OEGlobalsBag::getInstance()->getWebRoot() . '/interface/login/login.php?site=' . rawurlencode($siteId);
 
 if ($userId <= 0) {
-    header('Location: ' . OEGlobalsBag::getInstance()->get('login_screen'));
+    if (!headers_sent()) {
+        header('Location: ' . $loginUrl);
+        exit;
+    }
+    echo '<script>window.location.href=' . json_encode($loginUrl) . ';</script>';
     exit;
 }
 
@@ -26,7 +32,11 @@ $message = '';
 $success = false;
 
 if (!TemporaryPasswordService::requiresChange($userId)) {
-    header('Location: ' . OEGlobalsBag::getInstance()->getWebRoot() . '/interface/main/main_screen.php');
+    if (!headers_sent()) {
+        header('Location: ' . $loginUrl);
+        exit;
+    }
+    echo '<script>window.location.href=' . json_encode($loginUrl) . ';</script>';
     exit;
 }
 
@@ -45,8 +55,12 @@ if (!empty($_POST)) {
         $authUtils = new AuthUtils();
         if ($authUtils->updatePassword($userId, $userId, $currentPassword, $newPassword)) {
             TemporaryPasswordService::clearTemporary($userId);
-            $success = true;
-            $message = xl("Password change successful. Opening CarelioEMR.");
+            if (!headers_sent()) {
+                header('Location: ' . $loginUrl);
+                exit;
+            }
+            echo '<script>top.location.href=' . json_encode($loginUrl) . ';</script>';
+            exit;
         } else {
             $message = $authUtils->getErrorMessage() ?: xl("Password update error!");
         }
@@ -55,8 +69,19 @@ if (!empty($_POST)) {
 
 $user = sqlQuery("SELECT `fname`, `lname`, `username` FROM `users` WHERE `id` = ? LIMIT 1", [$userId]) ?: [];
 $displayName = trim(($user['fname'] ?? '') . ' ' . ($user['lname'] ?? '')) ?: ($user['username'] ?? '');
-$csrfToken = CsrfUtils::collectCsrfToken(session: $session);
-$mainUrl = OEGlobalsBag::getInstance()->getWebRoot() . '/interface/main/main_screen.php';
+
+$csrfToken = '';
+if (!$success) {
+    if (empty($session->get('csrf_private_key'))) {
+        CsrfUtils::setupCsrfKey($session);
+    }
+    try {
+        $csrfToken = CsrfUtils::collectCsrfToken(session: $session);
+    } catch (\Throwable) {
+        CsrfUtils::setupCsrfKey($session);
+        $csrfToken = CsrfUtils::collectCsrfToken(session: $session);
+    }
+}
 ?>
 <!doctype html>
 <html>
@@ -64,7 +89,7 @@ $mainUrl = OEGlobalsBag::getInstance()->getWebRoot() . '/interface/main/main_scr
     <?php Header::setupHeader(); ?>
     <title><?php echo xlt('Change Temporary Password'); ?></title>
     <?php if ($success) { ?>
-        <meta http-equiv="refresh" content="1;url=<?php echo attr($mainUrl); ?>">
+        <meta http-equiv="refresh" content="2;url=<?php echo attr($loginUrl); ?>">
     <?php } ?>
     <style>
         body { background: #f8fafc; }
@@ -79,6 +104,21 @@ $mainUrl = OEGlobalsBag::getInstance()->getWebRoot() . '/interface/main/main_scr
         }
         .carelio-password-card h1 { font-size: 1.35rem; font-weight: 700; margin-bottom: 8px; }
         .carelio-password-card p { color: #475569; }
+        .carelio-password-field { position: relative; }
+        .carelio-password-field .form-control { padding-right: 44px; }
+        .carelio-toggle-password {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            border: 0;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+        }
+        .carelio-toggle-password:hover { color: #0f172a; }
     </style>
 </head>
 <body>
@@ -98,25 +138,58 @@ $mainUrl = OEGlobalsBag::getInstance()->getWebRoot() . '/interface/main/main_scr
             <input type="hidden" name="csrf_token_form" value="<?php echo attr($csrfToken); ?>">
             <div class="form-group">
                 <label><?php echo xlt('Temporary Password'); ?></label>
-                <input class="form-control" type="password" name="curPass" required autofocus>
+                <div class="carelio-password-field">
+                    <input id="curPass" class="form-control" type="password" name="curPass" required autofocus>
+                    <button class="carelio-toggle-password" type="button" data-toggle-password="curPass" aria-label="<?php echo xla('Show password'); ?>">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
             </div>
             <div class="form-group">
                 <label><?php echo xlt('New Password'); ?></label>
-                <input class="form-control" type="password" name="newPass" required>
+                <div class="carelio-password-field">
+                    <input id="newPass" class="form-control" type="password" name="newPass" required>
+                    <button class="carelio-toggle-password" type="button" data-toggle-password="newPass" aria-label="<?php echo xla('Show password'); ?>">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
             </div>
             <div class="form-group">
                 <label><?php echo xlt('Confirm New Password'); ?></label>
-                <input class="form-control" type="password" name="newPass2" required>
+                <div class="carelio-password-field">
+                    <input id="newPass2" class="form-control" type="password" name="newPass2" required>
+                    <button class="carelio-toggle-password" type="button" data-toggle-password="newPass2" aria-label="<?php echo xla('Show password'); ?>">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
             </div>
             <button class="btn btn-primary btn-block" type="submit">
                 <?php echo xlt('Change Password and Continue'); ?>
             </button>
         </form>
     <?php } else { ?>
-        <a class="btn btn-primary btn-block" href="<?php echo attr($mainUrl); ?>">
-            <?php echo xlt('Continue to CarelioEMR'); ?>
+        <a class="btn btn-primary btn-block" href="<?php echo attr($loginUrl); ?>">
+            <?php echo xlt('Continue to Login'); ?>
         </a>
     <?php } ?>
 </div>
+<script>
+document.querySelectorAll('[data-toggle-password]').forEach(function (button) {
+    button.addEventListener('click', function () {
+        var input = document.getElementById(button.getAttribute('data-toggle-password'));
+        var icon = button.querySelector('i');
+        if (!input) {
+            return;
+        }
+
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        if (icon) {
+            icon.className = show ? 'fa fa-eye-slash' : 'fa fa-eye';
+        }
+        button.setAttribute('aria-label', show ? <?php echo js_escape(xl('Hide password')); ?> : <?php echo js_escape(xl('Show password')); ?>);
+    });
+});
+</script>
 </body>
 </html>
