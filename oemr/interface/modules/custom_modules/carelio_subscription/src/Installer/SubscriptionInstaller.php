@@ -259,21 +259,149 @@ class SubscriptionInstaller
         $stmt->execute([$key, $value]);
     }
 
-    private static function resolvePdo(): PDO
+    public static function resolveSiteDir(?string $siteDir = null): ?string
     {
-        $host = $GLOBALS['host'] ?? 'localhost';
-        $port = $GLOBALS['port'] ?? '3306';
-        $dbase = $GLOBALS['dbase'] ?? null;
-        $login = $GLOBALS['login'] ?? null;
-        $pass = $GLOBALS['pass'] ?? '';
-
-        if (empty($dbase) || empty($login)) {
-            throw new RuntimeException('OpenEMR database connection globals are not available.');
+        if (!empty($siteDir) && is_dir($siteDir) && file_exists($siteDir . '/sqlconf.php')) {
+            return realpath($siteDir) ?: $siteDir;
         }
 
-        return new PDO("mysql:host={$host};port={$port};dbname={$dbase};charset=utf8mb4", $login, $pass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]);
+        if (class_exists(\OpenEMR\Core\OEGlobalsBag::class)) {
+            $bagSiteDir = \OpenEMR\Core\OEGlobalsBag::getInstance()->get('OE_SITE_DIR');
+            if (!empty($bagSiteDir) && is_dir($bagSiteDir) && file_exists($bagSiteDir . '/sqlconf.php')) {
+                return realpath($bagSiteDir) ?: $bagSiteDir;
+            }
+        }
+
+        if (!empty($GLOBALS['OE_SITE_DIR']) && is_dir($GLOBALS['OE_SITE_DIR']) && file_exists($GLOBALS['OE_SITE_DIR'] . '/sqlconf.php')) {
+            return realpath($GLOBALS['OE_SITE_DIR']) ?: $GLOBALS['OE_SITE_DIR'];
+        }
+
+        $baseSites = dirname(__DIR__, 6) . DIRECTORY_SEPARATOR . 'sites';
+
+        if (!empty($_SESSION['site_id'])) {
+            $cleanSite = preg_replace('/[^a-zA-Z0-9_-]/', '', (string)$_SESSION['site_id']);
+            $sessionSite = $baseSites . DIRECTORY_SEPARATOR . $cleanSite;
+            if (is_dir($sessionSite) && file_exists($sessionSite . '/sqlconf.php')) {
+                return realpath($sessionSite) ?: $sessionSite;
+            }
+        }
+
+        if (is_dir($baseSites . DIRECTORY_SEPARATOR . 'default') && file_exists($baseSites . DIRECTORY_SEPARATOR . 'default/sqlconf.php')) {
+            return realpath($baseSites . DIRECTORY_SEPARATOR . 'default') ?: ($baseSites . DIRECTORY_SEPARATOR . 'default');
+        }
+
+        return null;
+    }
+
+    public static function resolvePdo(?string $siteDir = null): PDO
+    {
+        if (isset($GLOBALS['dbh']) && $GLOBALS['dbh'] instanceof PDO) {
+            return $GLOBALS['dbh'];
+        }
+
+        if (isset($GLOBALS['adodb']['db']) && is_object($GLOBALS['adodb']['db'])) {
+            $connection = $GLOBALS['adodb']['db']->_connectionID;
+            if ($connection instanceof PDO) {
+                return $connection;
+            }
+        }
+
+        $resolvedSiteDir = self::resolveSiteDir($siteDir);
+        if (!empty($resolvedSiteDir)) {
+            if (class_exists(\OpenEMR\Core\OEGlobalsBag::class)) {
+                \OpenEMR\Core\OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $resolvedSiteDir);
+            }
+            $GLOBALS['OE_SITE_DIR'] = $resolvedSiteDir;
+        }
+
+        if (class_exists(\OpenEMR\BC\Database::class)) {
+            try {
+                $dbal = \OpenEMR\BC\Database::instance()->getDbalConnection();
+                if (method_exists($dbal, 'getNativeConnection')) {
+                    $native = $dbal->getNativeConnection();
+                    if ($native instanceof PDO) {
+                        return $native;
+                    }
+                }
+            } catch (\Throwable $e) {
+            }
+        }
+
+        if (!empty($resolvedSiteDir) && file_exists($resolvedSiteDir . '/sqlconf.php')) {
+            if (class_exists(\OpenEMR\BC\DatabaseConnectionOptions::class) && class_exists(\OpenEMR\BC\DatabaseConnectionFactory::class)) {
+                try {
+                    $options = \OpenEMR\BC\DatabaseConnectionOptions::forSite($resolvedSiteDir);
+                    $dbal = \OpenEMR\BC\DatabaseConnectionFactory::createDbal($options, false);
+                    if (method_exists($dbal, 'getNativeConnection')) {
+                        $native = $dbal->getNativeConnection();
+                        if ($native instanceof PDO) {
+                            return $native;
+                        }
+                    }
+                } catch (\Throwable $e) {
+                }
+            }
+        }
+
+        $dbHost = $GLOBALS['host'] ?? ($GLOBALS['sqlconf']['host'] ?? null);
+        $dbPort = $GLOBALS['port'] ?? ($GLOBALS['sqlconf']['port'] ?? null);
+        $dbUser = $GLOBALS['login'] ?? ($GLOBALS['sqlconf']['login'] ?? null);
+        $dbPass = $GLOBALS['pass'] ?? ($GLOBALS['sqlconf']['pass'] ?? null);
+        $dbName = $GLOBALS['dbase'] ?? ($GLOBALS['sqlconf']['dbase'] ?? null);
+
+        if ((empty($dbUser) || empty($dbName)) && !empty($resolvedSiteDir) && file_exists($resolvedSiteDir . '/sqlconf.php')) {
+            $conf = self::loadSqlconfVars($resolvedSiteDir . '/sqlconf.php');
+            $dbName = $conf['dbase'] ?? $dbName;
+            $dbUser = $conf['login'] ?? $dbUser;
+            $dbPass = $conf['pass'] ?? $dbPass;
+            $dbHost = $conf['host'] ?? $dbHost;
+            $dbPort = $conf['port'] ?? $dbPort;
+        }
+
+        if (!empty($dbUser) && !empty($dbName)) {
+            $dsn = "mysql:dbname={$dbName};charset=utf8mb4";
+            if (!empty($dbHost)) {
+                $dsn .= ";host={$dbHost}";
+                if (!empty($dbPort)) {
+                    $dsn .= ";port={$dbPort}";
+                }
+            } else {
+                $dsn .= ";host=localhost;port=3306";
+            }
+
+            return new PDO($dsn, $dbUser, $dbPass ?? '', [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
+        }
+
+        throw new RuntimeException('OpenEMR database connection globals are not available.');
+    }
+
+    private static function loadSqlconfVars(string $filePath): array
+    {
+        if (!file_exists($filePath)) {
+            return [];
+        }
+
+        $host = null;
+        $port = null;
+        $login = null;
+        $pass = null;
+        $dbase = null;
+        $sqlconf = [];
+
+        try {
+            include $filePath;
+        } catch (\Throwable $e) {
+        }
+
+        return [
+            'host' => $sqlconf['host'] ?? $host,
+            'port' => $sqlconf['port'] ?? $port,
+            'login' => $sqlconf['login'] ?? $login,
+            'pass' => $sqlconf['pass'] ?? $pass,
+            'dbase' => $sqlconf['dbase'] ?? $dbase,
+        ];
     }
 }

@@ -67,6 +67,30 @@ class ModuleManagerListener extends AbstractModuleActionListener
         }
     }
 
+    private function upgrade($modId, $currentActionStatus): mixed
+    {
+        try {
+            self::ensureInstallerLoaded();
+            SubscriptionInstaller::install();
+            return $currentActionStatus;
+        } catch (\Throwable $e) {
+            error_log('Carelio Subscription upgrade error: ' . $e->getMessage());
+            return 'Upgrade warning: ' . $e->getMessage();
+        }
+    }
+
+    private function upgrade_sql($modId, $currentActionStatus): mixed
+    {
+        try {
+            self::ensureInstallerLoaded();
+            SubscriptionInstaller::install();
+            return $currentActionStatus;
+        } catch (\Throwable $e) {
+            error_log('Carelio Subscription upgrade_sql error: ' . $e->getMessage());
+            return 'Upgrade SQL warning: ' . $e->getMessage();
+        }
+    }
+
     private function disable($modId, $currentActionStatus): mixed
     {
         try {
