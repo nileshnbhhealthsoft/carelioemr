@@ -180,6 +180,14 @@ class TemporaryPasswordService
             return true;
         }
 
+        if (
+            str_ends_with($scriptName, '/interface/main/main_screen.php')
+            && ($_GET['auth'] ?? '') === 'login'
+            && isset($_POST['new_login_session_management'])
+        ) {
+            return true;
+        }
+
         return str_contains($scriptName, '/interface/login/login.php')
             || str_contains($scriptName, '/portal/');
     }
