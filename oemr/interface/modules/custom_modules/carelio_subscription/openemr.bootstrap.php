@@ -37,3 +37,7 @@ if (isset($eventDispatcher) && $eventDispatcher instanceof EventDispatcherInterf
 if ($dispatcher) {
     (new Bootstrap($dispatcher))->subscribeToEvents();
 }
+
+if (class_exists(\OpenEMR\Modules\CarelioSubscription\Security\SubscriptionEnforcementService::class)) {
+    \OpenEMR\Modules\CarelioSubscription\Security\SubscriptionEnforcementService::enforce();
+}
