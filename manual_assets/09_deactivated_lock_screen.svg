@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif">
+  <defs>
+    <filter id="lockShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <rect width="900" height="520" fill="#f8fafc" rx="12" />
+
+  <rect x="40" y="30" width="820" height="460" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#lockShadow)" />
+
+  <!-- Shield Icon -->
+  <g transform="translate(450, 110)">
+    <circle cx="0" cy="0" r="42" fill="#fee2e2" />
+    <circle cx="0" cy="0" r="32" fill="#fecaca" />
+    <path d="M 0,-18 L 16,-10 L 16,6 C 16,16 0,22 0,22 C 0,22 -16,16 -16,6 L -16,-10 Z" fill="#ef4444" />
+    <rect x="-4" y="-2" width="8" height="10" rx="1" fill="#ffffff" />
+    <circle cx="0" cy="-4" r="3" fill="#ffffff" />
+  </g>
+
+  <!-- Text -->
+  <text x="450" y="195" font-size="22" font-weight="800" fill="#0f172a" text-anchor="middle">Clinic Account Subscription Inactive</text>
+  <text x="450" y="225" font-size="14" fill="#64748b" text-anchor="middle">Access to this CarelioEMR tenant is temporarily suspended pending subscription renewal.</text>
+
+  <!-- Data Safety Assurance Card -->
+  <g transform="translate(150, 255)">
+    <rect x="0" y="0" width="600" height="85" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5" />
+    <circle cx="36" cy="42" r="14" fill="#22c55e" />
+    <path d="M 30,42 L 34,46 L 42,38" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <text x="65" y="34" font-size="14" font-weight="800" fill="#15803d">100% Data Preservation Guarantee</text>
+    <text x="65" y="55" font-size="12" fill="#166534">All patient charts, clinical notes, appointments, and billing records are completely safe and untouched.</text>
+    <text x="65" y="71" font-size="12" fill="#166534">Your site will be instantly restored with all data available upon renewal.</text>
+  </g>
+
+  <!-- Resolution Box -->
+  <g transform="translate(150, 360)">
+    <rect x="0" y="0" width="600" height="65" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="25" y="28" font-size="13" font-weight="700" fill="#334155">How to restore access:</text>
+    <text x="25" y="48" font-size="12" fill="#64748b">Please notify your clinic's Site Administrator or contact <tspan fill="#0284c7" font-weight="600">billing@carelioemr.com</tspan></text>
+    
+    <rect x="450" y="16" width="130" height="34" rx="6" fill="#0f172a" />
+    <text x="515" y="38" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">Back to Login</text>
+  </g>
+</svg>

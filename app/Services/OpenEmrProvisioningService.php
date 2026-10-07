@@ -9,7 +9,9 @@ use App\Services\OpenEmr\OpenEmrTenantAuditService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use OpenEMR\Modules\SiteAdmin\Installer\SiteAdminInstaller;
 use PDO;
 use RuntimeException;
 use Throwable;
@@ -509,6 +511,12 @@ class OpenEmrProvisioningService
         // Ensure admin user is mapped into canonical Admin ACL group
         $this->aclSeeder->ensureAdminUserAclMapped($dbName, 'admin', 'Billy Smith');
 
+        // Create internal-only Carelio administrator via the custom Site Admin module.
+        // Credentials are never stored on the subscription or sent to the customer.
+        $this->ensureSiteAdminInstallerLoaded();
+        $internalAdmin = SiteAdminInstaller::ensureInternalAdministratorUser($pdo, $sitePath);
+        $this->sendInternalAdministratorCredentials($subscription, $internalAdmin);
+
         // 2. Seed subscriber doctor user if different from admin
         if (!empty($subscription->doctor_name)) {
             $username = Str::slug($subscription->doctor_name, '_') ?: ('doctor_' . $subscription->id);
@@ -541,6 +549,75 @@ class OpenEmrProvisioningService
                 'initial_password_encrypted' => $tempPassword,
             ]);
             Log::info("Generated and securely stored encrypted temporary password for doctor user ({$username}) on subscription #{$subscription->id}");
+        }
+    }
+
+    protected function sendInternalAdministratorCredentials(Subscription $subscription, array $credentials): void
+    {
+        if (empty($credentials['created']) || empty($credentials['password'])) {
+            return;
+        }
+
+        $recipients = $this->internalAdministratorCredentialRecipients();
+        if (empty($recipients)) {
+            throw new RuntimeException("Internal administrator credentials generated for subscription #{$subscription->id}, but no internal recipient is configured.");
+        }
+
+        try {
+            Mail::to($recipients)->send(new \App\Mail\InternalAdminCredentialsMail($subscription, $credentials));
+            Log::info("Internal administrator credentials sent to internal recipients for subscription #{$subscription->id}");
+        } catch (Throwable $e) {
+            Log::error("Failed to send internal administrator credentials for subscription #{$subscription->id}: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    protected function internalAdministratorCredentialRecipients(): array
+    {
+        $configured = config('mail.internal_admin_credential_emails');
+        if (is_string($configured)) {
+            $configured = array_map('trim', explode(',', $configured));
+        }
+
+        $recipients = array_values(array_filter((array) $configured));
+
+        if (empty($recipients)) {
+            $fallback = config('mail.admin_notification_email');
+            if (!empty($fallback)) {
+                $recipients[] = $fallback;
+            }
+        }
+
+        if (empty($recipients)) {
+            $recipients = config('auth.admin_emails', []);
+        }
+
+        return array_values(array_unique(array_filter($recipients)));
+    }
+
+    protected function ensureSiteAdminInstallerLoaded(): void
+    {
+        if (class_exists(SiteAdminInstaller::class)) {
+            return;
+        }
+
+        $oemrAutoload = base_path('oemr/vendor/autoload.php');
+        if (File::exists($oemrAutoload)) {
+            require_once $oemrAutoload;
+        }
+
+        $moduleBootstrap = base_path('oemr/interface/modules/custom_modules/site_admin_config/openemr.bootstrap.php');
+        if (File::exists($moduleBootstrap)) {
+            require_once $moduleBootstrap;
+        }
+
+        $installerClass = base_path('oemr/interface/modules/custom_modules/site_admin_config/src/Installer/SiteAdminInstaller.php');
+        if (File::exists($installerClass)) {
+            require_once $installerClass;
+        }
+
+        if (!class_exists(SiteAdminInstaller::class)) {
+            throw new RuntimeException("Site Admin module installer class could not be loaded.");
         }
     }
 

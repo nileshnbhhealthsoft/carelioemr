@@ -117,4 +117,6 @@ return [
 
     'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL'),
 
+    'internal_admin_credential_emails' => array_values(array_filter(array_map('trim', explode(',', env('INTERNAL_ADMIN_CREDENTIAL_EMAILS', ''))))),
+
 ];

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif">
+  <defs>
+    <filter id="graceShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000" flood-opacity="0.06" />
+    </filter>
+  </defs>
+
+  <rect width="960" height="480" fill="#f8fafc" rx="12" />
+  <rect x="30" y="20" width="900" height="440" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#graceShadow)" />
+
+  <!-- Header -->
+  <text x="60" y="58" font-size="19" font-weight="800" fill="#0f172a">Carelio<tspan fill="#0284c7">EMR</tspan> Subscription Management</text>
+  
+  <!-- Status Badge EXPIRED_GRACE_PERIOD -->
+  <rect x="650" y="36" width="250" height="32" rx="16" fill="#ffedd5" stroke="#fed7aa" stroke-width="1.5" />
+  <circle cx="668" cy="52" r="5" fill="#ea580c" />
+  <text x="778" y="58" font-size="12" font-weight="800" fill="#9a3412" text-anchor="middle">STATUS: EXPIRED / GRACE PERIOD</text>
+
+  <!-- Banner EXPIRED_GRACE_PERIOD -->
+  <g transform="translate(60, 95)">
+    <rect x="0" y="0" width="840" height="90" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5" />
+    <rect x="0" y="0" width="6" height="90" rx="3" fill="#f97316" />
+    <circle cx="36" cy="45" r="16" fill="#f97316" />
+    <text x="36" y="52" font-size="18" font-weight="900" fill="#ffffff" text-anchor="middle">⏱</text>
+    <text x="68" y="34" font-size="15" font-weight="800" fill="#c2410c">Subscription Expired — 2-Day Grace Period In Effect</text>
+    <text x="68" y="55" font-size="13" fill="#9a3412">The regular subscription expired on 2026-10-06. Clinical and patient care continues uninterrupted during</text>
+    <text x="68" y="73" font-size="13" fill="#9a3412">this 2-day grace window. Deactivation will occur on 2026-10-08 23:59:59 if renewal is not submitted.</text>
+  </g>
+
+  <!-- Metrics -->
+  <g transform="translate(60, 210)">
+    <rect x="0" y="0" width="260" height="80" rx="8" fill="#fff7ed" stroke="#fed7aa" />
+    <text x="20" y="26" font-size="11" font-weight="700" fill="#9a3412">GRACE TIME REMAINING</text>
+    <text x="20" y="56" font-size="20" font-weight="900" fill="#ea580c">1 Day, 14 Hours</text>
+
+    <rect x="290" y="0" width="260" height="80" rx="8" fill="#f8fafc" stroke="#e2e8f0" />
+    <text x="20" y="26" font-size="11" font-weight="700" fill="#64748b" transform="translate(290,0)">DEACTIVATION DEADLINE</text>
+    <text x="20" y="56" font-size="20" font-weight="800" fill="#dc2626" transform="translate(290,0)">October 08, 2026</text>
+
+    <rect x="580" y="0" width="260" height="80" rx="8" fill="#f0fdf4" stroke="#bbf7d0" />
+    <text x="20" y="26" font-size="11" font-weight="700" fill="#166534" transform="translate(580,0)">PATIENT RECORDS ACCESS</text>
+    <text x="20" y="56" font-size="18" font-weight="800" fill="#16a34a" transform="translate(580,0)">Continuous Active</text>
+  </g>
+
+  <!-- Action Bar -->
+  <g transform="translate(60, 315)">
+    <rect x="0" y="0" width="840" height="90" rx="8" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="24" y="32" font-size="14" font-weight="700" fill="#0f172a">Immediate Renewal Action Required</text>
+    
+    <g transform="translate(24, 45)">
+      <rect x="0" y="0" width="230" height="38" rx="6" fill="#ea580c" />
+      <text x="115" y="24" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle">Renew Now (+30 Days) →</text>
+
+      <rect x="245" y="0" width="180" height="38" rx="6" fill="#0f172a" />
+      <text x="335" y="24" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Override / Extend Date</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,260 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>CarelioEMR Technical Documentation</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #fff; color: #1e293b; max-width: 980px; margin: 40px auto; padding: 0 30px; line-height: 1.6; }
+h1 { font-size: 2.2rem; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px; }
+h2 { font-size: 1.5rem; color: #0369a1; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-top: 36px; margin-bottom: 14px; }
+h3 { font-size: 1.2rem; color: #0f172a; margin-top: 24px; margin-bottom: 10px; }
+pre { background: #0f172a; color: #f8fafc; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.88rem; font-family: Consolas, monospace; }
+code { background: #f1f5f9; color: #0284c7; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
+pre code { background: transparent; color: inherit; padding: 0; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9rem; }
+th, td { border: 1px solid #cbd5e1; padding: 10px 14px; text-align: left; }
+th { background: #f8fafc; font-weight: 700; color: #475569; }
+ul, ol { margin-left: 24px; margin-bottom: 14px; }
+li { margin-bottom: 6px; }
+p { margin-bottom: 14px; }
+hr { border: none; border-top: 1px solid #e2e8f0; margin: 30px 0; }
+.btn-print { position: fixed; top: 15px; right: 25px; padding: 8px 16px; background: #0284c7; color: #fff; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
+@media print { .btn-print { display: none; } body { max-width: 100%; margin: 0; padding: 0; } h2 { page-break-before: always; } }
+</style></head><body><button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button><h1>CarelioEMR — Comprehensive Technical Documentation</h1>
+<p>**Subject:** Site Admin Configuration &amp; Subscription Management Modules</p>
+<p>**Author:** CarelioEMR Engineering Team</p>
+<p>**Date:** October 2026</p>
+<p>**Version:** 2.0</p>
+<p>**Repository Branch:** `subscription-model`</p>
+<hr>
+<h2>1. Executive Summary &amp; Architecture Overview</h2>
+<p>CarelioEMR is an enterprise multi-tenant Electronic Medical Records (EMR) platform based on OpenEMR. To ensure long-term maintainability, seamless upstream OpenEMR upgrades, and tenant isolation, all platform extensions are built strictly according to **Zero Core Modification Principles**.</p>
+<h3>Key Architectural Guidelines:</h3>
+<p>1. **Zero Core Modifications:** No core OpenEMR engine scripts (in `/src/`, `/interface/main/`, `/library/`) are altered.</p>
+<p>2. **Custom Module Encapsulation:** All capabilities are bundled as independent, self-contained OpenEMR modules in `/interface/modules/custom_modules/`:</p>
+<li>**`site_admin_config`:** Tenant Administration, Caribbean Demographics, Branding Assets, Role-Based Access Control, and Temporary Password Security.</li>
+<li>**`carelio_subscription`:** Subscription Lifecycle Monitoring, 2-Day Grace Period, Safe Deactivation, Site Admin Renewals/Extensions, Server-Side Access Enforcement, and Daily Automated Background Monitoring.</li>
+<p>3. **Idempotency &amp; Zero Data Loss:** All database scripts and migrations execute with `ON DUPLICATE KEY UPDATE` and idempotent checks. Subscription deactivation never deletes clinical, patient, encounters, or billing data.</p>
+<hr>
+<h2>2. Module 1: Site Admin Configuration (`site_admin_config`)</h2>
+<h3>2.1 Caribbean Geographic Demographics Engine</h3>
+<li>**Dataset Scope:** Embedded full geographic coverage for 29 Caribbean countries, all 10 Saint Lucia districts, and 367 distinct local communities.</li>
+<li>**Storage &amp; Structure:** Self-contained within `table.sql` and `sql/table.sql` (90 KB+). Data is injected into OpenEMR&#039;s standard `list_options` schema using composite primary keys `(list_id, option_id)` with `ON DUPLICATE KEY UPDATE`.</li>
+<li>**Dynamic Cascading UI Script:** Embedded `location_cascading_script` into `layout_options`. When a user selects a Caribbean country (e.g., Saint Lucia `LC`), the state dropdown dynamically repopulates with the 10 administrative districts. Selecting a district filters communities accordingly.</li>
+<h3>2.2 Carelio Brand Assets Auto-Deployment</h3>
+<li>Implemented in `SiteAdminInstaller::deployBrandAssets()`.</li>
+<li>Automatically provisions Carelio branding assets to tenant site directories (`oemr/sites/&lt;tenant&gt;/images/logos/`):</li>
+<li>`core/login/primary` &amp; `portal/login/primary` ➔ `logo.svg`, `logo.png`</li>
+<li>`core/favicon` ➔ `favicon.ico`</li>
+<li>`core/menu/primary` &amp; `portal/menu/primary` ➔ `logo.svg`, `logo.png`</li>
+<li>Legacy fallbacks ➔ `login_logo.gif`, `logo_1.png`, `logo_2.png`</li>
+<h3>2.3 Robust Multi-Runtime Database Connection Resolver</h3>
+<li>**Issue Solved:** In OpenEMR web runtime, `$GLOBALS[&#039;adodb&#039;][&#039;db&#039;]-&gt;_connectionID` is a `\mysqli` instance, while CLI/seeders use `\PDO`.</li>
+<li>**Implementation (`SiteAdminInstaller::resolvePdo()`):**</li>
+<p>1. Checks for existing PDO instances in `$GLOBALS[&#039;dbh&#039;]`.</p>
+<p>2. Resolves target tenant site directory via `$GLOBALS[&#039;OE_SITE_DIR&#039;]`, session, or folder inspection.</p>
+<p>3. Uses OpenEMR `DatabaseConnectionOptions::forSite()` and `DatabaseConnectionFactory::createDbal()`.</p>
+<p>4. Parses tenant `sqlconf.php` in an isolated scope and establishes a dedicated UTF-8 PDO connection (`SET NAMES &#039;utf8mb4&#039;, sql_mode = &#039;&#039;`).</p>
+<h3>2.4 Forced Temporary Password Security</h3>
+<li>**Files:** `TemporaryPasswordService.php` and `change_temporary_password.php`.</li>
+<li>**Flow:** First-time tenant login triggers mandatory password reset. Validates current temporary password, verifies complexity, updates hash via OpenEMR `AuthUtils`, clears temporary flag, and immediately redirects to the OpenEMR login page (`login.php?site=&lt;tenant&gt;`) for a clean, secure session launch.</li>
+<hr>
+<h2>3. Module 2: Subscription Management (`carelio_subscription`)</h2>
+<h3>3.1 Status Lifecycle State Machine</h3>
+<p>The subscription module enforces a 4-stage lifecycle state machine:</p>
+<pre><code>             ┌───────────────┐
+             │    ACTIVE     │  (Normal Active Period)
+             └───────┬───────┘
+                     │
+             ≤ 2 days remaining
+                     │
+                     ▼
+             ┌───────────────┐
+             │ EXPIRING SOON │  (Automated 2-Day Renewal Notification)
+             └───────┬───────┘
+                     │
+                Expiration
+                     │
+                     ▼
+          ┌─────────────────────┐
+          │ EXPIRED / GRACE     │  (2-Day Grace Period Active)
+          │     PERIOD          │  (Uninterrupted Clinic Operations)
+          └──────────┬──────────┘
+                     │
+                2 days passed
+                     │
+                     ▼
+             ┌───────────────┐
+             │  DEACTIVATED  │  (Site Deactivated, Server-Side Locked)
+             └───────┬───────┘  (100% Data Preserved - Clinical/Patient/Billing)
+                     │
+              Site Admin renews / reactivates
+                     │
+                     ▼
+             ┌───────────────┐
+             │    ACTIVE     │  (Restored +30 Days)
+             └───────────────┘
+</code></pre>
+<p>#### Lifecycle Stage Details:</p>
+<p>1. **`ACTIVE`:**</p>
+<li>Subscription is active. Account has full access.</li>
+<p>2. **`EXPIRING_SOON`:**</p>
+<li>Remaining days $\le$ 2 days (48 hours).</li>
+<li>Daily monitoring process flags subscription and dispatches renewal reminder notification to clinic administrator.</li>
+<p>3. **`EXPIRED_GRACE_PERIOD`:**</p>
+<li>Period end has passed, but time is within the 2-day (48-hour) grace window.</li>
+<li>Clinic users can continue using the application without interruption.</li>
+<li>Prominent grace period notice displayed on the dashboard.</li>
+<p>4. **`DEACTIVATED`:**</p>
+<li>2-day grace period has elapsed without renewal.</li>
+<li>Site is deactivated and locked server-side.</li>
+<li>**Data Preservation Guarantee:** Zero data deletion. All clinical records, encounters, medical history, documents, and billing records remain 100% intact.</li>
+<li>Account remains immediately available for Site Administrator reactivation.</li>
+<hr>
+<h3>3.2 Database Schema Architecture</h3>
+<p>The module utilizes 4 dedicated database tables inside each tenant database:</p>
+<pre><code>-- 1. Main Subscriptions Table
+CREATE TABLE IF NOT EXISTS `mod_carelio_subscriptions` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `external_subscription_id` VARCHAR(191) NULL UNIQUE,
+  `site_id` VARCHAR(191) NULL,
+  `site_name` VARCHAR(191) NULL,
+  `tenant_slug` VARCHAR(191) NULL,
+  `customer_name` VARCHAR(191) NULL,
+  `customer_email` VARCHAR(191) NULL,
+  `plan_name` VARCHAR(120) NULL,
+  `plan_amount` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `currency` VARCHAR(10) NOT NULL DEFAULT &#039;USD&#039;,
+  `billing_cycle` VARCHAR(20) NOT NULL DEFAULT &#039;monthly&#039;,
+  `status` VARCHAR(40) NOT NULL DEFAULT &#039;ACTIVE&#039;,
+  `current_period_start` DATETIME NULL,
+  `current_period_end` DATETIME NULL,
+  `expiration_reminder_sent_at` DATETIME NULL,
+  `grace_started_at` DATETIME NULL,
+  `grace_ends_at` DATETIME NULL,
+  `deactivated_at` DATETIME NULL,
+  `renewed_at` DATETIME NULL,
+  `reactivated_at` DATETIME NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY `idx_carelio_subscription_site` (`site_id`),
+  KEY `idx_carelio_subscription_status` (`status`),
+  KEY `idx_carelio_subscription_period_end` (`current_period_end`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 2. Configuration Settings Table
+CREATE TABLE IF NOT EXISTS `mod_carelio_subscription_config` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `config_key` VARCHAR(120) NOT NULL UNIQUE,
+  `config_value` TEXT NULL,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 3. Audit History &amp; Event Log
+CREATE TABLE IF NOT EXISTS `mod_carelio_subscription_history` (
+  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+  `subscription_id` INT NULL,
+  `action` VARCHAR(120) NOT NULL,
+  `old_status` VARCHAR(40) NULL,
+  `new_status` VARCHAR(40) NULL,
+  `old_period_end` DATETIME NULL,
+  `new_period_end` DATETIME NULL,
+  `performed_by` VARCHAR(191) NULL,
+  `notes` TEXT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY `idx_carelio_sub_hist_sub` (`subscription_id`),
+  KEY `idx_carelio_sub_hist_act` (`action`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 4. External Webhook Events Table
+CREATE TABLE IF NOT EXISTS `mod_carelio_subscription_events` (
+  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+  `subscription_id` INT NULL,
+  `event_type` VARCHAR(120) NOT NULL,
+  `event_payload` LONGTEXT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+</code></pre>
+<hr>
+<h3>3.3 Site Administrator Dashboard &amp; Actions (`public/index.php`)</h3>
+<li>**Navigation Path:** OpenEMR Navigation Menu ➔ **Administration ➔ Carelio Subscription**</li>
+<li>**Access Control:** Restricted via OpenEMR Core ACL `(&#039;admin&#039;, &#039;users&#039;)`. Regular clinicians and staff receive a read-only notification without modification controls.</li>
+<li>**Key Components:**</li>
+<p>1. **Status &amp; Expiration Banner:** Real-time color-coded alerts (Green: Active, Yellow: Expiring Soon, Orange: Grace Period, Red: Deactivated).</p>
+<p>2. **Plan &amp; Billing Metrics:** Plan Name, Monthly Fee, Start Date, Expiry Date, and Grace Window Countdown.</p>
+<p>3. **Site Admin Action Controls:**</p>
+<li>**Renew Subscription (+1 Month):** Automatically calculates future date (+30 days/month), restores status to `ACTIVE`, and records audit history.</li>
+<li>**Extend Expiration Date:** Interactive date picker allowing custom extension dates.</li>
+<li>**Reactivate Subscription:** One-click instant reactivation for sites in `DEACTIVATED` state.</li>
+<p>4. **Interactive Simulator Toolbar:**</p>
+<li>Dedicated testing toolbar allowing instant switching between all 4 statuses (`ACTIVE`, `EXPIRING_SOON`, `EXPIRED_GRACE_PERIOD`, `DEACTIVATED`) without waiting 30 days.</li>
+<p>5. **Subscription Audit History Table:**</p>
+<li>Comprehensive immutable audit log tracking every action, status transition, timestamp, user, and notes.</li>
+<hr>
+<h3>3.4 Server-Side Access Enforcement (`SubscriptionEnforcementService.php`)</h3>
+<p>To prevent users from bypassing restrictions through direct URL bookmarks or REST API calls:</p>
+<li>Registered inside `openemr.bootstrap.php` on every authenticated web request.</li>
+<li>**Behavior when Status is `DEACTIVATED`:**</li>
+<li>**Site Administrator:** Automatically redirected to `carelio_subscription/public/index.php` with reactivation controls enabled.</li>
+<li>**Regular Staff / Clinicians:** HTTP 403 Forbidden page rendered with the Carelio &quot;Account Deactivated&quot; security template explaining that data is preserved and advising them to contact the Site Administrator.</li>
+<li>Login, logout, assets, and subscription renewal paths are exempt from interception.</li>
+<hr>
+<h3>3.5 Automated Daily Monitoring Engine (`CarelioCheckSubscriptionsCommand.php`)</h3>
+<li>**Command:** `php artisan carelio:check-subscriptions`</li>
+<li>**Execution Flow:**</li>
+<p>1. Scans all tenant databases across MySQL.</p>
+<p>2. Evaluates expiration timestamps against current system time.</p>
+<p>3. Detects subscriptions expiring within 2 days $\rightarrow$ updates status to `EXPIRING_SOON` and triggers renewal reminders.</p>
+<p>4. Detects expired subscriptions within 2-day window $\rightarrow$ updates status to `EXPIRED_GRACE_PERIOD`.</p>
+<p>5. Detects subscriptions expired past 2-day grace $\rightarrow$ sets status to `DEACTIVATED` and logs deactivation event.</p>
+<p>6. Renders live execution summary table in console/logs.</p>
+<hr>
+<h2>4. Live Server Deployment &amp; Verification Guide</h2>
+<h3>Step 1: Push Local Branch &amp; Pull on Live Server</h3>
+<p>On development workstation:</p>
+<pre><code>git add .
+git commit -m &quot;feat: complete subscription management module with monitoring, grace period, renewal, and background cron&quot;
+git push origin subscription-model
+</code></pre>
+<p>On live server terminal:</p>
+<pre><code>cd /path/to/carelioemr
+git fetch origin
+git checkout subscription-model
+git pull origin subscription-model
+</code></pre>
+<h3>Step 2: Module Activation in OpenEMR UI</h3>
+<p>1. Sign in to OpenEMR as Super Administrator (`admin` / `pass`).</p>
+<p>2. Navigate to: **Administration ➔ System ➔ Modules**.</p>
+<p>3. Under the **Unregistered** tab: locate **Carelio Subscription** and click **Register**.</p>
+<p>4. Under the **Registered** tab: click **Install SQL**, then click **Enable**.</p>
+<p>*(Note: For newly provisioned tenants, `carelio_subscription` is pre-registered in the tenant baseline SQL).*</p>
+<h3>Step 3: Configure Live Background Cron Job</h3>
+<p>Add the daily subscription monitoring process to the live server crontab:</p>
+<pre><code>crontab -e
+</code></pre>
+<p>Add the following entry:</p>
+<pre><code>0 0 * * * cd /path/to/carelioemr &amp;&amp; php artisan carelio:check-subscriptions &gt;&gt; /var/log/carelio_sub_cron.log 2&gt;&amp;1
+</code></pre>
+<h3>Step 4: Live Verification Checklist</h3>
+<table>
+<tr><th>Item</th><th>Test Action</th><th>Expected Result</th><th>Verified</th></tr>
+<tr><th>1</th><th>Log in as `siteadmin` on live tenant</th><th>Menu contains **Administration ➔ Carelio Subscription**</th><th>[ ]</th></tr>
+<tr><th>2</th><th>Open Subscription Dashboard</th><th>Displays Plan, Status Badge (`ACTIVE`), Expiry Date</th><th>[ ]</th></tr>
+<tr><th>3</th><th>Click **&quot;Test EXPIRING SOON&quot;**</th><th>Banner turns Yellow, status becomes `EXPIRING_SOON`</th><th>[ ]</th></tr>
+<tr><th>4</th><th>Click **&quot;Test GRACE PERIOD&quot;**</th><th>Banner turns Orange, grace window active</th><th>[ ]</th></tr>
+<tr><th>5</th><th>Click **&quot;Test DEACTIVATED&quot;**</th><th>Banner turns Red, server-side guard engages</th><th>[ ]</th></tr>
+<tr><th>6</th><th>Click **&quot;Renew Subscription (+1 Month)&quot;**</th><th>Status returns to `ACTIVE`, date advances +30 days</th><th>[ ]</th></tr>
+<tr><th>7</th><th>Check Audit History Table</th><th>All test events logged with timestamps and actor</th><th>[ ]</th></tr>
+<tr><th>8</th><th>Run CLI command</th><th>`php artisan carelio:check-subscriptions` outputs tenant table</th><th>[ ]</th></tr>
+</table>
+<hr>
+<h2>5. Summary of Files Changed &amp; Created</h2>
+<table>
+<tr><th>File Path</th><th>Purpose</th></tr>
+<tr><th>`oemr/interface/modules/custom_modules/carelio_subscription/ModuleManagerListener.php`</th><th>OpenEMR UI module lifecycle dispatcher (install, enable, upgrade, disable).</th></tr>
+<tr><th>`oemr/interface/modules/custom_modules/carelio_subscription/openemr.bootstrap.php`</th><th>PSR-4 module autoloader, menu subscriber, and enforcement guard hook.</th></tr>
+<tr><th>`oemr/interface/modules/custom_modules/carelio_subscription/public/index.php`</th><th>Full Site Administrator Subscription Dashboard, actions, simulator, and audit log UI.</th></tr>
+<tr><th>`oemr/interface/modules/custom_modules/carelio_subscription/src/Services/SubscriptionManagerService.php`</th><th>Core business logic for renewals, extensions, status synchronization, and simulation.</th></tr>
+<tr><th>`oemr/interface/modules/custom_modules/carelio_subscription/src/Security/SubscriptionEnforcementService.php`</th><th>Server-side request interceptor blocking access during deactivated status.</th></tr>
+<tr><th>`oemr/interface/modules/custom_modules/carelio_subscription/src/Installer/SubscriptionInstaller.php`</th><th>Robust multi-context database installer and schema manager.</th></tr>
+<tr><th>`oemr/interface/modules/custom_modules/carelio_subscription/table.sql`</th><th>Self-contained schema definition for the 4 subscription tables and defaults.</th></tr>
+<tr><th>`app/Console/Commands/CarelioCheckSubscriptionsCommand.php`</th><th>Automated daily artisan command to check expirations, grace periods, and deactivations.</th></tr>
+<tr><th>`oemr/interface/modules/custom_modules/site_admin_config/public/change_temporary_password.php`</th><th>Secure temporary password update with clean login redirection.</th></tr>
+<tr><th>`oemr/interface/modules/custom_modules/site_admin_config/ModuleManagerListener.php`</th><th>Added upgrade and upgrade_sql lifecycle hooks.</th></tr>
+</table>
+</body></html>

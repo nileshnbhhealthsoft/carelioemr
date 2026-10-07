@@ -786,14 +786,14 @@
     </div>
 </section>
 
-<!-- 7. Sub-Domain Requirements: Your Dedicated EMR Workspace -->
+<!-- 7. Your Dedicated EMR Workspace -->
 <section id="workspace" class="py-20 bg-slate-50 border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         <div class="text-center max-w-3xl mx-auto space-y-3">
-            <span class="text-xs uppercase font-extrabold tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Dedicated Practice Architecture</span>
+            <span class="text-xs uppercase font-extrabold tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">Managed EMR Workspace</span>
             <h2 class="text-3xl sm:text-4xl font-black text-slate-900">Your Dedicated EMR Workspace</h2>
-            <p class="text-sm text-slate-600 font-medium">Independent, secure, and isolated healthcare environments tailored to each healthcare practice.</p>
+            <p class="text-sm text-slate-600 font-medium">A private CarelioEMR practice environment configured, hosted, and prepared for your clinic's daily clinical operations.</p>
         </div>
 
         <div class="max-w-4xl mx-auto p-6 sm:p-8 md:p-10 rounded-3xl bg-white border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
@@ -804,8 +804,8 @@
                         <i data-lucide="shield" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-slate-900">Isolated Practice Environment</h4>
-                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">Each subscribed practice receives its own dedicated EMR workspace, ensuring complete institutional independence and patient data privacy.</p>
+                        <h4 class="text-sm font-bold text-slate-900">Dedicated Tenant Workspace</h4>
+                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">Each practice receives its own isolated OpenEMR site and database, separated from other clinics and configured under the CarelioEMR managed environment.</p>
                     </div>
                 </div>
 
@@ -814,8 +814,8 @@
                         <i data-lucide="globe" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-slate-900">Unique Tenant Access URL</h4>
-                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">The practice may be assigned a unique tenant/sub-domain based access URL customized for your clinic's clinicians and administrative staff.</p>
+                        <h4 class="text-sm font-bold text-slate-900">Clinic Login &amp; Staff Access</h4>
+                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">Your clinic receives a dedicated login link for authorized users, with a Site Administrator account prepared for practice management and staff setup.</p>
                     </div>
                 </div>
 
@@ -824,8 +824,8 @@
                         <i data-lucide="settings" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-slate-900">Customized Deployment</h4>
-                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">Final domain/sub-domain configuration depends on deployment and subscription setup.</p>
+                        <h4 class="text-sm font-bold text-slate-900">Ready-to-Use EMR Features</h4>
+                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">Workflows include patient demographics, appointment scheduling, clinical encounters, documentation, billing tools, reporting, and CarelioEMR branding.</p>
                     </div>
                 </div>
 
@@ -834,22 +834,22 @@
                         <i data-lucide="check-circle-2" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-slate-900">Verified Access Delivery</h4>
-                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">Customer access information is provided after setup and approval.</p>
+                        <h4 class="text-sm font-bold text-slate-900">Regional Setup &amp; Ongoing Service</h4>
+                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">We configure Caribbean demographics and regional lists where applicable, activate subscription controls, and deliver access only after internal review.</p>
                     </div>
                 </div>
             </div>
 
             <div class="md:col-span-5 p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs space-y-4 text-center md:text-left">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Workspace Routing</span>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Active Node</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Customer Delivery</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Managed Setup</span>
                 </div>
                 <div class="p-3.5 bg-white rounded-xl border border-slate-200 font-mono text-xs text-blue-600 font-bold break-all">
-                    https://[your-practice].carelioemr.com
+                    Dedicated login link + Site Administrator access
                 </div>
                 <p class="text-[11px] text-slate-500 leading-relaxed">
-                    Personalized sub-domain routing and regional node allocation ensure zero interference with other practices and maximum clinical availability.
+                    We provision the workspace, configure the EMR baseline, verify the setup, and then send approved customer access details for the practice to begin using CarelioEMR.
                 </p>
             </div>
 

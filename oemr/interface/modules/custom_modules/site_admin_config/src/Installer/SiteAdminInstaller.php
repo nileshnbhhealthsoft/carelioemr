@@ -174,8 +174,8 @@ class SiteAdminInstaller
     /**
      * Assign a user to the Site Administrator role.
      * Enforces that root 'admin' can NEVER be assigned to Site Administrator.
-     * Idempotently maps user into Site Administrator, Physicians, Clinicians,
-     * and removes user from Super Administrators.
+     * Idempotently maps user into Site Administrator only, and removes direct
+     * mappings from Super Administrators, Physicians, and Clinicians.
      *
      * @param string $username User login name
      * @param string|null $fullName User full name
@@ -220,18 +220,50 @@ class SiteAdminInstaller
             }
         }
 
-        // 4. Map into Site Administrator, Physicians, Clinicians
+        // 4. Map into Site Administrator only
         $gacl->add_group_object($siteAdminGroupId, 'users', $username, 'ARO');
+
+        // 5. Remove direct mappings that caused duplicate role assignment.
+        // Site Administrator inherits from Physicians through the group tree,
+        // so the user should not be directly assigned to doc/clin too.
         if ($physicianGroupId) {
-            $gacl->add_group_object($physicianGroupId, 'users', $username, 'ARO');
+            $gacl->del_group_object($physicianGroupId, 'users', $username, 'ARO');
         }
         if ($clinicianGroupId) {
-            $gacl->add_group_object($clinicianGroupId, 'users', $username, 'ARO');
+            $gacl->del_group_object($clinicianGroupId, 'users', $username, 'ARO');
         }
-
-        // 5. Ensure removed from Super Administrators group (admin)
         if ($superAdminGroupId) {
             $gacl->del_group_object($superAdminGroupId, 'users', $username, 'ARO');
+        }
+
+        // GaclApi may leave legacy duplicate rows behind depending on tenant
+        // data shape, so enforce the final mapping set directly as well.
+        $stmtAro = $pdoInstance->prepare("
+            SELECT id FROM gacl_aro WHERE section_value = 'users' AND value = ? LIMIT 1
+        ");
+        $stmtAro->execute([$username]);
+        $userAroId = (int) $stmtAro->fetchColumn();
+
+        if ($userAroId > 0) {
+            $groupsToRemove = array_values(array_filter([
+                $physicianGroupId ?: null,
+                $clinicianGroupId ?: null,
+                $superAdminGroupId ?: null,
+            ]));
+
+            if (!empty($groupsToRemove)) {
+                $placeholders = implode(',', array_fill(0, count($groupsToRemove), '?'));
+                $stmtDelete = $pdoInstance->prepare("
+                    DELETE FROM gacl_groups_aro_map
+                    WHERE aro_id = ? AND group_id IN ({$placeholders})
+                ");
+                $stmtDelete->execute(array_merge([$userAroId], $groupsToRemove));
+            }
+
+            $stmtSiteAdmin = $pdoInstance->prepare("
+                INSERT IGNORE INTO gacl_groups_aro_map (group_id, aro_id) VALUES (?, ?)
+            ");
+            $stmtSiteAdmin->execute([$siteAdminGroupId, $userAroId]);
         }
 
         // 6. Ensure main_menu_role = 'standard' for native standard menu
@@ -245,6 +277,102 @@ class SiteAdminInstaller
         }
 
         return true;
+    }
+
+    /**
+     * Create the internal Carelio administrator user for a tenant.
+     * The generated password is returned only at creation time so the
+     * provisioning app can notify internal operators without exposing it
+     * to the subscribed customer.
+     */
+    public static function ensureInternalAdministratorUser(?PDO $pdo = null, ?string $siteDir = null, string $username = 'carelio_admin'): array
+    {
+        $pdoInstance = $pdo ?? self::resolvePdo($siteDir);
+        self::ensureCliEnvironment($pdoInstance, $siteDir);
+
+        if (empty($username) || strcasecmp($username, 'admin') === 0) {
+            throw new InvalidArgumentException("Internal administrator username is invalid.");
+        }
+
+        $stmtExisting = $pdoInstance->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
+        $stmtExisting->execute([$username]);
+        $userId = $stmtExisting->fetchColumn();
+        $created = false;
+        $temporaryPassword = null;
+
+        if (!$userId) {
+            $temporaryPassword = self::generateTemporaryPassword();
+            $passwordHash = password_hash($temporaryPassword, PASSWORD_DEFAULT);
+
+            $stmtUser = $pdoInstance->prepare("
+                INSERT INTO users (
+                    username, password, fname, lname, authorized, active, calendar,
+                    cal_ui, facility_id, info, main_menu_role, date_created, last_updated
+                ) VALUES (?, 'NoLongerUsed', 'Carelio', 'Administrator', 1, 1, 1, 3, 3, 'Internal Platform Administrator', '', NOW(), NOW())
+            ");
+            $stmtUser->execute([$username]);
+            $userId = (int) $pdoInstance->lastInsertId();
+
+            $stmtSecure = $pdoInstance->prepare("
+                REPLACE INTO users_secure (id, username, password, last_update_password, last_update)
+                VALUES (?, ?, ?, NOW(), NOW())
+            ");
+            $stmtSecure->execute([$userId, $username, $passwordHash]);
+
+            $stmtGroup = $pdoInstance->prepare("INSERT IGNORE INTO `groups` (name, user) VALUES ('Default', ?)");
+            $stmtGroup->execute([$username]);
+
+            $created = true;
+        } else {
+            $userId = (int) $userId;
+            $stmtUpdate = $pdoInstance->prepare("
+                UPDATE users
+                SET fname = 'Carelio',
+                    lname = 'Administrator',
+                    authorized = 1,
+                    active = 1,
+                    calendar = 1,
+                    cal_ui = 3,
+                    facility_id = 3,
+                    info = 'Internal Platform Administrator',
+                    main_menu_role = '',
+                    last_updated = NOW()
+                WHERE id = ?
+            ");
+            $stmtUpdate->execute([$userId]);
+        }
+
+        $gacl = new GaclApi();
+        $aroId = $gacl->get_object_id('users', $username, 'ARO');
+        if (!$aroId) {
+            $gacl->add_object('users', 'Carelio Administrator', $username, 10, 0, 'ARO');
+        }
+
+        $adminGroupId = (int) $gacl->get_group_id('admin', null, 'ARO');
+        if ($adminGroupId) {
+            $gacl->add_group_object($adminGroupId, 'users', $username, 'ARO');
+        }
+
+        $siteAdminGroupId = (int) $gacl->get_group_id(self::GROUP_VALUE, null, 'ARO');
+        if ($siteAdminGroupId) {
+            $gacl->del_group_object($siteAdminGroupId, 'users', $username, 'ARO');
+        }
+
+        if (class_exists(AclMain::class)) {
+            AclMain::clearGaclCache();
+        }
+
+        return [
+            'created' => $created,
+            'username' => $username,
+            'password' => $temporaryPassword,
+            'full_name' => 'Carelio Administrator',
+        ];
+    }
+
+    protected static function generateTemporaryPassword(): string
+    {
+        return rtrim(strtr(base64_encode(random_bytes(18)), '+/', '-_'), '=');
     }
 
     /**
