@@ -1,0 +1,408 @@
+{
+  "id": "med_access",
+  "title": "Med-Access Health Insurance Claim Form",
+  "insurer": "Med-Access",
+  "version": 1,
+  "documentCategory": "Insurance",
+  "maxLineItems": 0,
+  "showTotal": false,
+  "sections": [
+    {
+      "title": "1. Employee / insured",
+      "fields": [
+        {
+          "key": "insured_surname",
+          "label": "Surname",
+          "control": "text"
+        },
+        {
+          "key": "insured_first_name",
+          "label": "First name",
+          "control": "text"
+        },
+        {
+          "key": "insured_dob",
+          "label": "Date of birth",
+          "control": "date"
+        },
+        {
+          "key": "patient_name",
+          "label": "Patient's name",
+          "control": "text"
+        },
+        {
+          "key": "relationship_text",
+          "label": "Relationship",
+          "control": "text"
+        },
+        {
+          "key": "patient_dob",
+          "label": "Patient's date of birth",
+          "control": "date"
+        },
+        {
+          "key": "first_symptoms",
+          "label": "When did the symptoms of the ailment first appear?",
+          "control": "date"
+        },
+        {
+          "key": "prior_ailment",
+          "label": "Have you ever had this ailment before? If yes, when and describe",
+          "control": "text"
+        },
+        {
+          "key": "prior_ailment_more",
+          "label": "Ailment before - continued",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "Cause of condition / co-ordination of benefits",
+      "fields": [
+        {
+          "key": "related_employment",
+          "label": "Is the condition related to (a) employment?",
+          "control": "yesno"
+        },
+        {
+          "key": "related_auto",
+          "label": "(b) auto accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "related_other",
+          "label": "(c) other accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "condition_details",
+          "label": "Details",
+          "control": "text"
+        },
+        {
+          "key": "employer_insurer",
+          "label": "If yes, name of employer's insurer",
+          "control": "text"
+        },
+        {
+          "key": "other_plan",
+          "label": "Is the patient covered by any other plan for this injury or sickness?",
+          "control": "yesno"
+        },
+        {
+          "key": "other_plan_company",
+          "label": "Other plan: name of insurance company",
+          "control": "text"
+        },
+        {
+          "key": "other_plan_insured",
+          "label": "Other plan: insured's name",
+          "control": "text"
+        },
+        {
+          "key": "other_plan_group",
+          "label": "Other plan: group or company insured under",
+          "control": "text"
+        },
+        {
+          "key": "pay_to",
+          "label": "Authorize payment to",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "2. Human resources department",
+      "fields": [
+        {
+          "key": "policy_holder",
+          "label": "Policy holder",
+          "control": "text"
+        },
+        {
+          "key": "policy_no",
+          "label": "Policy No.",
+          "control": "text"
+        },
+        {
+          "key": "certificate_no",
+          "label": "Employee certificate No.",
+          "control": "text"
+        },
+        {
+          "key": "effective_date",
+          "label": "Effective date",
+          "control": "date"
+        },
+        {
+          "key": "workmens_claim",
+          "label": "Has the employee made a claim for Workmen's Compensation?",
+          "control": "yesno"
+        },
+        {
+          "key": "workmens_entitled",
+          "label": "Is he/she entitled to such benefits?",
+          "control": "yesno"
+        }
+      ]
+    },
+    {
+      "title": "3. Optician / ophthalmologist / optometrist",
+      "fields": [
+        {
+          "key": "optician_rows",
+          "label": "Services",
+          "control": "rows",
+          "max": 5,
+          "columns": [
+            {
+              "key": "dx",
+              "label": "Diagnosis",
+              "type": "icd"
+            },
+            {
+              "key": "date",
+              "label": "Date of service",
+              "type": "date"
+            },
+            {
+              "key": "desc",
+              "label": "Description of service",
+              "type": "text"
+            },
+            {
+              "key": "amount",
+              "label": "Charge",
+              "type": "money"
+            }
+          ]
+        },
+        {
+          "key": "opt_lens",
+          "label": "Lens type",
+          "control": "radio",
+          "options": [
+            [
+              "single",
+              "Single"
+            ],
+            [
+              "bifocal",
+              "Bi-focal"
+            ],
+            [
+              "lenticular",
+              "Lenticular"
+            ],
+            [
+              "contact",
+              "Contact lenses"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "4. Physician / health provider",
+      "fields": [
+        {
+          "key": "doc_rows",
+          "label": "Visits and services",
+          "control": "rows",
+          "max": 5,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date of visit",
+              "type": "date"
+            },
+            {
+              "key": "icd",
+              "label": "Diagnosis / ICD code",
+              "type": "icd"
+            },
+            {
+              "key": "fee",
+              "label": "Visit fee",
+              "type": "money"
+            },
+            {
+              "key": "visit_type",
+              "label": "Type of visit",
+              "type": "text"
+            },
+            {
+              "key": "desc",
+              "label": "Service rendered",
+              "type": "text"
+            },
+            {
+              "key": "amount",
+              "label": "Cost",
+              "type": "money"
+            },
+            {
+              "key": "further",
+              "label": "Further services recommended",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "key": "prev_treated",
+          "label": "Has the patient been previously treated for this condition?",
+          "control": "yesno"
+        },
+        {
+          "key": "first_consult",
+          "label": "Date of the first consultation for this condition",
+          "control": "date"
+        },
+        {
+          "key": "prev_treated_date",
+          "label": "If yes, give date",
+          "control": "date"
+        },
+        {
+          "key": "referred",
+          "label": "Was the patient referred?",
+          "control": "yesno"
+        },
+        {
+          "key": "referring_physician",
+          "label": "If yes, name of referring doctor",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "Surgical procedures",
+      "fields": [
+        {
+          "key": "op_date",
+          "label": "Date of surgery",
+          "control": "date"
+        },
+        {
+          "key": "op_surgeon_fee_amount",
+          "label": "Surgeon's fee",
+          "control": "money"
+        },
+        {
+          "key": "op_assistant_fee_amount",
+          "label": "Assistant surgeon's fee",
+          "control": "money"
+        },
+        {
+          "key": "op_anesthetist_fee_amount",
+          "label": "Anaesthetist's fee",
+          "control": "money"
+        },
+        {
+          "key": "op_type_ml",
+          "label": "Describe procedure(s) performed",
+          "control": "textarea"
+        }
+      ]
+    },
+    {
+      "title": "Maternity",
+      "fields": [
+        {
+          "key": "lmp_date",
+          "label": "Date pregnancy commenced",
+          "control": "date"
+        },
+        {
+          "key": "delivery_date",
+          "label": "Date of delivery or termination",
+          "control": "date"
+        },
+        {
+          "key": "delivery_type",
+          "label": "Type of delivery",
+          "control": "text"
+        },
+        {
+          "key": "obstetrical_fee_amount",
+          "label": "Obstetrical fee",
+          "control": "money"
+        }
+      ]
+    },
+    {
+      "title": "5. Dentist",
+      "fields": [
+        {
+          "key": "dentist_name",
+          "label": "Dentist",
+          "control": "text"
+        },
+        {
+          "key": "dentist_phone",
+          "label": "Tel. No.",
+          "control": "text"
+        },
+        {
+          "key": "dent_occ",
+          "label": "(a) Is treatment a result of occupational illness or injury?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_auto",
+          "label": "(b) Is treatment a result of auto accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_other_accident",
+          "label": "(c) Other accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_ortho",
+          "label": "(d) Orthodontic treatment?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_details_ml",
+          "label": "Details (if yes)",
+          "control": "textarea"
+        },
+        {
+          "key": "dent_rows",
+          "label": "List of services",
+          "control": "rows",
+          "max": 5,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date of service",
+              "type": "date"
+            },
+            {
+              "key": "tooth",
+              "label": "Tooth # or letter",
+              "type": "text"
+            },
+            {
+              "key": "surface",
+              "label": "Surface(s)",
+              "type": "text"
+            },
+            {
+              "key": "desc",
+              "label": "Description of service",
+              "type": "text"
+            },
+            {
+              "key": "amount",
+              "label": "Charge",
+              "type": "money"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

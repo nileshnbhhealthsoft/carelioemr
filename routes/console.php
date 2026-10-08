@@ -22,6 +22,7 @@ Artisan::command('admin:create {--email=} {--password=} {--name=}', function () 
         [
             'name' => $name,
             'password' => \Illuminate\Support\Facades\Hash::make($password),
+            'is_admin' => true,
             'email_verified_at' => now(),
         ]
     );
@@ -29,4 +30,3 @@ Artisan::command('admin:create {--email=} {--password=} {--name=}', function () 
     $this->info("Administrator [{$user->email}] successfully saved to database!");
     return 0;
 })->purpose('Create or update an administrator account safely without hardcoding in .env');
-

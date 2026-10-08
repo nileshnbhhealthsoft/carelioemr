@@ -1,0 +1,723 @@
+{
+  "id": "dental_claim_form_available_on_portal",
+  "title": "CG United Dental Claim Form",
+  "insurer": "CG United / Coralisle",
+  "version": 1,
+  "documentCategory": "Insurance",
+  "maxLineItems": 0,
+  "showTotal": false,
+  "sections": [
+    {
+      "title": "Part 1 - Employee / insured",
+      "fields": [
+        {
+          "key": "claim_no",
+          "label": "Claim No.",
+          "control": "text"
+        },
+        {
+          "key": "insured_name",
+          "label": "Full name of insured",
+          "control": "text"
+        },
+        {
+          "key": "effective_termination",
+          "label": "Effective and/or termination date",
+          "control": "text"
+        },
+        {
+          "key": "policy_no",
+          "label": "Group policy No.",
+          "control": "text"
+        },
+        {
+          "key": "certificate_no",
+          "label": "Certificate No.",
+          "control": "text"
+        },
+        {
+          "key": "employer_name",
+          "label": "Employer name",
+          "control": "text"
+        },
+        {
+          "key": "employer_address",
+          "label": "Employer's mailing address",
+          "control": "text"
+        },
+        {
+          "key": "employer_phone",
+          "label": "Employer tel. no.",
+          "control": "text"
+        },
+        {
+          "key": "patient_name",
+          "label": "Full name of patient",
+          "control": "text"
+        },
+        {
+          "key": "address",
+          "label": "Patient's mailing address",
+          "control": "text"
+        },
+        {
+          "key": "telephone",
+          "label": "Patient tel. no.",
+          "control": "text"
+        },
+        {
+          "key": "patient_dob",
+          "label": "Patient's date of birth",
+          "control": "date"
+        },
+        {
+          "key": "gender",
+          "label": "Patient's gender",
+          "control": "radio",
+          "options": [
+            [
+              "male",
+              "Male"
+            ],
+            [
+              "female",
+              "Female"
+            ]
+          ]
+        },
+        {
+          "key": "relationship",
+          "label": "Relationship to insured",
+          "control": "radio",
+          "options": [
+            [
+              "self",
+              "Self"
+            ],
+            [
+              "spouse",
+              "Spouse"
+            ],
+            [
+              "child",
+              "Child"
+            ],
+            [
+              "other",
+              "Other"
+            ]
+          ]
+        },
+        {
+          "key": "relationship_other",
+          "label": "Relationship - other (describe)",
+          "control": "text"
+        },
+        {
+          "key": "other_plan_details_ml",
+          "label": "Other dental coverage: policy holder and policy number",
+          "control": "textarea"
+        }
+      ]
+    },
+    {
+      "title": "Dentist",
+      "fields": [
+        {
+          "key": "dentist_name",
+          "label": "Name of dentist",
+          "control": "text"
+        },
+        {
+          "key": "dentist_address",
+          "label": "Address of dentist",
+          "control": "text"
+        },
+        {
+          "key": "assign_benefit",
+          "label": "Assignment of benefit: pay the dentist directly",
+          "control": "yesno"
+        }
+      ]
+    },
+    {
+      "title": "Part 2 - Attending dentist",
+      "fields": [
+        {
+          "key": "specialist",
+          "label": "Specialist in",
+          "control": "radio",
+          "options": [
+            [
+              "orthodontics",
+              "Orthodontics"
+            ],
+            [
+              "endodontics",
+              "Endodontics"
+            ],
+            [
+              "oral_surgery",
+              "Oral surgery"
+            ],
+            [
+              "periodontics",
+              "Periodontics"
+            ],
+            [
+              "other",
+              "Other"
+            ]
+          ]
+        },
+        {
+          "key": "specialist_other",
+          "label": "Specialist - other",
+          "control": "text"
+        },
+        {
+          "key": "dent_first_visit",
+          "label": "Date of first visit in current series",
+          "control": "date"
+        },
+        {
+          "key": "dentist_phone",
+          "label": "Dentist tel. no.",
+          "control": "text"
+        },
+        {
+          "key": "dent_initial",
+          "label": "1. If prosthesis, is this the initial replacement?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_prior_date",
+          "label": "If no, date of prior replacement",
+          "control": "date"
+        },
+        {
+          "key": "dent_ortho",
+          "label": "2. Is this treatment for orthodontics?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_ortho_start",
+          "label": "If yes, date service commenced",
+          "control": "date"
+        },
+        {
+          "key": "dent_appliances_date",
+          "label": "Date appliances placed",
+          "control": "date"
+        },
+        {
+          "key": "dent_months_left",
+          "label": "Months of treatment remaining",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "Part 3 - Examination and treatment plan",
+      "fields": [
+        {
+          "key": "dental_rows",
+          "label": "Examination and treatment plan (list in order of tooth no.)",
+          "control": "rows",
+          "max": 14,
+          "columns": [
+            {
+              "key": "tooth",
+              "label": "Tooth no. or letter",
+              "type": "text"
+            },
+            {
+              "key": "surface",
+              "label": "Surface",
+              "type": "text"
+            },
+            {
+              "key": "code",
+              "label": "Dental code",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- choose code -",
+                  "groups": [
+                    {
+                      "label": "Diagnostic - oral evaluations",
+                      "options": [
+                        [
+                          "D0120",
+                          "D0120 Periodic oral evaluation - established patient",
+                          "Periodic oral evaluation - established patient"
+                        ],
+                        [
+                          "D0140",
+                          "D0140 Limited oral evaluation - problem focused",
+                          "Limited oral evaluation - problem focused"
+                        ],
+                        [
+                          "D0150",
+                          "D0150 Comprehensive oral evaluation - new established patient",
+                          "Comprehensive oral evaluation - new established patient"
+                        ],
+                        [
+                          "D0160",
+                          "D0160 Detailed and extensive oral evaluation, problem focused by report",
+                          "Detailed and extensive oral evaluation, problem focused by report"
+                        ],
+                        [
+                          "D0180",
+                          "D0180 Comprehensive periodontal evaluation",
+                          "Comprehensive periodontal evaluation"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Diagnostic - X-rays",
+                      "options": [
+                        [
+                          "D0210",
+                          "D0210 Intraoral - complete series of radiographic images",
+                          "Intraoral - complete series of radiographic images"
+                        ],
+                        [
+                          "D0220",
+                          "D0220 Intraoral - periapical first radiographic image",
+                          "Intraoral - periapical first radiographic image"
+                        ],
+                        [
+                          "D0230",
+                          "D0230 Intraoral - periapical each additional image",
+                          "Intraoral - periapical each additional image"
+                        ],
+                        [
+                          "D0240",
+                          "D0240 Intraoral - occlusal radiographic image",
+                          "Intraoral - occlusal radiographic image"
+                        ],
+                        [
+                          "D0270",
+                          "D0270 Bitewing - single radiographic image",
+                          "Bitewing - single radiographic image"
+                        ],
+                        [
+                          "D0272",
+                          "D0272 Bitewings - two radiographic images",
+                          "Bitewings - two radiographic images"
+                        ],
+                        [
+                          "D0274",
+                          "D0274 Bitewings - four radiographic images",
+                          "Bitewings - four radiographic images"
+                        ],
+                        [
+                          "D0330",
+                          "D0330 Panoramic radiographic image",
+                          "Panoramic radiographic image"
+                        ],
+                        [
+                          "D0470",
+                          "D0470 Diagnostic casts",
+                          "Diagnostic casts"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Preventive",
+                      "options": [
+                        [
+                          "D1110",
+                          "D1110 Prophylaxis - adult",
+                          "Prophylaxis - adult"
+                        ],
+                        [
+                          "D1120",
+                          "D1120 Prophylaxis - child",
+                          "Prophylaxis - child"
+                        ],
+                        [
+                          "D1206",
+                          "D1206 Topical application of fluoride varnish",
+                          "Topical application of fluoride varnish"
+                        ],
+                        [
+                          "D1208",
+                          "D1208 Topical application of fluoride excl. varnish",
+                          "Topical application of fluoride excl. varnish"
+                        ],
+                        [
+                          "D1351",
+                          "D1351 Sealant - per tooth",
+                          "Sealant - per tooth"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Restorative - fillings",
+                      "options": [
+                        [
+                          "D2140",
+                          "D2140 Amalgam - one surface",
+                          "Amalgam - one surface"
+                        ],
+                        [
+                          "D2150",
+                          "D2150 Amalgam - two surfaces",
+                          "Amalgam - two surfaces"
+                        ],
+                        [
+                          "D2160",
+                          "D2160 Amalgam - three surfaces",
+                          "Amalgam - three surfaces"
+                        ],
+                        [
+                          "D2330",
+                          "D2330 Resin composite - one surface, anterior",
+                          "Resin composite - one surface, anterior"
+                        ],
+                        [
+                          "D2331",
+                          "D2331 Resin composite - two surfaces, anterior",
+                          "Resin composite - two surfaces, anterior"
+                        ],
+                        [
+                          "D2332",
+                          "D2332 Resin composite - three surfaces, anterior",
+                          "Resin composite - three surfaces, anterior"
+                        ],
+                        [
+                          "D2335",
+                          "D2335 Resin composite - four or more surfaces",
+                          "Resin composite - four or more surfaces"
+                        ],
+                        [
+                          "D2391",
+                          "D2391 Resin composite - one surface, posterior",
+                          "Resin composite - one surface, posterior"
+                        ],
+                        [
+                          "D2392",
+                          "D2392 Resin composite - two surfaces, posterior",
+                          "Resin composite - two surfaces, posterior"
+                        ],
+                        [
+                          "D2393",
+                          "D2393 Resin composite - three surfaces, posterior",
+                          "Resin composite - three surfaces, posterior"
+                        ],
+                        [
+                          "D2394",
+                          "D2394 Resin composite - four or more surfaces, posterior",
+                          "Resin composite - four or more surfaces, posterior"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Restorative - crowns and other",
+                      "options": [
+                        [
+                          "D2710",
+                          "D2710 Crown - resin-based composite (indirect)",
+                          "Crown - resin-based composite (indirect)"
+                        ],
+                        [
+                          "D2740",
+                          "D2740 Crown - porcelain/ceramic",
+                          "Crown - porcelain/ceramic"
+                        ],
+                        [
+                          "D2750",
+                          "D2750 Crown - porcelain fused to high noble metal",
+                          "Crown - porcelain fused to high noble metal"
+                        ],
+                        [
+                          "D2751",
+                          "D2751 Crown - porcelain fused to predominantly base metal",
+                          "Crown - porcelain fused to predominantly base metal"
+                        ],
+                        [
+                          "D2752",
+                          "D2752 Crown - porcelain fused to noble metal",
+                          "Crown - porcelain fused to noble metal"
+                        ],
+                        [
+                          "D2792",
+                          "D2792 Crown - full cast noble metal",
+                          "Crown - full cast noble metal"
+                        ],
+                        [
+                          "D2910",
+                          "D2910 Re-cement or re-bond inlay, onlay, veneer or partial coverage restoration",
+                          "Re-cement or re-bond inlay, onlay, veneer or partial coverage restoration"
+                        ],
+                        [
+                          "D2920",
+                          "D2920 Re-cement or re-bond crown",
+                          "Re-cement or re-bond crown"
+                        ],
+                        [
+                          "D2930",
+                          "D2930 Pre-fabricated stainless steel crown - primary tooth",
+                          "Pre-fabricated stainless steel crown - primary tooth"
+                        ],
+                        [
+                          "D2940",
+                          "D2940 Protective restoration",
+                          "Protective restoration"
+                        ],
+                        [
+                          "D2950",
+                          "D2950 Core build-up, including any pins",
+                          "Core build-up, including any pins"
+                        ],
+                        [
+                          "D2952",
+                          "D2952 Post and core in addition to crown, indirectly fabricated",
+                          "Post and core in addition to crown, indirectly fabricated"
+                        ],
+                        [
+                          "D2954",
+                          "D2954 Prefabricated post and core in addition to crown",
+                          "Prefabricated post and core in addition to crown"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Endodontics",
+                      "options": [
+                        [
+                          "D3220",
+                          "D3220 Therapeutic pulpotomy (excl. final restoration)",
+                          "Therapeutic pulpotomy (excl. final restoration)"
+                        ],
+                        [
+                          "D3310",
+                          "D3310 Endodontic therapy, anterior tooth",
+                          "Endodontic therapy, anterior tooth"
+                        ],
+                        [
+                          "D3320",
+                          "D3320 Endodontic therapy, premolar tooth",
+                          "Endodontic therapy, premolar tooth"
+                        ],
+                        [
+                          "D3330",
+                          "D3330 Endodontic therapy, molar tooth",
+                          "Endodontic therapy, molar tooth"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Periodontics",
+                      "options": [
+                        [
+                          "D4260",
+                          "D4260 Osseous surgery - four or more contiguous teeth or per quadrant",
+                          "Osseous surgery - four or more contiguous teeth or per quadrant"
+                        ],
+                        [
+                          "D4261",
+                          "D4261 Osseous surgery - one to three contiguous teeth or per quadrant",
+                          "Osseous surgery - one to three contiguous teeth or per quadrant"
+                        ],
+                        [
+                          "D4263",
+                          "D4263 Bone replacement graft, retained natural tooth, first site in quadrant",
+                          "Bone replacement graft, retained natural tooth, first site in quadrant"
+                        ],
+                        [
+                          "D4341",
+                          "D4341 Periodontal scaling and root planing - four or more teeth per quadrant",
+                          "Periodontal scaling and root planing - four or more teeth per quadrant"
+                        ],
+                        [
+                          "D4342",
+                          "D4342 Periodontal scaling and root planing - one to three teeth per quadrant",
+                          "Periodontal scaling and root planing - one to three teeth per quadrant"
+                        ],
+                        [
+                          "D4355",
+                          "D4355 Full mouth debridement",
+                          "Full mouth debridement"
+                        ],
+                        [
+                          "D4910",
+                          "D4910 Periodontal maintenance",
+                          "Periodontal maintenance"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Prosthodontics and implants",
+                      "options": [
+                        [
+                          "D5110",
+                          "D5110 Complete denture (maxillary)",
+                          "Complete denture (maxillary)"
+                        ],
+                        [
+                          "D5211",
+                          "D5211 Partial denture - resin-based (maxillary)",
+                          "Partial denture - resin-based (maxillary)"
+                        ],
+                        [
+                          "D5212",
+                          "D5212 Partial denture - resin-based (mandibular)",
+                          "Partial denture - resin-based (mandibular)"
+                        ],
+                        [
+                          "D5650",
+                          "D5650 Add tooth to existing partial denture",
+                          "Add tooth to existing partial denture"
+                        ],
+                        [
+                          "D6240",
+                          "D6240 Pontic - porcelain fused to high noble metal",
+                          "Pontic - porcelain fused to high noble metal"
+                        ],
+                        [
+                          "D6010",
+                          "D6010 Surgical placement of implant body: endosteal implant",
+                          "Surgical placement of implant body: endosteal implant"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Oral and maxillofacial surgery",
+                      "options": [
+                        [
+                          "D7111",
+                          "D7111 Extraction, coronal remnants - primary tooth",
+                          "Extraction, coronal remnants - primary tooth"
+                        ],
+                        [
+                          "D7140",
+                          "D7140 Extraction, erupted tooth or exposed root",
+                          "Extraction, erupted tooth or exposed root"
+                        ],
+                        [
+                          "D7210",
+                          "D7210 Extraction, erupted tooth requiring removal of bone",
+                          "Extraction, erupted tooth requiring removal of bone"
+                        ],
+                        [
+                          "D7220",
+                          "D7220 Removal of impacted tooth - soft tissue",
+                          "Removal of impacted tooth - soft tissue"
+                        ],
+                        [
+                          "D7230",
+                          "D7230 Removal of impacted tooth - partially bony",
+                          "Removal of impacted tooth - partially bony"
+                        ],
+                        [
+                          "D7240",
+                          "D7240 Removal of impacted tooth - completely bony",
+                          "Removal of impacted tooth - completely bony"
+                        ],
+                        [
+                          "D7250",
+                          "D7250 Removal of residual tooth roots (cutting procedure)",
+                          "Removal of residual tooth roots (cutting procedure)"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Orthodontics",
+                      "options": [
+                        [
+                          "D8030",
+                          "D8030 Limited orthodontic treatment of the adolescent dentition",
+                          "Limited orthodontic treatment of the adolescent dentition"
+                        ],
+                        [
+                          "D8040",
+                          "D8040 Limited orthodontic treatment of the adult dentition",
+                          "Limited orthodontic treatment of the adult dentition"
+                        ],
+                        [
+                          "D8070",
+                          "D8070 Comprehensive orthodontic treatment of the adolescent dentition",
+                          "Comprehensive orthodontic treatment of the adolescent dentition"
+                        ],
+                        [
+                          "D8080",
+                          "D8080 Comprehensive orthodontic treatment of the adult dentition",
+                          "Comprehensive orthodontic treatment of the adult dentition"
+                        ],
+                        [
+                          "D8696",
+                          "D8696 Repair of orthodontic appliance - maxillary",
+                          "Repair of orthodontic appliance - maxillary"
+                        ],
+                        [
+                          "D8697",
+                          "D8697 Repair of orthodontic appliance - mandibular",
+                          "Repair of orthodontic appliance - mandibular"
+                        ]
+                      ]
+                    },
+                    {
+                      "label": "Miscellaneous",
+                      "options": [
+                        [
+                          "D9110",
+                          "D9110 Palliative (emergency) treatment of dental pain - minor procedure",
+                          "Palliative (emergency) treatment of dental pain - minor procedure"
+                        ],
+                        [
+                          "D9222",
+                          "D9222 Deep sedation/general anesthesia - first 15 minutes",
+                          "Deep sedation/general anesthesia - first 15 minutes"
+                        ],
+                        [
+                          "D9223",
+                          "D9223 Deep sedation/general anesthesia - each subsequent 15 minutes",
+                          "Deep sedation/general anesthesia - each subsequent 15 minutes"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "other": true,
+              "describes": "desc"
+            },
+            {
+              "key": "desc",
+              "label": "Description of service",
+              "type": "text"
+            },
+            {
+              "key": "date",
+              "label": "Date of service",
+              "type": "date"
+            },
+            {
+              "key": "amount",
+              "label": "Fee",
+              "type": "money"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Part 4 - Dentist's certification",
+      "fields": [
+        {
+          "key": "dentist_paid",
+          "label": "I have been paid",
+          "control": "yesno"
+        },
+        {
+          "key": "items_count",
+          "label": "Number of items provided and completed",
+          "control": "text"
+        }
+      ]
+    }
+  ]
+}

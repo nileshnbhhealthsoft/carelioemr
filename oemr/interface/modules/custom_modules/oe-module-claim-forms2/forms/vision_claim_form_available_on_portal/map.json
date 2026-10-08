@@ -1,0 +1,1489 @@
+{
+  "formId": "vision_claim_form_available_on_portal",
+  "version": 1,
+  "title": "CG United Vision/Eye Care Claim Form",
+  "source_pdf": "Vision Claim Form (Available on Portal).pdf",
+  "coordinate_system": {
+    "origin": "top-left of page",
+    "unit": "pt (1/72 in)",
+    "page_width": 612,
+    "page_height": 792,
+    "text_xy": "x = left edge (or right edge when align is right, centre when align is center); y = text BASELINE",
+    "checkbox_xy": "cx, cy = centre of the printed box"
+  },
+  "defaults": {
+    "font": "Helvetica",
+    "size": 9,
+    "colour": "#000000"
+  },
+  "max_line_items": 0,
+  "pages": {
+    "1": {
+      "fields": {
+        "claim_no": {
+          "type": "text",
+          "x": 460,
+          "y": 87,
+          "w": 111,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "claim_no"
+        },
+        "insured_name": {
+          "type": "text",
+          "x": 135,
+          "y": 204,
+          "w": 434,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "insured_name"
+        },
+        "policy_no": {
+          "type": "text",
+          "x": 87,
+          "y": 225,
+          "w": 206,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "policy_no"
+        },
+        "certificate_no": {
+          "type": "text",
+          "x": 373,
+          "y": 225,
+          "w": 196,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "certificate_no"
+        },
+        "employer_name": {
+          "type": "text",
+          "x": 124,
+          "y": 246,
+          "w": 445,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "employer_name"
+        },
+        "patient_name": {
+          "type": "text",
+          "x": 130,
+          "y": 267,
+          "w": 439,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "patient_name"
+        },
+        "address": {
+          "type": "text",
+          "x": 151,
+          "y": 288,
+          "w": 418,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "address"
+        },
+        "patient_dob": {
+          "type": "text",
+          "x": 195,
+          "y": 309,
+          "w": 109,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "patient_dob",
+          "format": "DD/MM/YY"
+        },
+        "gender_male": {
+          "type": "checkbox",
+          "cx": 436.0,
+          "cy": 305.5,
+          "mark": "X",
+          "size": 9,
+          "source": "gender",
+          "equals": "male"
+        },
+        "gender_female": {
+          "type": "checkbox",
+          "cx": 490.0,
+          "cy": 305.5,
+          "mark": "X",
+          "size": 9,
+          "source": "gender",
+          "equals": "female"
+        },
+        "relationship_self": {
+          "type": "checkbox",
+          "cx": 158.0,
+          "cy": 326.5,
+          "mark": "X",
+          "size": 9,
+          "source": "relationship",
+          "equals": "self"
+        },
+        "relationship_spouse": {
+          "type": "checkbox",
+          "cx": 197.0,
+          "cy": 326.5,
+          "mark": "X",
+          "size": 9,
+          "source": "relationship",
+          "equals": "spouse"
+        },
+        "relationship_child": {
+          "type": "checkbox",
+          "cx": 250.0,
+          "cy": 326.5,
+          "mark": "X",
+          "size": 9,
+          "source": "relationship",
+          "equals": "child"
+        },
+        "relationship_other": {
+          "type": "checkbox",
+          "cx": 302.0,
+          "cy": 326.5,
+          "mark": "X",
+          "size": 9,
+          "source": "relationship",
+          "equals": "other"
+        },
+        "relationship_other_2": {
+          "type": "text",
+          "x": 340,
+          "y": 330,
+          "w": 229,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "relationship_other"
+        },
+        "other_plan_details_ml": {
+          "type": "multiline",
+          "x": 481,
+          "y": 342.0,
+          "w": 88,
+          "maxLines": 2,
+          "size": 6.5,
+          "lineBaselines": [
+            342.0,
+            350.5
+          ],
+          "source": "other_plan_details_ml",
+          "min_size": 5
+        },
+        "provider_name": {
+          "type": "text",
+          "x": 108,
+          "y": 372,
+          "w": 288,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "provider_name"
+        },
+        "provider_phone_area": {
+          "type": "text",
+          "x": 461,
+          "y": 372,
+          "w": 23,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "provider_phone_area"
+        },
+        "provider_phone": {
+          "type": "text",
+          "x": 492,
+          "y": 372,
+          "w": 82,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "provider_phone"
+        },
+        "provider_address": {
+          "type": "text",
+          "x": 114,
+          "y": 393,
+          "w": 460,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "provider_address"
+        },
+        "assign_policy": {
+          "type": "text",
+          "x": 205,
+          "y": 517,
+          "w": 223,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "assign_policy"
+        },
+        "patient_signatures": {
+          "type": "reserved",
+          "note": "Patient / authorised person signatures and dates are signed by hand. Never stamp.",
+          "boxes": [
+            {
+              "x": 225,
+              "y": 449,
+              "w": 205,
+              "h": 19
+            },
+            {
+              "x": 457,
+              "y": 452,
+              "w": 114,
+              "h": 19
+            },
+            {
+              "x": 225,
+              "y": 548,
+              "w": 205,
+              "h": 19
+            },
+            {
+              "x": 457,
+              "y": 551,
+              "w": 114,
+              "h": 19
+            }
+          ]
+        }
+      }
+    },
+    "2": {
+      "fields": {
+        "vis_proc_checks_92004_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 176.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.92004.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_92004_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 179,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.92004.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_92014_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 187.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.92014.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_92014_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 190,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.92014.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_92081_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 198.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.92081.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_92081_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 202,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.92081.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_v2020_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 210.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.V2020.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_v2020_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 213,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.V2020.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_v2100_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 220.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.V2100.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_v2100_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 224,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.V2100.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_v2200_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 232.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.V2200.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_v2200_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 235,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.V2200.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_v2300_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 243.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.V2300.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_v2300_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 246,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.V2300.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_v2500_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 254.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.V2500.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_v2500_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 257,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.V2500.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_v2740_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 266.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.V2740.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_v2740_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 269,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.V2740.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_v2750_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 276.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.V2750.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_v2750_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 279,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.V2750.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_v2760_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 288.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.V2760.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_v2760_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 291,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.V2760.fee",
+          "format": "money"
+        },
+        "vis_proc_checks_v2781_on": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 299.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_checks.V2781.on",
+          "equals": "1"
+        },
+        "vis_proc_checks_v2781_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 302,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_checks.V2781.fee",
+          "format": "money"
+        },
+        "vis_proc_x1_code": {
+          "type": "text",
+          "x": 55,
+          "y": 312.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.0.code"
+        },
+        "vis_proc_x1_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 312.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.0.desc"
+        },
+        "vis_proc_x1_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 312.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.0.amount",
+          "format": "money"
+        },
+        "vis_proc_x2_code": {
+          "type": "text",
+          "x": 55,
+          "y": 323.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.1.code"
+        },
+        "vis_proc_x2_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 323.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.1.desc"
+        },
+        "vis_proc_x2_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 323.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.1.amount",
+          "format": "money"
+        },
+        "vis_proc_x3_code": {
+          "type": "text",
+          "x": 55,
+          "y": 334.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.2.code"
+        },
+        "vis_proc_x3_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 334.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.2.desc"
+        },
+        "vis_proc_x3_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 334.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.2.amount",
+          "format": "money"
+        },
+        "vis_proc_x4_code": {
+          "type": "text",
+          "x": 55,
+          "y": 345.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.3.code"
+        },
+        "vis_proc_x4_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 345.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.3.desc"
+        },
+        "vis_proc_x4_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 345.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.3.amount",
+          "format": "money"
+        },
+        "vis_proc_x5_code": {
+          "type": "text",
+          "x": 55,
+          "y": 356.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.4.code"
+        },
+        "vis_proc_x5_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 356.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.4.desc"
+        },
+        "vis_proc_x5_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 356.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.4.amount",
+          "format": "money"
+        },
+        "vis_proc_x6_code": {
+          "type": "text",
+          "x": 55,
+          "y": 367.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.5.code"
+        },
+        "vis_proc_x6_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 367.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.5.desc"
+        },
+        "vis_proc_x6_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 367.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.5.amount",
+          "format": "money"
+        },
+        "vis_proc_x7_code": {
+          "type": "text",
+          "x": 55,
+          "y": 379.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.6.code"
+        },
+        "vis_proc_x7_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 379.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.6.desc"
+        },
+        "vis_proc_x7_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 379.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_proc_rows.6.amount",
+          "format": "money"
+        },
+        "vis_proc_x1_tick": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 310.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_rows.0.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_proc_x2_tick": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 322.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_rows.1.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_proc_x3_tick": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 333.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_rows.2.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_proc_x4_tick": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 344.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_rows.3.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_proc_x5_tick": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 355.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_rows.4.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_proc_x6_tick": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 366.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_rows.5.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_proc_x7_tick": {
+          "type": "checkbox",
+          "cx": 45.0,
+          "cy": 377.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_proc_rows.6.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_dx_checks_h52_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 398.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H52.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h52_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 402,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H52.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_h52_0_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 410.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H52_0.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h52_0_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 414,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H52_0.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_h52_03_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 421.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H52_03.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h52_03_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 425,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H52_03.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_h52_1_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 433.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H52_1.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h52_1_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 436,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H52_1.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_h52_13_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 444.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H52_13.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h52_13_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 448,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H52_13.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_h52_221_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 455.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H52_221.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h52_221_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 458,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H52_221.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_h52_222_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 466.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H52_222.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h52_222_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 469,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H52_222.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_h52_223_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 477.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H52_223.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h52_223_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 481,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H52_223.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_h52_4_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 488.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H52_4.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h52_4_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 492,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H52_4.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_h53_02_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 500.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.H53_02.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_h53_02_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 503,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.H53_02.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_z01_0_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 510.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.Z01_0.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_z01_0_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 514,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.Z01_0.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_z01_00_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 522.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.Z01_00.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_z01_00_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 526,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.Z01_00.fee",
+          "format": "money"
+        },
+        "vis_dx_checks_z01_01_on": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 533.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_checks.Z01_01.on",
+          "equals": "1"
+        },
+        "vis_dx_checks_z01_01_fee": {
+          "type": "text",
+          "x": 408,
+          "y": 537,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_checks.Z01_01.fee",
+          "format": "money"
+        },
+        "vis_dx_x1_code": {
+          "type": "text",
+          "x": 55,
+          "y": 546.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.0.code"
+        },
+        "vis_dx_x1_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 546.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.0.desc"
+        },
+        "vis_dx_x1_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 546.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.0.amount",
+          "format": "money"
+        },
+        "vis_dx_x2_code": {
+          "type": "text",
+          "x": 55,
+          "y": 557.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.1.code"
+        },
+        "vis_dx_x2_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 557.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.1.desc"
+        },
+        "vis_dx_x2_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 557.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.1.amount",
+          "format": "money"
+        },
+        "vis_dx_x3_code": {
+          "type": "text",
+          "x": 55,
+          "y": 568.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.2.code"
+        },
+        "vis_dx_x3_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 568.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.2.desc"
+        },
+        "vis_dx_x3_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 568.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.2.amount",
+          "format": "money"
+        },
+        "vis_dx_x4_code": {
+          "type": "text",
+          "x": 55,
+          "y": 579.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.3.code"
+        },
+        "vis_dx_x4_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 579.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.3.desc"
+        },
+        "vis_dx_x4_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 579.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.3.amount",
+          "format": "money"
+        },
+        "vis_dx_x5_code": {
+          "type": "text",
+          "x": 55,
+          "y": 590.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.4.code"
+        },
+        "vis_dx_x5_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 590.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.4.desc"
+        },
+        "vis_dx_x5_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 590.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.4.amount",
+          "format": "money"
+        },
+        "vis_dx_x6_code": {
+          "type": "text",
+          "x": 55,
+          "y": 602.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.5.code"
+        },
+        "vis_dx_x6_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 602.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.5.desc"
+        },
+        "vis_dx_x6_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 602.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.5.amount",
+          "format": "money"
+        },
+        "vis_dx_x7_code": {
+          "type": "text",
+          "x": 55,
+          "y": 613.8,
+          "w": 38,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.6.code"
+        },
+        "vis_dx_x7_desc": {
+          "type": "text",
+          "x": 98,
+          "y": 613.8,
+          "w": 240,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.6.desc"
+        },
+        "vis_dx_x7_amount": {
+          "type": "text",
+          "x": 408,
+          "y": 613.8,
+          "w": 67,
+          "size": 8,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vis_dx_rows.6.amount",
+          "format": "money"
+        },
+        "vis_dx_x1_tick": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 544.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_rows.0.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_dx_x2_tick": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 556.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_rows.1.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_dx_x3_tick": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 567.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_rows.2.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_dx_x4_tick": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 578.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_rows.3.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_dx_x5_tick": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 589.0,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_rows.4.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_dx_x6_tick": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 600.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_rows.5.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_dx_x7_tick": {
+          "type": "checkbox",
+          "cx": 44.0,
+          "cy": 611.5,
+          "mark": "X",
+          "size": 8,
+          "source": "vis_dx_rows.6.amount",
+          "equals": "",
+          "nonempty": true
+        },
+        "vis_dx_other_ml": {
+          "type": "multiline",
+          "x": 39,
+          "y": 645.5,
+          "w": 206,
+          "maxLines": 1,
+          "size": 8,
+          "lineBaselines": [
+            645.5
+          ],
+          "source": "vis_dx_other_ml",
+          "min_size": 5
+        },
+        "total_charges": {
+          "type": "text",
+          "x": 408,
+          "y": 629,
+          "w": 66,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "_sum",
+          "format": "money",
+          "bold": true,
+          "sum_of": [
+            "vis_proc_checks",
+            "vis_dx_checks",
+            "vis_proc_rows",
+            "vis_dx_rows"
+          ]
+        },
+        "payment_made": {
+          "type": "text",
+          "x": 408,
+          "y": 644,
+          "w": 66,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "payment_made",
+          "format": "money"
+        },
+        "provider_signature": {
+          "type": "image",
+          "x": 90,
+          "y": 664,
+          "w": 190,
+          "h": 22,
+          "source": "user_signature",
+          "fit": "contain"
+        },
+        "sign_date": {
+          "type": "text",
+          "x": 496.0,
+          "y": 685,
+          "w": 150,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "generation_date",
+          "format": "DD/MM/YY"
+        }
+      }
+    }
+  }
+}

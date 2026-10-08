@@ -1,0 +1,188 @@
+{
+  "id": "prescription_drug_claim_form_available_on_portal",
+  "title": "CG United Prescription Drug Claim",
+  "insurer": "CG United / Coralisle",
+  "version": 1,
+  "documentCategory": "Insurance",
+  "maxLineItems": 0,
+  "showTotal": false,
+  "sections": [
+    {
+      "title": "Part 1 - Primary insured",
+      "fields": [
+        {
+          "key": "claim_no",
+          "label": "Claim No.",
+          "control": "text"
+        },
+        {
+          "key": "insured_surname",
+          "label": "Surname",
+          "control": "text"
+        },
+        {
+          "key": "insured_first_name",
+          "label": "First name",
+          "control": "text"
+        },
+        {
+          "key": "insured_middle",
+          "label": "Middle initial",
+          "control": "text"
+        },
+        {
+          "key": "certificate_no",
+          "label": "Certificate No.",
+          "control": "text"
+        },
+        {
+          "key": "insured_dob",
+          "label": "Date of birth",
+          "control": "date"
+        },
+        {
+          "key": "address",
+          "label": "Mailing address",
+          "control": "text"
+        },
+        {
+          "key": "phone_home",
+          "label": "Contact no. (H)",
+          "control": "text"
+        },
+        {
+          "key": "phone_work",
+          "label": "Contact no. (W)",
+          "control": "text"
+        },
+        {
+          "key": "phone_cell",
+          "label": "Contact no. (C)",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "Part 2 - Prescription(s) were for",
+      "fields": [
+        {
+          "key": "patient_surname",
+          "label": "Patient surname",
+          "control": "text"
+        },
+        {
+          "key": "patient_first_name",
+          "label": "Patient first name",
+          "control": "text"
+        },
+        {
+          "key": "patient_middle",
+          "label": "Patient middle initial",
+          "control": "text"
+        },
+        {
+          "key": "relationship",
+          "label": "Relationship to insured",
+          "control": "radio",
+          "options": [
+            [
+              "self",
+              "Self"
+            ],
+            [
+              "spouse",
+              "Spouse"
+            ],
+            [
+              "child",
+              "Child"
+            ]
+          ]
+        },
+        {
+          "key": "patient_dob",
+          "label": "Patient date of birth",
+          "control": "date"
+        },
+        {
+          "key": "other_plan",
+          "label": "Is the patient covered by additional health insurance?",
+          "control": "yesno"
+        },
+        {
+          "key": "other_plan_company",
+          "label": "Other carrier name",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "Part 3 - Pharmacy and prescriptions",
+      "fields": [
+        {
+          "key": "pharmacy_name",
+          "label": "Name of pharmacy",
+          "control": "text"
+        },
+        {
+          "key": "vat_reg_no",
+          "label": "VAT Reg. No.",
+          "control": "text"
+        },
+        {
+          "key": "pharmacy_address",
+          "label": "Pharmacy address",
+          "control": "text"
+        },
+        {
+          "key": "pharmacy_phone",
+          "label": "Pharmacy tel. no.",
+          "control": "text"
+        },
+        {
+          "key": "rx_rows",
+          "label": "Prescriptions",
+          "control": "rows",
+          "max": 7,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date",
+              "type": "date"
+            },
+            {
+              "key": "rx_no",
+              "label": "Rx no.",
+              "type": "text"
+            },
+            {
+              "key": "drug_id",
+              "label": "Drug ID (if given)",
+              "type": "text"
+            },
+            {
+              "key": "qty",
+              "label": "Qty",
+              "type": "text"
+            },
+            {
+              "key": "desc",
+              "label": "Description",
+              "type": "text"
+            },
+            {
+              "key": "amount",
+              "label": "Price",
+              "type": "money"
+            }
+          ]
+        },
+        {
+          "key": "vat_amount",
+          "label": "VAT",
+          "control": "money"
+        }
+      ]
+    }
+  ]
+}

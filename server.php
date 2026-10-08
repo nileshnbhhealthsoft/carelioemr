@@ -31,6 +31,62 @@ if ($uri !== '/' && file_exists($publicPath . $uri)) {
     return false;
 }
 
+// Laravel public assets live under public/, but this dev server runs from the project root.
+if ($uri !== '/' && file_exists($publicPath . '/public' . $uri)) {
+    $asset = $publicPath . '/public' . $uri;
+    if (is_file($asset)) {
+        $mimeTypes = [
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'svg' => 'image/svg+xml',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'ico' => 'image/x-icon',
+            'webp' => 'image/webp',
+            'woff2' => 'font/woff2',
+            'ttf' => 'font/ttf',
+        ];
+        $ext = strtolower(pathinfo($asset, PATHINFO_EXTENSION));
+        if (isset($mimeTypes[$ext])) {
+            header('Content-Type: ' . $mimeTypes[$ext]);
+        }
+        readfile($asset);
+        return true;
+    }
+}
+
+// OpenEMR may generate root-relative /index.php links when running at this port.
+// Route those back to the bundled OpenEMR front controller instead of Laravel.
+if ($uri === '/index.php' && !empty($_GET['site'])) {
+    $target = $publicPath . '/oemr/index.php';
+    $_SERVER['SCRIPT_FILENAME'] = $target;
+    $_SERVER['SCRIPT_NAME'] = $uri;
+    $_SERVER['PHP_SELF'] = $uri;
+    chdir(dirname($target));
+    require $target;
+    return true;
+}
+
+// OpenEMR's Laminas/Zend modules are served through their public index.php.
+foreach (['/interface/modules/zend_modules/public', '/oemr/interface/modules/zend_modules/public'] as $zendPrefix) {
+    if ($uri === $zendPrefix || str_starts_with($uri, $zendPrefix . '/')) {
+        $pathInfo = substr($uri, strlen($zendPrefix));
+        if ($pathInfo === '' || $pathInfo === '/') {
+            $pathInfo = '/';
+        }
+        $target = $publicPath . '/oemr/interface/modules/zend_modules/public/index.php';
+        $_SERVER['SCRIPT_FILENAME'] = $target;
+        $_SERVER['SCRIPT_NAME'] = $zendPrefix . '/index.php';
+        $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . ($pathInfo === '/' ? '' : $pathInfo);
+        $_SERVER['PATH_INFO'] = $pathInfo;
+        chdir(dirname($target));
+        require $target;
+        return true;
+    }
+}
+
 // Emulate Apache rewrite for OpenEMR paths: /interface/... -> /oemr/interface/...
 if (preg_match('#^/(interface|portal|apis|library|custom|sites|templates|swagger|ccdaservice)(/.*)?$#', $uri)) {
     $target = $publicPath . '/oemr' . $uri;
@@ -47,5 +103,4 @@ if (preg_match('#^/(interface|portal|apis|library|custom|sites|templates|swagger
     }
 }
 
-require_once $publicPath . '/index.php';
-
+require_once $publicPath . '/public/index.php';
