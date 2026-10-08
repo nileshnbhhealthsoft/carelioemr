@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarelioEMR — Official User Manual & Operations Guide</title>
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-light: #e0f2fe;
+      --success: #16a34a;
+      --warning: #d97706;
+      --orange: #ea580c;
+      --danger: #dc2626;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f1f5f9;
+      color: var(--slate-800);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .toolbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--slate-200);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .toolbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .toolbar-logo {
+      height: 34px;
+    }
+    .toolbar-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--slate-900);
+    }
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+    .btn-outline {
+      background: #ffffff;
+      color: var(--slate-700);
+      border-color: var(--slate-200);
+    }
+    .btn-outline:hover {
+      background: var(--slate-50);
+    }
+
+    .container {
+      max-width: 1060px;
+      margin: 32px auto;
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      padding: 48px;
+    }
+
+    .doc-header {
+      border-bottom: 2px solid var(--slate-100);
+      padding-bottom: 32px;
+      margin-bottom: 40px;
+    }
+    .doc-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      margin-bottom: 16px;
+    }
+    .doc-title {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .doc-subtitle {
+      font-size: 1.15rem;
+      color: var(--slate-500);
+      margin-bottom: 20px;
+    }
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      font-size: 0.88rem;
+      color: var(--slate-600);
+      padding-top: 16px;
+      border-top: 1px dashed var(--slate-200);
+    }
+    .doc-meta strong {
+      color: var(--slate-900);
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-top: 48px;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--slate-800);
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+    p {
+      margin-bottom: 16px;
+      color: var(--slate-700);
+      font-size: 1rem;
+    }
+
+    /* Visual Media Cards */
+    .visual-card {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 24px 0 32px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .visual-card img, .visual-card svg {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      display: block;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+    .visual-caption {
+      margin-top: 12px;
+      font-size: 0.88rem;
+      color: var(--slate-500);
+      text-align: center;
+      font-weight: 500;
+    }
+    .visual-caption strong {
+      color: var(--slate-700);
+    }
+
+    /* Badges & Alerts */
+    .badge-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .badge-active { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-expiring { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+    .badge-grace { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+    .badge-deactivated { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+    .callout {
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin: 20px 0;
+      font-size: 0.95rem;
+      border-left: 4px solid;
+    }
+    .callout-info {
+      background: #eff6ff;
+      border-color: var(--primary);
+      color: #1e40af;
+    }
+    .callout-success {
+      background: #f0fdf4;
+      border-color: var(--success);
+      color: #166534;
+    }
+    .callout-warning {
+      background: #fffbeb;
+      border-color: var(--warning);
+      color: #92400e;
+    }
+    .callout-danger {
+      background: #fef2f2;
+      border-color: var(--danger);
+      color: #991b1b;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 0.92rem;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    th {
+      background: var(--slate-50);
+      font-weight: 700;
+      color: var(--slate-600);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+    }
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* Step lists */
+    .step-list {
+      list-style: none;
+      counter-reset: step-counter;
+      margin: 20px 0;
+    }
+    .step-list li {
+      counter-increment: step-counter;
+      position: relative;
+      padding-left: 42px;
+      margin-bottom: 16px;
+      font-size: 0.98rem;
+      color: var(--slate-700);
+    }
+    .step-list li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+
+    code {
+      background: var(--slate-100);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-family: Consolas, Monaco, monospace;
+      color: #0369a1;
+    }
+    pre {
+      background: var(--slate-900);
+      color: #f8fafc;
+      padding: 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88rem;
+      font-family: Consolas, Monaco, monospace;
+      margin: 16px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 40px;
+      margin-top: 48px;
+      border-top: 1px solid var(--slate-200);
+      font-size: 0.88rem;
+      color: var(--slate-500);
+    }
+
+    @media print {
+      body { background: #ffffff; }
+      .toolbar { display: none; }
+      .container { border: none; box-shadow: none; padding: 0; max-width: 100%; margin: 0; }
+      h2 { page-break-before: always; margin-top: 20px; }
+      h2:first-of-type { page-break-before: avoid; }
+      .visual-card { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Action Bar -->
+  <header class="toolbar">
+    <div class="toolbar-brand">
+      <img src="./manual_assets/carelio_logo.png" alt="CarelioEMR" class="toolbar-logo">
+      <div class="toolbar-title">CarelioEMR Operations Manual</div>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+      <a href="./Carelio_Technical_Documentation.md" class="btn btn-outline" target="_blank">Technical Docs</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Document Header -->
+    <header class="doc-header">
+      <span class="doc-badge">Official Release • Version 2.0</span>
+      <h1 class="doc-title">CarelioEMR User Manual &amp; Operations Guide</h1>
+      <p class="doc-subtitle">Complete Illustrated Guide for Site Administration, Caribbean Regional Demographics, and Automated Subscription Lifecycle Management.</p>
+      
+      <div class="doc-meta">
+        <div><strong>Product:</strong> CarelioEMR Multi-Tenant Platform</div>
+        <div><strong>Modules:</strong> <code>site_admin_config</code> &amp; <code>carelio_subscription</code></div>
+        <div><strong>Date:</strong> October 2026</div>
+        <div><strong>Data Policy:</strong> Zero Data Loss Guaranteed</div>
+      </div>
+    </header>
+
+    <!-- Section 1 -->
+    <section>
+      <h2>1. System Roles &amp; Access Hierarchy</h2>
+      <p>CarelioEMR strictly enforces the principle of least privilege. Permissions are partitioned into three clearly defined user tiers:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>User Role</th>
+            <th>Primary Responsibilities</th>
+            <th>Subscription &amp; Admin Rights</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Super Administrator</strong><br><code>admin</code></td>
+            <td>Global platform infrastructure, OpenEMR module registry, system database migrations.</td>
+            <td>Full system-wide administrative control across all tenant instances.</td>
+          </tr>
+          <tr>
+            <td><strong>Site Administrator</strong><br><code>siteadmin</code></td>
+            <td>Clinic tenant owner, clinician account provisioning, Caribbean demographic settings, <strong>Subscription renewals and reactivation</strong>.</td>
+            <td><strong>Sole permission</strong> to renew, extend, and reactivate clinic subscriptions via <em>Administration ➔ Carelio Subscription</em>.</td>
+          </tr>
+          <tr>
+            <td><strong>Clinicians &amp; Staff</strong><br><code>dr_johnson</code>, <code>receptionist</code></td>
+            <td>Patient registrations, vitals, medical chart notes, encounter billing, appointment schedules.</td>
+            <td><strong>Read-only</strong> subscription status. Access is suspended automatically if the tenant is deactivated.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <strong>Security Rule:</strong> Regular clinicians and front-desk staff cannot alter, renew, or view sensitive subscription billing details. Only designated Site Administrators have access to subscription management controls.
+      </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section>
+      <h2>2. Module 1: Site Admin Configuration &amp; Onboarding</h2>
+
+      <h3>2.1 Branded Clinic Login Experience</h3>
+      <p>Every tenant instance of CarelioEMR features customized high-resolution clinic branding, from the browser favicon to the primary sign-in splash screen.</p>
+
+      <div class="visual-card">
+        <img src="./manual_assets/01_login_screen.png" alt="CarelioEMR Login Screen">
+        <div class="visual-caption"><strong>Figure 1:</strong> CarelioEMR Custom Tenant Login Interface with Secure Single Sign-On.</div>
+      </div>
+
+      <ol class="step-list">
+        <li>Open your browser and navigate to your clinic URL: <code>https://your-domain/oemr/interface/login/login.php?site=site-dr-sarah-johnson-1</code>.</li>
+        <li>Enter your assigned <strong>Username</strong> and <strong>Password</strong>.</li>
+        <li>Click <strong>Login</strong>.</li>
+      </ol>
+
+      <h3>2.2 Mandatory First-Time Temporary Password Reset</h3>
+      <p>To ensure healthcare data privacy and compliance with HIPAA and Caribbean health data standards, newly provisioned administrator accounts must replace their initial temporary password upon first sign-in.</p>
+
+      <div class="visual-card">
+        <img src="./manual_assets/02_temporary_password_reset.svg" alt="Temporary Password Reset Screen">
+        <div class="visual-caption"><strong>Figure 2:</strong> Mandatory First-Time Password Reset Dialog with Live Complexity Verification.</div>
+      </div>
+
+      <ol class="step-list">
+        <li>Enter your current <strong>Temporary Password</strong>.</li>
+        <li>Enter a <strong>New Permanent Password</strong> meeting complexity requirements (8+ characters, uppercase letter, number, or symbol).</li>
+        <li>Confirm your new password and click <strong>Save Password &amp; Proceed to Login</strong>.</li>
+        <li>Your credentials are saved, and you are immediately redirected back to the login page for an authenticated session.</li>
+      </ol>
+
+      <h3>2.3 Caribbean Geographic Demographics Engine (Saint Lucia)</h3>
+      <p>CarelioEMR includes integrated geographic demographic datasets covering <strong>29 Caribbean nations</strong>, all <strong>10 administrative districts of Saint Lucia</strong>, and <strong>367 verified localized communities</strong>.</p>
+
+      <div class="visual-card">
+        <img src="./manual_assets/03_caribbean_demographics.svg" alt="Caribbean Demographics Cascading Form">
+        <div class="visual-caption"><strong>Figure 3:</strong> Client-Side Dynamic Cascading Dropdowns for Saint Lucia Districts and Communities.</div>
+      </div>
+
+      <p>When registering a patient under <em>Patient / Client ➔ New / Search</em>:</p>
+      <ul style="margin-left: 24px; margin-bottom: 16px; color: var(--slate-700);">
+        <li><strong>Step 1 (Country):</strong> Select <code>Saint Lucia (LC)</code>.</li>
+        <li><strong>Step 2 (District):</strong> The district dropdown instantly populates Saint Lucia's 10 administrative districts (Castries, Gros Islet, Soufrière, Vieux Fort, Micoud, Dennery, Anse la Raye, Canaries, Laborie, Choiseul).</li>
+        <li><strong>Step 3 (Community):</strong> Selecting a district instantly filters the community dropdown to its localized communities (e.g., selecting <em>Castries</em> displays <em>Babonneau, Bisee, Marchand, Ciceron</em>, etc.).</li>
+      </ul>
+    </section>
+
+    <!-- Section 3 -->
+    <section>
+      <h2>3. Module 2: Subscription Management &amp; Lifecycle</h2>
+
+      <h3>3.1 Subscription Lifecycle Architecture</h3>
+      <p>The CarelioEMR subscription engine governs account standing through an automated, server-enforced 4-stage lifecycle state machine:</p>
+
+      <div class="visual-card">
+        <img src="./manual_assets/08_subscription_lifecycle_flow.svg" alt="Subscription Lifecycle Flowchart">
+        <div class="visual-caption"><strong>Figure 4:</strong> CarelioEMR 4-Stage Subscription State Machine and Transition Rules.</div>
+      </div>
+
+      <h3>3.2 Stage 1: Active Subscription</h3>
+      <p>When the subscription is current and has more than 2 days remaining, the dashboard displays a vibrant green <span class="badge-status badge-active">ACTIVE</span> badge. All clinic staff have full access.</p>
+
+      <div class="visual-card">
+        <img src="./manual_assets/04_subscription_dashboard_active.svg" alt="Active Subscription Dashboard">
+        <div class="visual-caption"><strong>Figure 5:</strong> Subscription Management Dashboard in ACTIVE State.</div>
+      </div>
+
+      <h3>3.3 Stage 2: Expiring Soon Reminder (&le; 2 Days / 48 Hours)</h3>
+      <p>When the subscription is within 48 hours of expiration, the module transitions to <span class="badge-status badge-expiring">EXPIRING SOON</span>.</p>
+
+      <div class="visual-card">
+        <img src="./manual_assets/05_subscription_dashboard_expiring.svg" alt="Expiring Soon Dashboard">
+        <div class="visual-caption"><strong>Figure 6:</strong> Warning Banner and Expiration Reminder within the 2-Day Threshold.</div>
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>Automated Action:</strong> The background monitoring process automatically sends an email reminder to clinic administrators prompting them to renew. Clinical workflows remain 100% active and uninterrupted.
+      </div>
+
+      <h3>3.4 Stage 3: Expired / Grace Period (2-Day Window)</h3>
+      <p>If the primary expiration date passes without payment, CarelioEMR immediately grants a <strong>2-Day Grace Period</strong> (<span class="badge-status badge-grace">EXPIRED / GRACE PERIOD</span>).</p>
+
+      <div class="visual-card">
+        <img src="./manual_assets/06_subscription_dashboard_grace.svg" alt="Grace Period Dashboard">
+        <div class="visual-caption"><strong>Figure 7:</strong> Active 2-Day Grace Period Dashboard with Operational Continuity Assurance.</div>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Zero Care Disruption:</strong> Doctors, nurses, and laboratory staff continue treating patients without any system interruptions throughout the entire 48-hour grace window.
+      </div>
+
+      <h3>3.5 Stage 4: Safe Deactivation &amp; 100% Data Preservation</h3>
+      <p>If the 2-day grace period elapses without renewal, the tenant enters <span class="badge-status badge-deactivated">DEACTIVATED</span>.</p>
+
+      <div class="visual-card">
+        <img src="./manual_assets/07_subscription_dashboard_deactivated.svg" alt="Deactivated Subscription Dashboard">
+        <div class="visual-caption"><strong>Figure 8:</strong> Safe Deactivation Panel with 1-Click Site Admin Reactivation.</div>
+      </div>
+
+      <div class="callout callout-danger">
+        <strong>🔒 100% Data Preservation Guarantee:</strong>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+          <li><strong>ZERO Patient Records are deleted.</strong></li>
+          <li><strong>ZERO Clinical Notes or Encounters are deleted.</strong></li>
+          <li><strong>ZERO Billing Invoices or Financial data are touched.</strong></li>
+          <li><strong>ZERO Database Users are removed.</strong></li>
+        </ul>
+        The entire clinic database remains completely intact and is instantly unlocked the moment the Site Administrator reactivates the subscription.
+      </div>
+
+      <h3>3.6 Regular Clinician Lockout Screen</h3>
+      <p>While a tenant is deactivated, non-admin clinicians are greeted with a secure, polite lockout notice preventing chart modifications until the subscription is renewed:</p>
+
+      <div class="visual-card">
+        <img src="./manual_assets/09_deactivated_lock_screen.svg" alt="Clinician Lockout Screen">
+        <div class="visual-caption"><strong>Figure 9:</strong> Server-Side Lockout Screen Enforced for Clinicians and Staff.</div>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section>
+      <h2>4. Site Administrator Operations (How-To Guide)</h2>
+      <p>To manage subscriptions, navigate to: <code>Administration ➔ Carelio Subscription</code> in the top navigation bar.</p>
+
+      <h3>4.1 Renewing a Subscription</h3>
+      <ol class="step-list">
+        <li>Under <strong>Site Administrator Controls</strong>, locate the <strong>Quick Renewal</strong> panel.</li>
+        <li>Click <strong>+ 1 Month</strong> to add 30 days, or <strong>+ 1 Year</strong> to add 365 days.</li>
+        <li>The system updates the expiration date, sets the status to <code>ACTIVE</code>, and logs an entry in the audit trail.</li>
+      </ol>
+
+      <h3>4.2 Custom Expiration Date Override</h3>
+      <ol class="step-list">
+        <li>In the <strong>Custom Expiration Date Override</strong> field, select your desired date (e.g., <code>2026-12-31</code>).</li>
+        <li>Click <strong>Extend Date</strong>.</li>
+        <li>The record is updated immediately.</li>
+      </ol>
+
+      <h3>4.3 Reactivating a Deactivated Site</h3>
+      <ol class="step-list">
+        <li>Log into the subscription management panel as Site Administrator.</li>
+        <li>Click the prominent green button: <strong>⚡ Reactivate Tenant (+30 Days)</strong>.</li>
+        <li>Status is instantly restored to <code>ACTIVE</code>, and all clinician accounts are immediately unlocked.</li>
+      </ol>
+    </section>
+
+    <!-- Section 5 -->
+    <section>
+      <h2>5. How to Test the Subscription Module (Interactive Simulator)</h2>
+      <p>To demonstrate and test the system without waiting days for dates to roll over, an <strong>Interactive Test Simulator</strong> is embedded directly into the subscription dashboard:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Simulation Button</th>
+            <th>Simulated Conditions</th>
+            <th>Expected System Behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color: #16a34a;">Simulate ACTIVE</strong></td>
+            <td>Expiration set to +30 days from today.</td>
+            <td>Status changes to <code>ACTIVE</code>. Full clinic access.</td>
+          </tr>
+          <tr>
+            <td><strong style="color: #ca8a04;">Simulate EXPIRING (2d)</strong></td>
+            <td>Expiration set to exactly +2 days from today.</td>
+            <td>Status changes to <code>EXPIRING_SOON</code>. Amber reminder banner displays.</td>
+          </tr>
+          <tr>
+            <td><strong style="color: #ea580c;">Simulate GRACE PERIOD</strong></td>
+            <td>Expiration set to yesterday (-1 day).</td>
+            <td>Status changes to <code>EXPIRED_GRACE_PERIOD</code>. Orange 48-hour grace banner displays. Clinical operations remain uninterrupted.</td>
+          </tr>
+          <tr>
+            <td><strong style="color: #dc2626;">Simulate DEACTIVATE</strong></td>
+            <td>Expiration set to -3 days (grace elapsed).</td>
+            <td>Status changes to <code>DEACTIVATED</code>. Red lockout banner displays. Clinicians locked server-side; data remains 100% safe.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 6 -->
+    <section>
+      <h2>6. Production Daily Automated Background Process</h2>
+      <p>CarelioEMR includes a daily automated background process that evaluates subscriptions across all clinic tenants:</p>
+
+      <pre>php artisan carelio:check-subscriptions</pre>
+
+      <p><strong>Tasks Executed by the Background Daemon:</strong></p>
+      <ul style="margin-left: 24px; margin-bottom: 16px; color: var(--slate-700);">
+        <li>Scans tenant databases for upcoming expiration dates.</li>
+        <li>Dispatches email reminders when subscriptions have &le; 2 days remaining.</li>
+        <li>Transitions expired subscriptions into the 2-day grace period.</li>
+        <li>Safely deactivates accounts where the grace period has elapsed.</li>
+        <li>Maintains 100% database integrity with zero record deletion.</li>
+      </ul>
+
+      <h3>Production Scheduler Configuration (Cron):</h3>
+      <pre>0 1 * * * cd /var/www/carelio &amp;&amp; php artisan carelio:check-subscriptions &gt;&gt; /var/log/carelio_sub.log 2&gt;&amp;1</pre>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p><strong>CarelioEMR — Connected Data. Better Care.</strong></p>
+      <p>&copy; 2026 CarelioEMR Healthcare Systems. All Rights Reserved.</p>
+    </footer>
+
+  </main>
+
+</body>
+</html>
+

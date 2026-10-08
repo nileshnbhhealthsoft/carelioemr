@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 620" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif">
+  <defs>
+    <filter id="demoShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000" flood-opacity="0.07" />
+    </filter>
+  </defs>
+
+  <rect width="920" height="620" fill="#f8fafc" rx="12" />
+  
+  <!-- Window Container -->
+  <rect x="25" y="20" width="870" height="575" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#demoShadow)" />
+  
+  <!-- Window Header -->
+  <path d="M 25,30 Q 25,20 35,20 L 885,20 Q 895,20 895,30 L 895,62 L 25,62 Z" fill="#0f172a" />
+  <circle cx="50" cy="41" r="5" fill="#ef4444" />
+  <circle cx="68" cy="41" r="5" fill="#f59e0b" />
+  <circle cx="86" cy="41" r="5" fill="#10b981" />
+  <text x="115" y="46" fill="#f8fafc" font-size="14" font-weight="600">CarelioEMR — Patient Registration &amp; Demographics</text>
+  <rect x="740" y="32" width="130" height="22" rx="4" fill="#1e293b" />
+  <text x="805" y="47" fill="#94a3b8" font-size="11" text-anchor="middle">Saint Lucia Regional</text>
+
+  <!-- Section Header -->
+  <g transform="translate(55, 90)">
+    <rect x="0" y="0" width="810" height="42" rx="6" fill="#f0fdf4" stroke="#bbf7d0" />
+    <circle cx="24" cy="21" r="10" fill="#22c55e" />
+    <path d="M 19,21 L 23,25 L 29,17" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" />
+    <text x="45" y="26" font-size="14" font-weight="700" fill="#166534">Caribbean Geographic Demographics Engine (Active)</text>
+    <text x="455" y="26" font-size="12" fill="#15803d">29 Caribbean Nations • 10 Saint Lucia Districts • 367 Communities</text>
+  </g>
+
+  <!-- Form Layout -->
+  <g transform="translate(55, 155)">
+    <!-- Row 1: Patient Basic Info -->
+    <text x="0" y="15" font-size="12" font-weight="600" fill="#64748b">FIRST NAME</text>
+    <rect x="0" y="25" width="250" height="38" rx="6" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="12" y="49" font-size="14" fill="#1e293b">Marcus</text>
+
+    <text x="280" y="15" font-size="12" font-weight="600" fill="#64748b">LAST NAME</text>
+    <rect x="280" y="25" width="250" height="38" rx="6" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="292" y="49" font-size="14" fill="#1e293b">Alexander</text>
+
+    <text x="560" y="15" font-size="12" font-weight="600" fill="#64748b">DATE OF BIRTH</text>
+    <rect x="560" y="25" width="250" height="38" rx="6" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="572" y="49" font-size="14" fill="#1e293b">1988-04-14</text>
+  </g>
+
+  <!-- Cascading Dropdowns Highlight Box -->
+  <g transform="translate(55, 240)">
+    <rect x="0" y="0" width="810" height="230" rx="8" fill="#f8fafc" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6,4" />
+    <rect x="20" y="-12" width="270" height="24" rx="4" fill="#0284c7" />
+    <text x="155" y="4" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">⚡ DYNAMIC CASCADING SELECTION</text>
+
+    <!-- Step 1: Country -->
+    <g transform="translate(30, 30)">
+      <text x="0" y="15" font-size="13" font-weight="700" fill="#0369a1">1. Country (Selects Nation)</text>
+      <rect x="0" y="25" width="225" height="42" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="2" />
+      <text x="14" y="52" font-size="14" font-weight="600" fill="#0f172a">Saint Lucia (LC)</text>
+      <path d="M 195,47 L 202,54 L 209,47" fill="none" stroke="#0284c7" stroke-width="2" />
+    </g>
+
+    <!-- Arrow 1 -->
+    <path d="M 275,80 L 305,80" stroke="#0284c7" stroke-width="2.5" marker-end="url(#arrow)" />
+
+    <!-- Step 2: District -->
+    <g transform="translate(325, 30)">
+      <text x="0" y="15" font-size="13" font-weight="700" fill="#0369a1">2. Administrative District</text>
+      <rect x="0" y="25" width="215" height="42" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="2" />
+      <text x="14" y="52" font-size="14" font-weight="600" fill="#0f172a">Castries</text>
+      <path d="M 185,47 L 192,54 L 199,47" fill="none" stroke="#0284c7" stroke-width="2" />
+      <text x="0" y="85" font-size="11" fill="#64748b">Populates 10 LC Districts</text>
+    </g>
+
+    <!-- Arrow 2 -->
+    <path d="M 560,80 L 590,80" stroke="#0284c7" stroke-width="2.5" />
+
+    <!-- Step 3: Community -->
+    <g transform="translate(605, 30)">
+      <text x="0" y="15" font-size="13" font-weight="700" fill="#0369a1">3. Local Community</text>
+      <rect x="0" y="25" width="180" height="42" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="2" />
+      <text x="14" y="52" font-size="14" font-weight="600" fill="#0f172a">Babonneau</text>
+      <path d="M 152,47 L 159,54 L 166,47" fill="none" stroke="#0284c7" stroke-width="2" />
+      <text x="0" y="85" font-size="11" fill="#64748b">Filtered to Castries (367 Total)</text>
+    </g>
+
+    <!-- Street Address & Postal -->
+    <g transform="translate(30, 130)">
+      <text x="0" y="15" font-size="12" font-weight="600" fill="#475569">STREET ADDRESS</text>
+      <rect x="0" y="25" width="485" height="38" rx="6" fill="#ffffff" stroke="#cbd5e1" />
+      <text x="14" y="49" font-size="13" fill="#1e293b">Hill Top Road, Building 4A</text>
+
+      <text x="510" y="15" font-size="12" font-weight="600" fill="#475569">POSTAL CODE</text>
+      <rect x="510" y="25" width="245" height="38" rx="6" fill="#ffffff" stroke="#cbd5e1" />
+      <text x="524" y="49" font-size="13" fill="#1e293b">LC01 101</text>
+    </g>
+  </g>
+
+  <!-- Footer Actions -->
+  <g transform="translate(55, 495)">
+    <rect x="0" y="0" width="140" height="44" rx="6" fill="#0284c7" />
+    <text x="70" y="27" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">Save Patient</text>
+
+    <rect x="155" y="0" width="100" height="44" rx="6" fill="#f1f5f9" stroke="#cbd5e1" />
+    <text x="205" y="27" font-size="14" font-weight="600" fill="#475569" text-anchor="middle">Cancel</text>
+
+    <text x="810" y="27" font-size="12" fill="#64748b" text-anchor="end">Database stored in OpenEMR list_options schema</text>
+  </g>
+</svg>
