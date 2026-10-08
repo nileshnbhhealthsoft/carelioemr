@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CarelioEMR Workstation — {{ $subscription->doctor_name ?? 'Dr. Subscriber' }}</title>
+<link rel="icon" type="image/svg+xml" href="{{ asset('images/carelio_customer_dashboard_logo.svg') }}?v=1">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
@@ -120,7 +121,7 @@ tailwind.config = {
   <nav class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between shrink-0 z-10">
     <div class="flex items-center gap-3">
       <a href="{{ url('/') }}" class="flex items-center">
-        <img src="{{ asset('images/carelio_logo_white.svg') }}" alt="CarelioEMR" class="h-6.5 w-auto">
+        <img src="{{ asset('images/carelio_customer_dashboard_logo.svg') }}" alt="CarelioEMR" class="h-8 w-8">
       </a>
       <span class="ml-2 text-[10px] bg-blue-900/60 text-blue-300 border border-blue-700/50 px-1.5 py-0.5 rounded font-bold uppercase">Workstation v8.3.0</span>
     </div>

@@ -30,7 +30,7 @@
         <div class="content">
             <div class="greeting">Welcome aboard, {{ $subscription->doctor_name }}!</div>
             <div class="text">
-                Thank you for subscribing to <strong>CarelioEMR Cloud Healthcare Suite</strong>. Your monthly subscription has been successfully activated and your dedicated CarelioEMR tenant workstation is provisioned.
+                Thank you for subscribing to <strong>CarelioEMR Cloud Healthcare Suite</strong>. Your subscription has been successfully activated and your dedicated CarelioEMR tenant workstation is provisioned.
             </div>
 
             <div class="receipt-card">
@@ -40,6 +40,10 @@
                     <tr>
                         <td style="color:#64748b; font-weight:500;">Subscriber / Doctor:</td>
                         <td style="font-weight:700; color:#0f172a; text-align:right;">{{ $subscription->doctor_name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#64748b; font-weight:500;">CarelioEMR Site Name:</td>
+                        <td style="font-weight:700; color:#0f172a; text-align:right;">{{ $subscription->getDisplaySiteName() }}</td>
                     </tr>
                     <tr>
                         <td style="color:#64748b; font-weight:500;">Email Address:</td>
@@ -54,8 +58,10 @@
                         <td style="font-weight:700; color:#0f172a; text-align:right;">{{ $subscription->region }} Region Node</td>
                     </tr>
                     <tr>
-                        <td style="color:#64748b; font-weight:500;">Monthly Plan:</td>
-                        <td style="font-weight:900; color:#059669; text-align:right;">$80.00 / month</td>
+                        <td style="color:#64748b; font-weight:500;">Subscription Plan:</td>
+                        <td style="font-weight:900; color:#059669; text-align:right;">
+                            {{ ($subscription->billing_cycle ?? 'monthly') === 'yearly' ? '$880.00 / year (saved $80)' : '$80.00 / month' }}
+                        </td>
                     </tr>
                     <tr>
                         <td style="color:#64748b; font-weight:500;">CarelioEMR Dedicated Site URL:</td>

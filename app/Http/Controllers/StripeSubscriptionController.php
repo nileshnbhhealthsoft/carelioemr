@@ -11,6 +11,7 @@ use Stripe\Customer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use App\Mail\SubscriptionConfirmationMail;
 use App\Mail\RegistrationAcknowledgementMail;
 use App\Mail\AdminTenantReadyForReviewMail;
@@ -70,43 +71,24 @@ class StripeSubscriptionController extends Controller
                 'email',
                 function ($attribute, $value, $fail) {
                     $normalized = strtolower(trim((string) $value));
-                    $hasCustomerEmail = \Illuminate\Support\Facades\Schema::hasColumn('subscriptions', 'customer_email');
-                    $hasStripeStatus = \Illuminate\Support\Facades\Schema::hasColumn('subscriptions', 'stripe_status');
 
-                    $exists = Subscription::where(function ($q) use ($normalized, $hasCustomerEmail) {
-                            $q->where('email', $normalized);
-                            if ($hasCustomerEmail) {
-                                $q->orWhere('customer_email', $normalized);
-                            }
-                        })
-                        ->where(function ($query) use ($hasStripeStatus) {
-                            if ($hasStripeStatus) {
-                                $query->whereIn('stripe_status', ['active', 'trialing', 'incomplete']);
-                            }
-                            $query->orWhereIn('provision_status', ['completed', 'provisioning'])
-                                  ->orWhereNotNull('openemr_database')
-                                  ->orWhereIn('payment_status', ['succeeded', 'paid', 'active', 'trialing'])
-                                  ->orWhere(function ($q2) {
-                                      $q2->where('provision_status', 'pending')
-                                         ->where(function ($q3) {
-                                             $q3->whereNotNull('paid_at')
-                                                ->orWhereIn('payment_status', ['succeeded', 'paid']);
-                                         });
-                                  });
-                        })
-                        ->exists();
-
-                    if ($exists) {
-                        $fail('An active account or subscription is already associated with this email address. Please log in to your tenant portal or contact support.');
+                    if ($this->findActiveSubscriptionByEmail($normalized)) {
+                        $fail($this->duplicateEmailMessage());
                     }
                 },
             ],
+            'site_name' => 'nullable|string|max:255',
             'practice_type' => 'nullable|string',
             'region' => 'nullable|string',
+            'billing_cycle' => 'nullable|in:monthly,yearly',
         ]);
 
         try {
-            $amount = 8000; // $80.00 in cents
+            $billingCycle = $request->billing_cycle === 'yearly' ? 'yearly' : 'monthly';
+            $plan = $this->getSubscriptionPlan($billingCycle);
+            $siteName = trim((string) $request->site_name) ?: (($request->doctor_name ?? 'Doctor') . ' Practice');
+
+            $amount = $plan['amount_cents'];
             $currency = 'usd';
 
             // 1. Create or Find Stripe Customer dynamically
@@ -118,6 +100,7 @@ class StripeSubscriptionController extends Controller
                     'email' => $request->email,
                     'name' => $request->doctor_name,
                     'metadata' => [
+                        'site_name' => $siteName,
                         'practice_type' => $request->practice_type ?? 'General Practice',
                         'region' => $request->region ?? 'LC',
                     ]
@@ -130,11 +113,15 @@ class StripeSubscriptionController extends Controller
                 'currency' => $currency,
                 'customer' => $customer->id,
                 'receipt_email' => $request->email,
-                'description' => "CarelioEMR Monthly Subscription ($80/mo) - {$request->doctor_name}",
+                'description' => $plan['description'] . " - {$request->doctor_name}",
                 'metadata' => [
                     'subscriber_name' => $request->doctor_name,
+                    'site_name' => $siteName,
                     'practice_type' => $request->practice_type ?? 'General Practice',
                     'region' => $request->region ?? 'LC',
+                    'billing_cycle' => $billingCycle,
+                    'billing_interval_months' => (string) $plan['interval_months'],
+                    'discount_amount' => number_format($plan['discount_amount'], 2, '.', ''),
                     'setup_cost_note' => 'Setup cost will be an additional cost'
                 ],
                 'automatic_payment_methods' => [
@@ -150,25 +137,34 @@ class StripeSubscriptionController extends Controller
             if ($subscription) {
                 $subscription->update([
                     'doctor_name' => $request->doctor_name,
+                    'site_name' => $siteName,
                     'practice_type' => $request->practice_type ?? 'General Practice',
                     'region' => $request->region ?? 'LC',
                     'stripe_customer_id' => $customer->id,
                     'stripe_payment_intent_id' => $intent->id,
+                    'amount' => $plan['amount_decimal'],
+                    'billing_cycle' => $billingCycle,
+                    'billing_interval_months' => $plan['interval_months'],
+                    'discount_amount' => $plan['discount_amount'],
                     'updated_at' => Carbon::now(),
                 ]);
             } else {
                 $subscription = Subscription::create([
                     'doctor_name' => $request->doctor_name,
+                    'site_name' => $siteName,
                     'email' => $request->email,
                     'practice_type' => $request->practice_type ?? 'General Practice',
                     'region' => $request->region ?? 'LC',
                     'stripe_customer_id' => $customer->id,
                     'stripe_payment_intent_id' => $intent->id,
-                    'amount' => 80.00,
+                    'amount' => $plan['amount_decimal'],
                     'currency' => 'usd',
                     'payment_status' => 'pending',
                     'provision_status' => 'pending',
                     'setup_cost_status' => 'setup_cost_additional_billed_separately',
+                    'billing_cycle' => $billingCycle,
+                    'billing_interval_months' => $plan['interval_months'],
+                    'discount_amount' => $plan['discount_amount'],
                 ]);
             }
 
@@ -195,6 +191,21 @@ class StripeSubscriptionController extends Controller
 
         try {
             $intent = PaymentIntent::retrieve($request->payment_intent_id);
+            $receiptEmail = strtolower(trim((string) ($intent->receipt_email ?? $request->email ?? '')));
+
+            if ($intent->status === 'succeeded' && $receiptEmail !== '') {
+                $duplicateSubscription = $this->findActiveSubscriptionByEmail(
+                    $receiptEmail,
+                    (string) $request->payment_intent_id
+                );
+
+                if ($duplicateSubscription) {
+                    return response()->json([
+                        'error' => $this->duplicateEmailMessage(),
+                        'subscription_id' => $duplicateSubscription->id,
+                    ], 409);
+                }
+            }
 
             $subscription = Subscription::where('stripe_payment_intent_id', $request->payment_intent_id)->first();
 
@@ -207,22 +218,31 @@ class StripeSubscriptionController extends Controller
             if (!$subscription) {
                 $subscription = Subscription::create([
                     'doctor_name' => $intent->metadata->subscriber_name ?? $request->doctor_name ?? 'Doctor',
+                    'site_name' => $intent->metadata->site_name ?? $request->site_name ?? null,
                     'email' => $intent->receipt_email ?? $request->email,
                     'practice_type' => $intent->metadata->practice_type ?? 'General Practice',
                     'region' => $intent->metadata->region ?? 'LC',
                     'stripe_customer_id' => $intent->customer,
                     'stripe_payment_intent_id' => $intent->id,
-                    'amount' => 80.00,
+                    'amount' => ($intent->amount_received ?? $intent->amount ?? 8000) / 100,
                     'currency' => 'usd',
                     'payment_status' => $intent->status === 'succeeded' ? 'succeeded' : $intent->status,
                     'provision_status' => 'pending',
                     'setup_cost_status' => 'setup_cost_additional_billed_separately',
+                    'billing_cycle' => $intent->metadata->billing_cycle ?? 'monthly',
+                    'billing_interval_months' => (int) ($intent->metadata->billing_interval_months ?? 1),
+                    'discount_amount' => (float) ($intent->metadata->discount_amount ?? 0),
                     'paid_at' => $intent->status === 'succeeded' ? Carbon::now() : null,
                 ]);
             } else {
                 $subscription->update([
                     'stripe_payment_intent_id' => $intent->id,
+                    'site_name' => $subscription->site_name ?: ($intent->metadata->site_name ?? $request->site_name ?? null),
+                    'amount' => ($intent->amount_received ?? $intent->amount ?? ((float) $subscription->amount * 100)) / 100,
                     'payment_status' => $intent->status === 'succeeded' ? 'succeeded' : $intent->status,
+                    'billing_cycle' => $intent->metadata->billing_cycle ?? $subscription->billing_cycle ?? 'monthly',
+                    'billing_interval_months' => (int) ($intent->metadata->billing_interval_months ?? $subscription->billing_interval_months ?? 1),
+                    'discount_amount' => (float) ($intent->metadata->discount_amount ?? $subscription->discount_amount ?? 0),
                     'paid_at' => $intent->status === 'succeeded' ? Carbon::now() : $subscription->paid_at,
                 ]);
             }
@@ -235,23 +255,30 @@ class StripeSubscriptionController extends Controller
                     ->delete();
             }
 
-            // Send customer acknowledgement email immediately after payment confirmation and BEFORE provisioning
-            try {
-                if ($intent->status === 'succeeded' && $subscription->email) {
-                    Mail::to($subscription->email)->send(new RegistrationAcknowledgementMail($subscription));
-                }
-            } catch (\Exception $mailEx) {
-                \Log::warning('Registration acknowledgement mail error: ' . $mailEx->getMessage());
-            }
-
-            // Dispatch tenant provisioning job (sync in local dev, non-blocking queued database worker in production)
             if ($intent->status === 'succeeded') {
-                ProvisionOpenEmrTenantJob::dispatch($subscription);
+                $subscriptionId = $subscription->id;
+
+                app()->terminating(function () use ($subscriptionId) {
+                    $subscription = Subscription::find($subscriptionId);
+                    if (!$subscription) {
+                        return;
+                    }
+
+                    try {
+                        if ($subscription->email) {
+                            Mail::to($subscription->email)->send(new RegistrationAcknowledgementMail($subscription));
+                        }
+                    } catch (\Exception $mailEx) {
+                        \Log::warning('Registration acknowledgement mail error: ' . $mailEx->getMessage());
+                    }
+
+                    ProvisionOpenEmrTenantJob::dispatch($subscription);
+                });
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Payment confirmed and CarelioEMR tenant provisioning initiated successfully!',
+                'message' => 'Payment confirmed. CarelioEMR tenant provisioning has started.',
                 'subscriber' => $subscription->fresh(),
                 'openemr_site_url' => $subscription->openemr_site_url,
                 'tenant_slug' => $subscription->tenant_slug,
@@ -273,5 +300,69 @@ class StripeSubscriptionController extends Controller
             'count' => $subscribers->count(),
             'subscribers' => $subscribers
         ]);
+    }
+
+    protected function getSubscriptionPlan(string $billingCycle): array
+    {
+        if ($billingCycle === 'yearly') {
+            return [
+                'amount_cents' => 88000,
+                'amount_decimal' => 880.00,
+                'discount_amount' => 80.00,
+                'interval_months' => 12,
+                'description' => 'CarelioEMR Yearly Subscription ($880/year, $80 discount)',
+            ];
+        }
+
+        return [
+            'amount_cents' => 8000,
+            'amount_decimal' => 80.00,
+            'discount_amount' => 0.00,
+            'interval_months' => 1,
+            'description' => 'CarelioEMR Monthly Subscription ($80/mo)',
+        ];
+    }
+
+    protected function findActiveSubscriptionByEmail(string $email, ?string $exceptPaymentIntentId = null): ?Subscription
+    {
+        $email = strtolower(trim($email));
+        if ($email === '') {
+            return null;
+        }
+
+        $hasCustomerEmail = Schema::hasColumn('subscriptions', 'customer_email');
+        $hasStripeStatus = Schema::hasColumn('subscriptions', 'stripe_status');
+
+        return Subscription::where(function ($query) use ($email, $hasCustomerEmail) {
+                $query->whereRaw('LOWER(email) = ?', [$email]);
+
+                if ($hasCustomerEmail) {
+                    $query->orWhereRaw('LOWER(customer_email) = ?', [$email]);
+                }
+            })
+            ->when($exceptPaymentIntentId, function ($query) use ($exceptPaymentIntentId) {
+                $query->where(function ($q) use ($exceptPaymentIntentId) {
+                    $q->whereNull('stripe_payment_intent_id')
+                      ->orWhere('stripe_payment_intent_id', '!=', $exceptPaymentIntentId);
+                });
+            })
+            ->where(function ($query) use ($hasStripeStatus) {
+                $query->whereIn('payment_status', ['succeeded', 'paid', 'active', 'trialing'])
+                    ->orWhereNotNull('paid_at')
+                    ->orWhereIn('provision_status', ['provisioning', 'completed'])
+                    ->orWhereNotNull('openemr_database')
+                    ->orWhereIn('review_status', ['pending_review', 'approved', 'rejected']);
+
+                if ($hasStripeStatus) {
+                    $query->orWhereIn('stripe_status', ['active', 'trialing', 'incomplete']);
+                }
+            })
+            ->orderByDesc('id')
+            ->first();
+    }
+
+    protected function duplicateEmailMessage(): string
+    {
+        return 'This email address already has a CarelioEMR subscription. Please use a different email address or contact support.';
     }
 }

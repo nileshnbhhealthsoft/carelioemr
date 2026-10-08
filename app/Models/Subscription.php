@@ -15,6 +15,7 @@ class Subscription extends Model
 
     protected $fillable = [
         'doctor_name',
+        'site_name',
         'email',
         'practice_type',
         'region',
@@ -30,6 +31,9 @@ class Subscription extends Model
         'currency',
         'payment_status',
         'setup_cost_status',
+        'billing_cycle',
+        'billing_interval_months',
+        'discount_amount',
         'paid_at',
         'review_status',
         'reviewed_at',
@@ -40,6 +44,8 @@ class Subscription extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'billing_interval_months' => 'integer',
         'paid_at' => 'datetime',
         'reviewed_at' => 'datetime',
         'initial_password_encrypted' => 'encrypted',
@@ -55,5 +61,10 @@ class Subscription extends Model
         $tenantSlug = $this->tenant_slug ?? '';
 
         return $baseUrl . $webPath . '/interface/login/login.php?site=' . rawurlencode($tenantSlug);
+    }
+
+    public function getDisplaySiteName(): string
+    {
+        return $this->site_name ?: ($this->doctor_name ? ($this->doctor_name . ' Practice') : 'CarelioEMR Medical Practice');
     }
 }

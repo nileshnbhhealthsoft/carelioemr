@@ -59,7 +59,10 @@ class OpenEmrProvisioningService
      */
     public function provisionTenant(Subscription $subscription): bool
     {
-        $cleanSlug = Str::slug($subscription->doctor_name, '-');
+        @set_time_limit(0);
+
+        $siteDisplayName = $subscription->getDisplaySiteName();
+        $cleanSlug = Str::slug($siteDisplayName, '-');
         $tenantSlug = 'site-' . ($cleanSlug ?: 'tenant') . '-' . $subscription->id;
         $dbName = 'openemr_' . str_replace('-', '_', $tenantSlug);
         $openEmrBasePath = $this->getOpenEmrBasePath();
@@ -68,6 +71,11 @@ class OpenEmrProvisioningService
         $baseUrl = rtrim((string) config('app.url'), '/');
         $webPath = config('oemr.web_path') ? ('/' . trim((string) config('oemr.web_path'), '/')) : '';
         $siteUrl = $baseUrl . $webPath . '/interface/login/login.php?site=' . rawurlencode($tenantSlug);
+
+        if ($subscription->provision_status === 'completed' && !empty($subscription->openemr_database) && !empty($subscription->tenant_slug)) {
+            Log::info("Subscription #{$subscription->id} already provisioned with database {$subscription->openemr_database}. Skipping duplicate provisioning.");
+            return true;
+        }
 
         Log::info("Starting Canonical OpenEMR Tenant Provisioning for Subscription #{$subscription->id} ({$tenantSlug})");
 
@@ -180,8 +188,18 @@ class OpenEmrProvisioningService
         try {
             $destBase = $sitePath . '/images/logos';
 
-            // 1. Favicon (.ico)
+            $sourceDashboardLogoSvg = public_path('images/carelio_customer_dashboard_logo.svg');
+
+            // 1. Favicon for customer workstations
+            $sourceFaviconSvg = $sourceDashboardLogoSvg;
             $sourceFavicon = public_path('favicon.ico');
+            if (File::exists($sourceFaviconSvg)) {
+                $destFavDir = $destBase . '/core/favicon';
+                if (!File::isDirectory($destFavDir)) {
+                    File::makeDirectory($destFavDir, 0755, true, true);
+                }
+                File::copy($sourceFaviconSvg, $destFavDir . '/favicon.svg');
+            }
             if (File::exists($sourceFavicon)) {
                 $destFavDir = $destBase . '/core/favicon';
                 if (!File::isDirectory($destFavDir)) {
@@ -204,16 +222,21 @@ class OpenEmrProvisioningService
                 File::copy($sourceLogoPng, $destLoginDir . '/logo.png');
             }
 
-            // 3. Menu / Header Logo (SVG & PNG)
+            // 3. Menu / Header Logo (shown after customer login)
             $destMenuDir = $destBase . '/core/menu/primary';
             if (!File::isDirectory($destMenuDir)) {
                 File::makeDirectory($destMenuDir, 0755, true, true);
             }
-            if (File::exists($sourceLogoSvg)) {
-                File::copy($sourceLogoSvg, $destMenuDir . '/logo.svg');
-            }
-            if (File::exists($sourceLogoPng)) {
-                File::copy($sourceLogoPng, $destMenuDir . '/logo.png');
+            if (File::exists($sourceDashboardLogoSvg)) {
+                File::copy($sourceDashboardLogoSvg, $destMenuDir . '/logo.svg');
+                File::delete($destMenuDir . '/logo.png');
+            } else {
+                if (File::exists($sourceLogoSvg)) {
+                    File::copy($sourceLogoSvg, $destMenuDir . '/logo.svg');
+                }
+                if (File::exists($sourceLogoPng)) {
+                    File::copy($sourceLogoPng, $destMenuDir . '/logo.png');
+                }
             }
 
             // 4. Portal Login & Menu
@@ -266,7 +289,8 @@ class OpenEmrProvisioningService
         $driver = config('database.default', 'mysql');
 
         if ($driver === 'mysql') {
-            DB::statement("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            DB::statement("DROP DATABASE IF EXISTS `{$dbName}`");
+            DB::statement("CREATE DATABASE `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
         } else {
             $sqlitePath = database_path("{$dbName}.sqlite");
             if (!File::exists($sqlitePath)) {
@@ -422,9 +446,7 @@ class OpenEmrProvisioningService
             OEGlobalsBag::getInstance()->set('OE_SITE_DIR', $sitePath);
         }
 
-        $clinicName = $subscription->practice_type 
-            ? ($subscription->practice_type . ' Clinic') 
-            : ($subscription->doctor_name ? ($subscription->doctor_name . ' Practice') : 'CarelioEMR Medical Practice');
+        $clinicName = $subscription->getDisplaySiteName();
 
         $overrides = [
             'practice_name' => $clinicName,
@@ -540,6 +562,7 @@ class OpenEmrProvisioningService
 
             $pdo->exec("REPLACE INTO users_secure (id, username, password, last_update_password, last_update) VALUES ({$docUserId}, '{$username}', '{$hashedPassword}', NOW(), NOW())");
             $pdo->exec("INSERT IGNORE INTO `groups` (name, user) VALUES ('Default', '{$username}')");
+            $this->markUserPasswordTemporary($pdo, $docUserId, $username, 'tenant_provisioning');
 
             // Map subscriber doctor into native Site Administrator phpGACL group and apply branding
             app(\Database\Seeders\SiteAdminSeeder::class)->runOnPdo($pdo, $username, $subscription->doctor_name);
@@ -619,6 +642,29 @@ class OpenEmrProvisioningService
         if (!class_exists(SiteAdminInstaller::class)) {
             throw new RuntimeException("Site Admin module installer class could not be loaded.");
         }
+    protected function markUserPasswordTemporary(PDO $pdo, int $userId, string $username, string $createdBy): void
+    {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `mod_site_admin_temp_passwords` (
+            `user_id` INT NOT NULL PRIMARY KEY,
+            `username` VARCHAR(255) NOT NULL,
+            `is_temporary` TINYINT(1) NOT NULL DEFAULT 1,
+            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `cleared_at` DATETIME NULL,
+            `created_by` VARCHAR(255) NULL,
+            KEY `idx_temp_password_username` (`username`),
+            KEY `idx_temp_password_active` (`is_temporary`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+        $stmt = $pdo->prepare("INSERT INTO `mod_site_admin_temp_passwords`
+            (`user_id`, `username`, `is_temporary`, `created_at`, `cleared_at`, `created_by`)
+            VALUES (?, ?, 1, NOW(), NULL, ?)
+            ON DUPLICATE KEY UPDATE
+                `username` = VALUES(`username`),
+                `is_temporary` = 1,
+                `created_at` = NOW(),
+                `cleared_at` = NULL,
+                `created_by` = VALUES(`created_by`)");
+        $stmt->execute([$userId, $username, $createdBy]);
     }
 
     /**

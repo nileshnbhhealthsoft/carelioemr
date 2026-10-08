@@ -135,6 +135,10 @@ class Header
     public static function getFavIcon()
     {
         $logoService = new LogoService();
+        $svgIcon = $logoService->getLogo("core/favicon/", "favicon.svg");
+        if ($svgIcon !== '') {
+            return $svgIcon;
+        }
         $icon = $logoService->getLogo("core/favicon/", "favicon.ico");
         return $icon;
     }

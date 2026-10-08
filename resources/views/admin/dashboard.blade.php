@@ -36,7 +36,7 @@
                         <span>Stripe Transactions</span>
                     </div>
                     <span class="text-[10px] px-2 py-0.5 rounded-full font-extrabold {{ request('tab') == 'payments' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700' }}">
-                        ${{ $subscribers->count() * 80 }}
+                        ${{ number_format($subscribers->sum('amount'), 2) }}
                     </span>
                 </a>
             </div>
@@ -139,9 +139,9 @@
                     <i data-lucide="dollar-sign" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <div class="text-[11px] text-slate-400 font-extrabold uppercase tracking-wider">Monthly MRR</div>
-                    <div class="text-2xl font-black text-emerald-600 mt-0.5">${{ $subscribers->count() * 80 }}</div>
-                    <div class="text-[10px] text-slate-500 font-semibold mt-0.5">$80 / month per tenant</div>
+                    <div class="text-[11px] text-slate-400 font-extrabold uppercase tracking-wider">Subscription Revenue</div>
+                    <div class="text-2xl font-black text-emerald-600 mt-0.5">${{ number_format($subscribers->sum('amount'), 2) }}</div>
+                    <div class="text-[10px] text-slate-500 font-semibold mt-0.5">Monthly and yearly plans</div>
                 </div>
             </div>
 
@@ -171,10 +171,11 @@
         <!-- Data Table Container -->
         <div class="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-5">
             <div class="overflow-x-auto rounded-2xl border border-slate-200/80">
-                <table class="w-full text-left border-collapse min-w-[950px]">
+                <table class="w-full text-left border-collapse min-w-[1050px]">
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
                             <th class="px-6 py-4 whitespace-nowrap">Doctor / Subscriber</th>
+                            <th class="px-6 py-4 whitespace-nowrap">Plan</th>
                             <th class="px-6 py-4 whitespace-nowrap">CarelioEMR Site URL</th>
                             <th class="px-6 py-4 whitespace-nowrap">Tenant DB</th>
                             <th class="px-6 py-4 whitespace-nowrap">Provision Status</th>
@@ -189,8 +190,19 @@
                             <tr class="hover:bg-blue-50/40 transition-colors">
                                 <td class="px-6 py-4.5 whitespace-nowrap">
                                     <div class="font-extrabold text-slate-900 text-sm">{{ $sub->doctor_name }}</div>
+                                    <div class="text-[11px] text-blue-700 font-bold mt-0.5">{{ $sub->site_name ?? $sub->getDisplaySiteName() }}</div>
                                     <div class="text-[11px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
                                         <i data-lucide="mail" class="w-3 h-3 text-blue-600 shrink-0"></i> {{ $sub->email }}
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4.5 whitespace-nowrap">
+                                    <div class="inline-flex flex-col gap-0.5 px-3 py-1.5 rounded-lg {{ ($sub->billing_cycle ?? 'monthly') === 'yearly' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-blue-50 text-blue-700 border border-blue-200' }}">
+                                        <span class="font-extrabold text-xs">{{ ucfirst($sub->billing_cycle ?? 'monthly') }}</span>
+                                        <span class="text-[10px] font-bold">${{ number_format((float) $sub->amount, 2) }}{{ ($sub->billing_cycle ?? 'monthly') === 'yearly' ? ' / year' : ' / month' }}</span>
+                                        @if((float) ($sub->discount_amount ?? 0) > 0)
+                                            <span class="text-[10px] font-bold">Saved ${{ number_format((float) $sub->discount_amount, 2) }}</span>
+                                        @endif
                                     </div>
                                 </td>
 
@@ -285,7 +297,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colSpan="8" class="px-6 py-12 text-center text-slate-500 font-medium">
+                                <td colSpan="9" class="px-6 py-12 text-center text-slate-500 font-medium">
                                     No tenant database records found.
                                 </td>
                             </tr>

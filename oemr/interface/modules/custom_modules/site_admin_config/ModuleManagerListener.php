@@ -95,6 +95,42 @@ class ModuleManagerListener extends AbstractModuleActionListener
     }
 
     /**
+     * Fired when admin clicks "Upgrade SQL" in OpenEMR Modules UI
+     *
+     * @param int|string $modId
+     * @param string $currentActionStatus
+     * @return mixed
+     */
+    private function upgrade_sql($modId, $currentActionStatus): mixed
+    {
+        try {
+            SiteAdminInstaller::install();
+            return $currentActionStatus;
+        } catch (\Throwable $e) {
+            error_log('SiteAdmin ModuleManagerListener upgrade_sql error: ' . $e->getMessage());
+            return 'Upgrade SQL warning: ' . $e->getMessage();
+        }
+    }
+
+    /**
+     * Fired when admin clicks "Upgrade" in OpenEMR Modules UI
+     *
+     * @param int|string $modId
+     * @param string $currentActionStatus
+     * @return mixed
+     */
+    private function upgrade($modId, $currentActionStatus): mixed
+    {
+        try {
+            SiteAdminInstaller::install();
+            return $currentActionStatus;
+        } catch (\Throwable $e) {
+            error_log('SiteAdmin ModuleManagerListener upgrade error: ' . $e->getMessage());
+            return 'Upgrade warning: ' . $e->getMessage();
+        }
+    }
+
+    /**
      * Fired when admin clicks "Enable" in OpenEMR Modules UI
      *
      * @param int|string $modId

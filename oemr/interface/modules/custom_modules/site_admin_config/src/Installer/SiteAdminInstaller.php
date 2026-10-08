@@ -60,16 +60,28 @@ class SiteAdminInstaller
         $pdoInstance = $pdo ?? self::resolvePdo($siteDir);
         self::ensureCliEnvironment($pdoInstance, $siteDir);
 
-        // 1. Ensure module schema and defaults exist via table.sql
+        // 1. Ensure critical module schema exists independently of table.sql.
+        // This keeps live installs safe even if optional seed data hits an environment-specific warning.
+        self::ensureTemporaryPasswordSchema($pdoInstance);
+
+        // 2. Ensure module schema and defaults exist via table.sql
         self::executeTableSql($pdoInstance);
 
-        // 2. Deploy standard Carelio brand assets (logos, favicon) natively to tenant site directory
+        // 3. Re-check critical schema after table.sql for idempotent upgrades.
+        self::ensureTemporaryPasswordSchema($pdoInstance);
+
+        // 4. Deploy standard Carelio brand assets (logos, favicon) natively to tenant site directory
         self::deployBrandAssets($siteDir);
 
-        // 3. Ensure Caribbean Geographic Demographics and list_options are synchronized
-        CaribbeanDemographicsLoader::sync($pdoInstance);
+        // 5. Ensure Caribbean Geographic Demographics and list_options are synchronized.
+        // Demographic sync is important, but it should not brick module installation on live systems.
+        try {
+            CaribbeanDemographicsLoader::sync($pdoInstance);
+        } catch (\Throwable $e) {
+            error_log('SiteAdminInstaller demographics sync warning: ' . $e->getMessage());
+        }
 
-        // 4. Initialize native OpenEMR GaclApi to sync sequences and clear cache
+        // 6. Initialize native OpenEMR GaclApi to sync sequences and clear cache
         $gacl = new GaclApi();
 
         // 5. Resolve Physicians parent group dynamically
@@ -734,6 +746,12 @@ class SiteAdminInstaller
             return;
         }
 
+        $embeddedDatasetMarker = '-- CARELIO_EMBEDDED_CARIBBEAN_DEMOGRAPHICS_SQL_BEGIN';
+        $embeddedDatasetPosition = strpos($sql, $embeddedDatasetMarker);
+        if ($embeddedDatasetPosition !== false) {
+            $sql = substr($sql, 0, $embeddedDatasetPosition);
+        }
+
         try {
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         } catch (\Throwable $e) {
@@ -769,6 +787,24 @@ class SiteAdminInstaller
                 }
             } catch (\Throwable $e) {}
         }
+    }
+
+    /**
+     * Critical schema used by the temporary-password first-login gate.
+     * Kept as direct PDO DDL so module install/enable can self-heal on live sites.
+     */
+    public static function ensureTemporaryPasswordSchema(PDO $pdo): void
+    {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `mod_site_admin_temp_passwords` (
+            `user_id` INT NOT NULL PRIMARY KEY,
+            `username` VARCHAR(255) NOT NULL,
+            `is_temporary` TINYINT(1) NOT NULL DEFAULT 1,
+            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `cleared_at` DATETIME NULL,
+            `created_by` VARCHAR(255) NULL,
+            KEY `idx_temp_password_username` (`username`),
+            KEY `idx_temp_password_active` (`is_temporary`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     }
 
     /**
