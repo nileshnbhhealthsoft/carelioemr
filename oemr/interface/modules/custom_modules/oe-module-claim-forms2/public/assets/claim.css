@@ -1,0 +1,12 @@
+#claim-app { max-width: 980px; }
+#claim-app .section { border: 1px solid #ccd; border-radius: 4px; margin-bottom: 14px; }
+#claim-app .section > h5 { background: #eef1f6; margin: 0; padding: 6px 10px; font-size: 1rem; }
+#claim-app .section .body { padding: 10px; }
+#claim-app .lines td { vertical-align: middle; padding: .25rem; }
+#claim-app .total { font-weight: bold; font-size: 1.1rem; }
+#claim-app .actions { position: sticky; bottom: 0; background: #fff; border-top: 1px solid #ccd; padding: 8px 0; z-index: 5; }
+#claim-app .icd-search-results { max-height: 160px; overflow: auto; border: 1px solid #ccd; background: #fff; }
+#claim-app .icd-search-results div { padding: 3px 8px; cursor: pointer; }
+#claim-app .icd-search-results div:hover { background: #eef1f6; }
+#claim-app .errors { color: #a00; }
+#claim-app .hint { color: #666; font-size: .85rem; }

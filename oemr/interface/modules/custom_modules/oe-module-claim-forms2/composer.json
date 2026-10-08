@@ -1,0 +1,14 @@
+{
+  "name": "sahs/oe-module-claim-forms",
+  "description": "Insurance claim forms for OpenEMR: pre-fills from the chart, review screen, stamps a print-ready PDF with the provider's signature.",
+  "type": "openemr-module",
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "OpenEMR\\Modules\\ClaimForms\\": "src/"
+    }
+  }
+}

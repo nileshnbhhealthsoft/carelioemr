@@ -1,0 +1,713 @@
+{
+  "id": "gtm_enhanced",
+  "title": "GTM Health Insurance Claim Form (L-170 N/C)",
+  "insurer": "The Guyana & Trinidad Mutual Life Insurance Company Limited",
+  "version": 1,
+  "documentCategory": "Insurance",
+  "maxLineItems": 0,
+  "showTotal": false,
+  "sections": [
+    {
+      "title": "1. Policy",
+      "fields": [
+        {
+          "key": "policy_no",
+          "label": "Policy #",
+          "control": "text"
+        },
+        {
+          "key": "certificate_no",
+          "label": "Certificate #",
+          "control": "text"
+        },
+        {
+          "key": "member_id",
+          "label": "ID #",
+          "control": "text"
+        },
+        {
+          "key": "plan_type",
+          "label": "Type of plan",
+          "control": "radio",
+          "options": [
+            [
+              "group",
+              "Group"
+            ],
+            [
+              "non_group",
+              "Non-group"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "2. Employee / insured and patient",
+      "fields": [
+        {
+          "key": "insured_name",
+          "label": "Employee's / insured's name",
+          "control": "text"
+        },
+        {
+          "key": "patient_name",
+          "label": "Patient's name",
+          "control": "text"
+        },
+        {
+          "key": "patient_dob",
+          "label": "Patient's date of birth",
+          "control": "date"
+        },
+        {
+          "key": "gender",
+          "label": "Gender",
+          "control": "radio",
+          "options": [
+            [
+              "male",
+              "M"
+            ],
+            [
+              "female",
+              "F"
+            ]
+          ]
+        },
+        {
+          "key": "spouse_employer",
+          "label": "Name of spouse's employer",
+          "control": "text"
+        },
+        {
+          "key": "address",
+          "label": "Address",
+          "control": "textarea"
+        },
+        {
+          "key": "telephone",
+          "label": "Telephone #",
+          "control": "text"
+        },
+        {
+          "key": "related_employment",
+          "label": "Is the patient's condition related to (a) employment?",
+          "control": "yesno"
+        },
+        {
+          "key": "related_auto",
+          "label": "(b) auto accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "related_other",
+          "label": "(c) other accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "condition_details",
+          "label": "If yes, give details",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "3. Other plans / 4. Relationship / 5. Patient's status",
+      "fields": [
+        {
+          "key": "other_plan",
+          "label": "Is the patient covered through any other plans?",
+          "control": "yesno"
+        },
+        {
+          "key": "other_plan_company",
+          "label": "Other plan: name of insurance company",
+          "control": "text"
+        },
+        {
+          "key": "other_plan_group",
+          "label": "Other plan: name of group or company insured under",
+          "control": "text"
+        },
+        {
+          "key": "relationship",
+          "label": "If the patient is not the insured: relationship",
+          "control": "radio",
+          "options": [
+            [
+              "spouse",
+              "Spouse"
+            ],
+            [
+              "child",
+              "Child"
+            ],
+            [
+              "other",
+              "Other"
+            ]
+          ]
+        },
+        {
+          "key": "marital_status",
+          "label": "Patient's status",
+          "control": "radio",
+          "options": [
+            [
+              "single",
+              "Single"
+            ],
+            [
+              "married",
+              "Married"
+            ],
+            [
+              "divorced",
+              "Divorced"
+            ],
+            [
+              "widowed",
+              "Widowed"
+            ],
+            [
+              "common_law",
+              "Common law"
+            ],
+            [
+              "student",
+              "Full-time student"
+            ]
+          ]
+        },
+        {
+          "key": "pay_to",
+          "label": "Authorise payment to",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "6. Doctor / health provider",
+      "fields": [
+        {
+          "key": "icd",
+          "label": "Diagnosis or nature of illness or injury (ICD code)",
+          "control": "icd"
+        },
+        {
+          "key": "provider_block",
+          "label": "Name and address of doctor / health provider",
+          "control": "textarea"
+        },
+        {
+          "key": "referring_physician",
+          "label": "Name of referring physician",
+          "control": "text"
+        },
+        {
+          "key": "pregnancy",
+          "label": "Is the condition due to pregnancy?",
+          "control": "yesno"
+        },
+        {
+          "key": "last_period",
+          "label": "If yes, approximate date of last monthly period",
+          "control": "date"
+        }
+      ]
+    },
+    {
+      "title": "7. Medical / surgical treatment",
+      "fields": [
+        {
+          "key": "first_symptoms",
+          "label": "Date of first symptoms",
+          "control": "date"
+        },
+        {
+          "key": "prev_treated",
+          "label": "Has the patient been previously treated for this condition?",
+          "control": "yesno"
+        },
+        {
+          "key": "first_consult",
+          "label": "Date of first consultation for this condition",
+          "control": "date"
+        },
+        {
+          "key": "prev_treated_date",
+          "label": "If yes, give dates",
+          "control": "date"
+        },
+        {
+          "key": "gtm_rows",
+          "label": "Services",
+          "control": "rows",
+          "max": 8,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date",
+              "type": "date"
+            },
+            {
+              "key": "place",
+              "label": "Place of service (office/home/hosp.)",
+              "type": "text"
+            },
+            {
+              "key": "desc",
+              "label": "Procedures, services or supplies",
+              "type": "text"
+            },
+            {
+              "key": "dx",
+              "label": "Diagnosis(es)",
+              "type": "icd"
+            },
+            {
+              "key": "amount",
+              "label": "Charges",
+              "type": "money"
+            },
+            {
+              "key": "copay",
+              "label": "Co-payment",
+              "type": "money"
+            }
+          ]
+        },
+        {
+          "key": "further_services",
+          "label": "Further services recommended",
+          "control": "textarea"
+        },
+        {
+          "key": "further_services_amount",
+          "label": "Further services charge",
+          "control": "money"
+        },
+        {
+          "key": "op_date",
+          "label": "Surgical procedure: date of operation",
+          "control": "date"
+        },
+        {
+          "key": "op_type",
+          "label": "Surgical procedure: type of operation",
+          "control": "cpt"
+        },
+        {
+          "key": "op_surgeon",
+          "label": "Name of surgeon / assistant surgeon",
+          "control": "text"
+        },
+        {
+          "key": "op_anesthetist",
+          "label": "Name of anaesthetist",
+          "control": "text"
+        },
+        {
+          "key": "surgical_amount",
+          "label": "Surgical procedure charge",
+          "control": "money"
+        },
+        {
+          "key": "copay_total_amount",
+          "label": "Total co-payment",
+          "control": "money"
+        }
+      ]
+    },
+    {
+      "title": "8. Hospital",
+      "fields": [
+        {
+          "key": "hosp_days",
+          "label": "Number of days confined",
+          "control": "text"
+        },
+        {
+          "key": "hosp_ward",
+          "label": "Ward type",
+          "control": "radio",
+          "options": [
+            [
+              "private",
+              "Private"
+            ],
+            [
+              "semi_private",
+              "Semi-private"
+            ],
+            [
+              "ward",
+              "Ward"
+            ]
+          ]
+        },
+        {
+          "key": "hosp_daily_amount",
+          "label": "Daily hospital charge for patient",
+          "control": "money"
+        },
+        {
+          "key": "hosp_from",
+          "label": "From",
+          "control": "date"
+        },
+        {
+          "key": "hosp_to",
+          "label": "To",
+          "control": "date"
+        },
+        {
+          "key": "hosp_operation",
+          "label": "Operation or delivery room (type of operation)",
+          "control": "cpt"
+        },
+        {
+          "key": "hosp_services",
+          "label": "Hospital services",
+          "control": "text"
+        },
+        {
+          "key": "hosp_doctor",
+          "label": "Name of admitting doctor",
+          "control": "text"
+        },
+        {
+          "key": "hosp_room_amount",
+          "label": "Room charges",
+          "control": "money"
+        },
+        {
+          "key": "hosp_operation_amount",
+          "label": "Operation or delivery room charge",
+          "control": "money"
+        },
+        {
+          "key": "hosp_services_amount",
+          "label": "Hospital services charge",
+          "control": "money"
+        }
+      ]
+    },
+    {
+      "title": "9. Laboratory / X-ray",
+      "fields": [
+        {
+          "key": "lab_rows",
+          "label": "Date and type(s) of test(s)",
+          "control": "rows",
+          "max": 3,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date",
+              "type": "date"
+            },
+            {
+              "key": "test",
+              "label": "Type of test",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- X-ray / ultrasound -",
+                  "groups": [
+                    {
+                      "label": "X-ray",
+                      "options": [
+                        "Chest X-ray",
+                        "Abdominal X-ray"
+                      ]
+                    },
+                    {
+                      "label": "Ultrasound",
+                      "options": [
+                        "Ultrasound - Prostate",
+                        "Ultrasound - Abdomen",
+                        "Ultrasound - Breast",
+                        "Ultrasound - Gynaecological (pelvic)"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "placeholder": "- Blood test -",
+                  "options": [
+                    "Complete blood count (CBC)",
+                    "Renal profile (urea, creatinine, electrolytes)",
+                    "Liver profile (LFTs)",
+                    "Glucose - fasting",
+                    "Glucose - random",
+                    "HbA1c",
+                    "Lipid profile",
+                    "Thyroid profile (TSH, T4)",
+                    "Electrolytes",
+                    "Urea and creatinine",
+                    "Uric acid",
+                    "PSA (prostate-specific antigen)",
+                    "Serology - HIV",
+                    "Serology - Hepatitis B",
+                    "Serology - Hepatitis C",
+                    "Serology - Syphilis (VDRL)",
+                    "CRP",
+                    "ESR",
+                    "Coagulation profile (PT/INR)",
+                    "Cardiac enzymes (troponin)",
+                    "Iron studies",
+                    "Vitamin D",
+                    "Blood culture",
+                    "Blood group and crossmatch",
+                    "Pregnancy test (beta-hCG)",
+                    "Other blood test"
+                  ]
+                }
+              ],
+              "other": true
+            }
+          ]
+        },
+        {
+          "key": "lab_amount",
+          "label": "Charge",
+          "control": "money"
+        },
+        {
+          "key": "lab_copay_amount",
+          "label": "Co-payment",
+          "control": "money"
+        }
+      ]
+    },
+    {
+      "title": "10. Dentist",
+      "fields": [
+        {
+          "key": "dentist_name",
+          "label": "Dentist",
+          "control": "text"
+        },
+        {
+          "key": "dent_address",
+          "label": "Address",
+          "control": "textarea"
+        },
+        {
+          "key": "dentist_phone",
+          "label": "Tel. #",
+          "control": "text"
+        },
+        {
+          "key": "dent_crown",
+          "label": "If crown, was the tooth badly broken down?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_crown_note",
+          "label": "If crown, was the tooth badly broken down - description and dates",
+          "control": "text"
+        },
+        {
+          "key": "dent_occ",
+          "label": "Is treatment the result of occupational illness or injury?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_occ_note",
+          "label": "Is treatment the result of occupational illness  - description and dates",
+          "control": "text"
+        },
+        {
+          "key": "dent_auto",
+          "label": "Is treatment the result of an auto accident or other accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_auto_note",
+          "label": "Is treatment the result of an auto accident or o - description and dates",
+          "control": "text"
+        },
+        {
+          "key": "dent_other_plan",
+          "label": "Are any services covered by another plan?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_other_plan_note",
+          "label": "Are any services covered by another plan - description and dates",
+          "control": "text"
+        },
+        {
+          "key": "dent_ortho",
+          "label": "Is the treatment for orthodontics?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_ortho_note",
+          "label": "Is the treatment for orthodontics - description and dates",
+          "control": "text"
+        },
+        {
+          "key": "dent_first_visit",
+          "label": "First visit date",
+          "control": "date"
+        },
+        {
+          "key": "dent_place",
+          "label": "Place of treatment",
+          "control": "radio",
+          "options": [
+            [
+              "office",
+              "Office"
+            ],
+            [
+              "hospital",
+              "Hosp."
+            ],
+            [
+              "other",
+              "Other"
+            ]
+          ]
+        },
+        {
+          "key": "dent_xrays",
+          "label": "X-ray or models enclosed?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_xray_count",
+          "label": "How many?",
+          "control": "text"
+        },
+        {
+          "key": "dent_initial",
+          "label": "If prosthesis, is this initial placement?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_extraction",
+          "label": "If yes, date of extractions of teeth being replaced",
+          "control": "text"
+        },
+        {
+          "key": "dent_replace_reason",
+          "label": "If no, reason for replacement and date of prior placement",
+          "control": "text"
+        },
+        {
+          "key": "dent_rows",
+          "label": "Examination and treatment plan",
+          "control": "rows",
+          "max": 5,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date of service",
+              "type": "date"
+            },
+            {
+              "key": "tooth",
+              "label": "Tooth # or letter",
+              "type": "text"
+            },
+            {
+              "key": "surface",
+              "label": "Surface",
+              "type": "text"
+            },
+            {
+              "key": "desc",
+              "label": "Description of service",
+              "type": "text"
+            },
+            {
+              "key": "amount",
+              "label": "Charge",
+              "type": "money"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "11. Optometrist / ophthalmologist",
+      "fields": [
+        {
+          "key": "optician_rows",
+          "label": "Services (A) examination, (B) frames, (C) lenses",
+          "control": "rows",
+          "max": 3,
+          "columns": [
+            {
+              "key": "dx",
+              "label": "Diagnosis",
+              "type": "icd"
+            },
+            {
+              "key": "date",
+              "label": "Date of service",
+              "type": "date"
+            },
+            {
+              "key": "amount",
+              "label": "Charge",
+              "type": "money"
+            }
+          ]
+        },
+        {
+          "key": "opt_lens",
+          "label": "Lens type",
+          "control": "radio",
+          "options": [
+            [
+              "single",
+              "Single"
+            ],
+            [
+              "bifocal",
+              "Bi-focal"
+            ],
+            [
+              "multifocal",
+              "Multi-focal"
+            ],
+            [
+              "lenticular",
+              "Lenticular"
+            ],
+            [
+              "contact",
+              "Contact lenses"
+            ]
+          ]
+        },
+        {
+          "key": "opt_q_a1",
+          "label": "(a) If contact lenses, were they prescribed for severe corneal astigmatism, corneal scarring, keratoconus or aphakia?",
+          "control": "yesno"
+        },
+        {
+          "key": "opt_q_a2",
+          "label": "Can visual acuity be improved to at least 20/70 by spectacle lenses?",
+          "control": "yesno"
+        },
+        {
+          "key": "opt_q_a3",
+          "label": "Can visual acuity be improved to at least 20/70 by contact lenses?",
+          "control": "yesno"
+        },
+        {
+          "key": "opt_q_b",
+          "label": "(b) Are these prescription sun glasses?",
+          "control": "yesno"
+        }
+      ]
+    }
+  ]
+}

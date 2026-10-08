@@ -1,0 +1,346 @@
+{
+  "id": "vision_claim_form_available_on_portal",
+  "title": "CG United Vision/Eye Care Claim Form",
+  "insurer": "CG United / Coralisle",
+  "version": 1,
+  "documentCategory": "Insurance",
+  "maxLineItems": 0,
+  "showTotal": false,
+  "sections": [
+    {
+      "title": "Part 1 - Employee / insured",
+      "fields": [
+        {
+          "key": "claim_no",
+          "label": "Claim No.",
+          "control": "text"
+        },
+        {
+          "key": "insured_name",
+          "label": "Full name of insured",
+          "control": "text"
+        },
+        {
+          "key": "policy_no",
+          "label": "Policy No.",
+          "control": "text"
+        },
+        {
+          "key": "certificate_no",
+          "label": "Certificate No.",
+          "control": "text"
+        },
+        {
+          "key": "employer_name",
+          "label": "Name of employer",
+          "control": "text"
+        },
+        {
+          "key": "patient_name",
+          "label": "Full name of patient",
+          "control": "text"
+        },
+        {
+          "key": "address",
+          "label": "Patient's mailing address",
+          "control": "text"
+        },
+        {
+          "key": "patient_dob",
+          "label": "Patient's date of birth",
+          "control": "date"
+        },
+        {
+          "key": "gender",
+          "label": "Patient's gender",
+          "control": "radio",
+          "options": [
+            [
+              "male",
+              "Male"
+            ],
+            [
+              "female",
+              "Female"
+            ]
+          ]
+        },
+        {
+          "key": "relationship",
+          "label": "Relationship to insured",
+          "control": "radio",
+          "options": [
+            [
+              "self",
+              "Self"
+            ],
+            [
+              "spouse",
+              "Spouse"
+            ],
+            [
+              "child",
+              "Child"
+            ],
+            [
+              "other",
+              "Other"
+            ]
+          ]
+        },
+        {
+          "key": "relationship_other",
+          "label": "Relationship - other (describe)",
+          "control": "text"
+        },
+        {
+          "key": "other_plan_details_ml",
+          "label": "Other health coverage: policy holder and policy number",
+          "control": "textarea"
+        }
+      ]
+    },
+    {
+      "title": "Provider",
+      "fields": [
+        {
+          "key": "provider_name",
+          "label": "Provider name",
+          "control": "text"
+        },
+        {
+          "key": "provider_phone_area",
+          "label": "Contact no. - area code",
+          "control": "text"
+        },
+        {
+          "key": "provider_phone",
+          "label": "Contact no.",
+          "control": "text"
+        },
+        {
+          "key": "provider_address",
+          "label": "Provider mailing address",
+          "control": "text"
+        },
+        {
+          "key": "assign_policy",
+          "label": "Assignment of benefits: under policy",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "Part 3 - Procedures and diagnoses (attending physician)",
+      "fields": [
+        {
+          "key": "vis_proc_checks",
+          "label": "Procedures (tick and enter the fee)",
+          "control": "checklist",
+          "groups": [
+            {
+              "title": "Vision procedures",
+              "items": [
+                {
+                  "id": "92004",
+                  "code": "92004",
+                  "label": "Examination - New Patient"
+                },
+                {
+                  "id": "92014",
+                  "code": "92014",
+                  "label": "Examination - Established Patient"
+                },
+                {
+                  "id": "92081",
+                  "code": "92081",
+                  "label": "Visual Field report"
+                },
+                {
+                  "id": "V2020",
+                  "code": "V2020",
+                  "label": "Frames"
+                },
+                {
+                  "id": "V2100",
+                  "code": "V2100",
+                  "label": "Single Vision Lenses"
+                },
+                {
+                  "id": "V2200",
+                  "code": "V2200",
+                  "label": "Bifocal Lenses"
+                },
+                {
+                  "id": "V2300",
+                  "code": "V2300",
+                  "label": "Trifocal Lenses"
+                },
+                {
+                  "id": "V2500",
+                  "code": "V2500",
+                  "label": "Contact Lenses"
+                },
+                {
+                  "id": "V2740",
+                  "code": "V2740",
+                  "label": "Tint"
+                },
+                {
+                  "id": "V2750",
+                  "code": "V2750",
+                  "label": "Anti-Reflective Coating"
+                },
+                {
+                  "id": "V2760",
+                  "code": "V2760",
+                  "label": "Scratch Resistent"
+                },
+                {
+                  "id": "V2781",
+                  "code": "V2781",
+                  "label": "Progressive Lenses"
+                }
+              ]
+            }
+          ],
+          "codeLabel": "Code"
+        },
+        {
+          "key": "vis_proc_rows",
+          "label": "Other procedures",
+          "control": "rows",
+          "max": 7,
+          "columns": [
+            {
+              "key": "code",
+              "label": "Code",
+              "type": "text"
+            },
+            {
+              "key": "desc",
+              "label": "Description",
+              "type": "text"
+            },
+            {
+              "key": "amount",
+              "label": "Fee",
+              "type": "money"
+            }
+          ]
+        },
+        {
+          "key": "vis_dx_checks",
+          "label": "ICD-10 diagnoses (tick and enter the fee)",
+          "control": "checklist",
+          "groups": [
+            {
+              "title": "Diagnoses",
+              "items": [
+                {
+                  "id": "H52",
+                  "code": "H52",
+                  "label": "Disorders of refraction and accommodation"
+                },
+                {
+                  "id": "H52_0",
+                  "code": "H52.0",
+                  "label": "Hypermetropia"
+                },
+                {
+                  "id": "H52_03",
+                  "code": "H52.03",
+                  "label": "Hypermetropia, bilateral"
+                },
+                {
+                  "id": "H52_1",
+                  "code": "H52.1",
+                  "label": "Myopia"
+                },
+                {
+                  "id": "H52_13",
+                  "code": "H52.13",
+                  "label": "Myopia, bilateral"
+                },
+                {
+                  "id": "H52_221",
+                  "code": "H52.221",
+                  "label": "Regular astigmatism, right eye"
+                },
+                {
+                  "id": "H52_222",
+                  "code": "H52.222",
+                  "label": "Regular astigmatism, left eye"
+                },
+                {
+                  "id": "H52_223",
+                  "code": "H52.223",
+                  "label": "Regular astigmatism, bilateral"
+                },
+                {
+                  "id": "H52_4",
+                  "code": "H52.4",
+                  "label": "Presbyopia"
+                },
+                {
+                  "id": "H53_02",
+                  "code": "H53.02",
+                  "label": "Refractive amblyopia"
+                },
+                {
+                  "id": "Z01_0",
+                  "code": "Z01.0",
+                  "label": "Encounter for examination of eyes and vision"
+                },
+                {
+                  "id": "Z01_00",
+                  "code": "Z01.00",
+                  "label": "Encounter for eye exam w/o abnormal findings"
+                },
+                {
+                  "id": "Z01_01",
+                  "code": "Z01.01",
+                  "label": "Encounter for eye exam w abnormal findings"
+                }
+              ]
+            }
+          ],
+          "codeLabel": "Code"
+        },
+        {
+          "key": "vis_dx_rows",
+          "label": "Other diagnoses",
+          "control": "rows",
+          "max": 7,
+          "columns": [
+            {
+              "key": "code",
+              "label": "ICD-10 code",
+              "type": "icd"
+            },
+            {
+              "key": "desc",
+              "label": "Description",
+              "type": "text"
+            },
+            {
+              "key": "amount",
+              "label": "Fee",
+              "type": "money"
+            }
+          ]
+        },
+        {
+          "key": "vis_dx_other_ml",
+          "label": "Diagnosis (if not defined above)",
+          "control": "textarea"
+        },
+        {
+          "key": "payment_made",
+          "label": "Payment made",
+          "control": "money"
+        }
+      ]
+    }
+  ]
+}

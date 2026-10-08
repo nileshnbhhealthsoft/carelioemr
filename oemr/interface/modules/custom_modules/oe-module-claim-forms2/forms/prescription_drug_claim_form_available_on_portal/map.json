@@ -1,0 +1,820 @@
+{
+  "formId": "prescription_drug_claim_form_available_on_portal",
+  "version": 1,
+  "title": "CG United Prescription Drug Claim",
+  "source_pdf": "Prescription Drug Claim Form (Available on Portal).pdf",
+  "coordinate_system": {
+    "origin": "top-left of page",
+    "unit": "pt (1/72 in)",
+    "page_width": 612,
+    "page_height": 792,
+    "text_xy": "x = left edge (or right edge when align is right, centre when align is center); y = text BASELINE",
+    "checkbox_xy": "cx, cy = centre of the printed box"
+  },
+  "defaults": {
+    "font": "Helvetica",
+    "size": 9,
+    "colour": "#000000"
+  },
+  "max_line_items": 0,
+  "pages": {
+    "1": {
+      "fields": {
+        "claim_no": {
+          "type": "text",
+          "x": 411,
+          "y": 84,
+          "w": 162,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "claim_no"
+        },
+        "insured_surname": {
+          "type": "text",
+          "x": 81,
+          "y": 207,
+          "w": 169,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "insured_surname"
+        },
+        "insured_first_name": {
+          "type": "text",
+          "x": 308,
+          "y": 207,
+          "w": 158,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "insured_first_name"
+        },
+        "insured_middle": {
+          "type": "text",
+          "x": 529,
+          "y": 207,
+          "w": 40,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "insured_middle"
+        },
+        "certificate_no": {
+          "type": "text",
+          "x": 103,
+          "y": 226,
+          "w": 201,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "certificate_no"
+        },
+        "insured_dob": {
+          "type": "text",
+          "x": 432,
+          "y": 226,
+          "w": 137,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "insured_dob",
+          "format": "DD/MM/YY"
+        },
+        "address": {
+          "type": "text",
+          "x": 114,
+          "y": 245,
+          "w": 455,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "address"
+        },
+        "phone_home": {
+          "type": "text",
+          "x": 114,
+          "y": 264,
+          "w": 125,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "phone_home"
+        },
+        "phone_work": {
+          "type": "text",
+          "x": 265,
+          "y": 264,
+          "w": 147,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "phone_work"
+        },
+        "phone_cell": {
+          "type": "text",
+          "x": 432,
+          "y": 264,
+          "w": 137,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "phone_cell"
+        },
+        "patient_surname": {
+          "type": "text",
+          "x": 81,
+          "y": 303,
+          "w": 169,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "patient_surname"
+        },
+        "patient_first_name": {
+          "type": "text",
+          "x": 308,
+          "y": 303,
+          "w": 158,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "patient_first_name"
+        },
+        "patient_middle": {
+          "type": "text",
+          "x": 529,
+          "y": 303,
+          "w": 40,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "patient_middle"
+        },
+        "relationship_self": {
+          "type": "checkbox",
+          "cx": 153.5,
+          "cy": 318.0,
+          "mark": "X",
+          "size": 9,
+          "source": "relationship",
+          "equals": "self"
+        },
+        "relationship_spouse": {
+          "type": "checkbox",
+          "cx": 192.0,
+          "cy": 318.0,
+          "mark": "X",
+          "size": 9,
+          "source": "relationship",
+          "equals": "spouse"
+        },
+        "relationship_child": {
+          "type": "checkbox",
+          "cx": 246.0,
+          "cy": 318.0,
+          "mark": "X",
+          "size": 9,
+          "source": "relationship",
+          "equals": "child"
+        },
+        "patient_dob": {
+          "type": "text",
+          "x": 432,
+          "y": 322,
+          "w": 137,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "patient_dob",
+          "format": "DD/MM/YY"
+        },
+        "other_plan_yes": {
+          "type": "checkbox",
+          "cx": 327.0,
+          "cy": 337.0,
+          "mark": "X",
+          "size": 9,
+          "source": "other_plan",
+          "equals": "yes"
+        },
+        "other_plan_no": {
+          "type": "checkbox",
+          "cx": 361.0,
+          "cy": 337.0,
+          "mark": "X",
+          "size": 9,
+          "source": "other_plan",
+          "equals": "no"
+        },
+        "other_plan_company": {
+          "type": "text",
+          "x": 130,
+          "y": 360,
+          "w": 298,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "other_plan_company"
+        },
+        "pharmacy_name": {
+          "type": "text",
+          "x": 124,
+          "y": 402,
+          "w": 283,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "pharmacy_name"
+        },
+        "vat_reg_no": {
+          "type": "text",
+          "x": 470,
+          "y": 402,
+          "w": 99,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vat_reg_no"
+        },
+        "pharmacy_address": {
+          "type": "text",
+          "x": 76,
+          "y": 422,
+          "w": 358,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "pharmacy_address"
+        },
+        "pharmacy_phone": {
+          "type": "text",
+          "x": 470,
+          "y": 422,
+          "w": 99,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "pharmacy_phone"
+        },
+        "rx1_date": {
+          "type": "text",
+          "x": 39,
+          "y": 467.8,
+          "w": 67,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.0.date",
+          "format": "DD/MM/YY"
+        },
+        "rx1_rx_no": {
+          "type": "text",
+          "x": 111,
+          "y": 467.8,
+          "w": 54,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.0.rx_no"
+        },
+        "rx1_drug_id": {
+          "type": "text",
+          "x": 170,
+          "y": 467.8,
+          "w": 49,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.0.drug_id"
+        },
+        "rx1_qty": {
+          "type": "text",
+          "x": 224,
+          "y": 467.8,
+          "w": 40,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.0.qty"
+        },
+        "rx1_desc": {
+          "type": "text",
+          "x": 269,
+          "y": 467.8,
+          "w": 226,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.0.desc"
+        },
+        "rx1_amount": {
+          "type": "text",
+          "x": 571,
+          "y": 467.8,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.0.amount",
+          "format": "money"
+        },
+        "rx2_date": {
+          "type": "text",
+          "x": 39,
+          "y": 482.8,
+          "w": 67,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.1.date",
+          "format": "DD/MM/YY"
+        },
+        "rx2_rx_no": {
+          "type": "text",
+          "x": 111,
+          "y": 482.8,
+          "w": 54,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.1.rx_no"
+        },
+        "rx2_drug_id": {
+          "type": "text",
+          "x": 170,
+          "y": 482.8,
+          "w": 49,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.1.drug_id"
+        },
+        "rx2_qty": {
+          "type": "text",
+          "x": 224,
+          "y": 482.8,
+          "w": 40,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.1.qty"
+        },
+        "rx2_desc": {
+          "type": "text",
+          "x": 269,
+          "y": 482.8,
+          "w": 226,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.1.desc"
+        },
+        "rx2_amount": {
+          "type": "text",
+          "x": 571,
+          "y": 482.8,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.1.amount",
+          "format": "money"
+        },
+        "rx3_date": {
+          "type": "text",
+          "x": 39,
+          "y": 496.8,
+          "w": 67,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.2.date",
+          "format": "DD/MM/YY"
+        },
+        "rx3_rx_no": {
+          "type": "text",
+          "x": 111,
+          "y": 496.8,
+          "w": 54,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.2.rx_no"
+        },
+        "rx3_drug_id": {
+          "type": "text",
+          "x": 170,
+          "y": 496.8,
+          "w": 49,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.2.drug_id"
+        },
+        "rx3_qty": {
+          "type": "text",
+          "x": 224,
+          "y": 496.8,
+          "w": 40,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.2.qty"
+        },
+        "rx3_desc": {
+          "type": "text",
+          "x": 269,
+          "y": 496.8,
+          "w": 226,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.2.desc"
+        },
+        "rx3_amount": {
+          "type": "text",
+          "x": 571,
+          "y": 496.8,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.2.amount",
+          "format": "money"
+        },
+        "rx4_date": {
+          "type": "text",
+          "x": 39,
+          "y": 511.8,
+          "w": 67,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.3.date",
+          "format": "DD/MM/YY"
+        },
+        "rx4_rx_no": {
+          "type": "text",
+          "x": 111,
+          "y": 511.8,
+          "w": 54,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.3.rx_no"
+        },
+        "rx4_drug_id": {
+          "type": "text",
+          "x": 170,
+          "y": 511.8,
+          "w": 49,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.3.drug_id"
+        },
+        "rx4_qty": {
+          "type": "text",
+          "x": 224,
+          "y": 511.8,
+          "w": 40,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.3.qty"
+        },
+        "rx4_desc": {
+          "type": "text",
+          "x": 269,
+          "y": 511.8,
+          "w": 226,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.3.desc"
+        },
+        "rx4_amount": {
+          "type": "text",
+          "x": 571,
+          "y": 511.8,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.3.amount",
+          "format": "money"
+        },
+        "rx5_date": {
+          "type": "text",
+          "x": 39,
+          "y": 525.8,
+          "w": 67,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.4.date",
+          "format": "DD/MM/YY"
+        },
+        "rx5_rx_no": {
+          "type": "text",
+          "x": 111,
+          "y": 525.8,
+          "w": 54,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.4.rx_no"
+        },
+        "rx5_drug_id": {
+          "type": "text",
+          "x": 170,
+          "y": 525.8,
+          "w": 49,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.4.drug_id"
+        },
+        "rx5_qty": {
+          "type": "text",
+          "x": 224,
+          "y": 525.8,
+          "w": 40,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.4.qty"
+        },
+        "rx5_desc": {
+          "type": "text",
+          "x": 269,
+          "y": 525.8,
+          "w": 226,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.4.desc"
+        },
+        "rx5_amount": {
+          "type": "text",
+          "x": 571,
+          "y": 525.8,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.4.amount",
+          "format": "money"
+        },
+        "rx6_date": {
+          "type": "text",
+          "x": 39,
+          "y": 539.8,
+          "w": 67,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.5.date",
+          "format": "DD/MM/YY"
+        },
+        "rx6_rx_no": {
+          "type": "text",
+          "x": 111,
+          "y": 539.8,
+          "w": 54,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.5.rx_no"
+        },
+        "rx6_drug_id": {
+          "type": "text",
+          "x": 170,
+          "y": 539.8,
+          "w": 49,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.5.drug_id"
+        },
+        "rx6_qty": {
+          "type": "text",
+          "x": 224,
+          "y": 539.8,
+          "w": 40,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.5.qty"
+        },
+        "rx6_desc": {
+          "type": "text",
+          "x": 269,
+          "y": 539.8,
+          "w": 226,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.5.desc"
+        },
+        "rx6_amount": {
+          "type": "text",
+          "x": 571,
+          "y": 539.8,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.5.amount",
+          "format": "money"
+        },
+        "rx7_date": {
+          "type": "text",
+          "x": 39,
+          "y": 554.8,
+          "w": 67,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.6.date",
+          "format": "DD/MM/YY"
+        },
+        "rx7_rx_no": {
+          "type": "text",
+          "x": 111,
+          "y": 554.8,
+          "w": 54,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.6.rx_no"
+        },
+        "rx7_drug_id": {
+          "type": "text",
+          "x": 170,
+          "y": 554.8,
+          "w": 49,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.6.drug_id"
+        },
+        "rx7_qty": {
+          "type": "text",
+          "x": 224,
+          "y": 554.8,
+          "w": 40,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.6.qty"
+        },
+        "rx7_desc": {
+          "type": "text",
+          "x": 269,
+          "y": 554.8,
+          "w": 226,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.6.desc"
+        },
+        "rx7_amount": {
+          "type": "text",
+          "x": 571,
+          "y": 554.8,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "rx_rows.6.amount",
+          "format": "money"
+        },
+        "total_charges": {
+          "type": "text",
+          "x": 571,
+          "y": 569,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "_sum",
+          "format": "money",
+          "sum_of": [
+            "rx_rows"
+          ]
+        },
+        "vat_amount": {
+          "type": "text",
+          "x": 571,
+          "y": 584,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "vat_amount",
+          "format": "money"
+        },
+        "total_receipt": {
+          "type": "text",
+          "x": 571,
+          "y": 598,
+          "w": 73,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "_sum",
+          "format": "money",
+          "bold": true,
+          "sum_of": [
+            "rx_rows",
+            "vat_amount"
+          ]
+        },
+        "insured_signature": {
+          "type": "reserved",
+          "note": "The primary insured signs and dates this declaration by hand. Never stamp.",
+          "boxes": [
+            {
+              "x": 160,
+              "y": 649,
+              "w": 270,
+              "h": 29
+            },
+            {
+              "x": 457,
+              "y": 663,
+              "w": 114,
+              "h": 18
+            }
+          ]
+        }
+      }
+    }
+  }
+}
