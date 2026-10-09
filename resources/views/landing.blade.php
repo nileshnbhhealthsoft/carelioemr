@@ -1238,6 +1238,58 @@
         });
     }
 
+    async function parseApiJson(response) {
+        const raw = await response.text();
+        const body = raw.trim();
+
+        if (!body) {
+            return {};
+        }
+
+        try {
+            return JSON.parse(body);
+        } catch (parseError) {
+            const firstBrace = body.indexOf('{');
+            if (firstBrace !== -1) {
+                let depth = 0;
+                let inString = false;
+                let escaped = false;
+
+                for (let i = firstBrace; i < body.length; i++) {
+                    const ch = body[i];
+
+                    if (inString) {
+                        escaped = !escaped && ch === '\\';
+                        if (!escaped && ch === '"') {
+                            inString = false;
+                        } else if (ch !== '\\') {
+                            escaped = false;
+                        }
+                        continue;
+                    }
+
+                    if (ch === '"') {
+                        inString = true;
+                    } else if (ch === '{') {
+                        depth++;
+                    } else if (ch === '}') {
+                        depth--;
+                        if (depth === 0) {
+                            try {
+                                return JSON.parse(body.slice(firstBrace, i + 1));
+                            } catch (nestedError) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            console.error('Non-JSON API response:', raw);
+            throw new Error('Server returned an invalid response. Please try again or contact support.');
+        }
+    }
+
     async function handleStripePayment(e) {
         e.preventDefault();
         const submitBtn = document.getElementById('submitBtn');
@@ -1271,7 +1323,7 @@
                     billing_cycle: selectedBillingCycle
                 })
             });
-            const data = await res.json();
+            const data = await parseApiJson(res);
 
             // Handle duplicate email or validation errors (HTTP 422)
             if (res.status === 422 || !res.ok) {
@@ -1315,7 +1367,7 @@
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({ payment_intent_id: result.paymentIntent.id, doctor_name: doctorName, site_name: siteName, email: email })
                     });
-                    const confirmData = await confirmRes.json();
+                    const confirmData = await parseApiJson(confirmRes);
 
                     if (!confirmRes.ok) {
                         submitBtn.disabled = false;
