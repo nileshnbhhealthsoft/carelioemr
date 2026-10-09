@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use OpenEMR\Modules\SiteAdmin\Installer\SiteAdminInstaller;
 use PDO;
 use RuntimeException;
+use Symfony\Component\Process\Process;
 use Throwable;
 
 class OpenEmrProvisioningService
@@ -350,13 +351,22 @@ class OpenEmrProvisioningService
             throw new RuntimeException("Canonical OpenEMR database.sql not found: {$sqlFile}");
         }
 
-        $mysqlExe = 'C:\\Program Files\\MySQL\\MySQL Server 9.6\\bin\\mysql.exe';
-        if (File::exists($mysqlExe)) {
-            $passArg = $pass !== '' ? "-p{$pass}" : '';
-            $cmd = "cmd.exe /c \"\"{$mysqlExe}\" -h {$host} -P {$port} -u {$user} {$passArg} {$dbName} < \"{$sqlFile}\"\"";
-            exec($cmd, $output, $returnCode);
-            if ($returnCode !== 0) {
-                throw new RuntimeException("MySQL CLI execution of database.sql failed with exit code {$returnCode}");
+        $mysqlBinary = $this->findMysqlBinary();
+        if ($mysqlBinary !== null) {
+            $command = [$mysqlBinary, '-h', $host, '-P', (string) $port, '-u', $user];
+            if ($pass !== '') {
+                $command[] = "-p{$pass}";
+            }
+            $command[] = $dbName;
+
+            $process = new Process($command);
+            $process->setInput(File::get($sqlFile));
+            $process->setTimeout(null);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                $error = trim($process->getErrorOutput() ?: $process->getOutput());
+                throw new RuntimeException("MySQL CLI import of database.sql failed with exit code {$process->getExitCode()}" . ($error ? ": {$error}" : ''));
             }
         } else {
             $pdo = $this->getTenantPdo($dbName);
@@ -366,6 +376,27 @@ class OpenEmrProvisioningService
             $pdo->exec($rawSql);
             $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
         }
+    }
+
+    protected function findMysqlBinary(): ?string
+    {
+        $candidates = array_filter([
+            env('MYSQL_BINARY'),
+            'C:\\Program Files\\MySQL\\MySQL Server 9.6\\bin\\mysql.exe',
+            'C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe',
+            'E:\\xampp\\mysql\\bin\\mysql.exe',
+            '/usr/bin/mysql',
+            '/usr/local/bin/mysql',
+            '/opt/homebrew/bin/mysql',
+        ]);
+
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && File::exists($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -642,6 +673,8 @@ class OpenEmrProvisioningService
         if (!class_exists(SiteAdminInstaller::class)) {
             throw new RuntimeException("Site Admin module installer class could not be loaded.");
         }
+    }
+
     protected function markUserPasswordTemporary(PDO $pdo, int $userId, string $username, string $createdBy): void
     {
         $pdo->exec("CREATE TABLE IF NOT EXISTS `mod_site_admin_temp_passwords` (
