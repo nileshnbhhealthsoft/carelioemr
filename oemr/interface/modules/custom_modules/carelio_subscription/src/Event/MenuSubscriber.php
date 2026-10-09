@@ -42,15 +42,31 @@ class MenuSubscriber implements EventSubscriberInterface
         foreach ($menu as $menuItem) {
             if (($menuItem->menu_id ?? '') === 'admimg' || strtolower((string) ($menuItem->label ?? '')) === 'admin') {
                 foreach (($menuItem->children ?? []) as $child) {
-                    if (($child->menu_id ?? '') === 'carelio_subscription0') {
+                    if (($child->menu_id ?? '') === 'carelio_subscription0' || ($child->menu_id ?? '') === 'carelio_subscription_management') {
                         $child->label = xlt('Subscription Management');
                         $child->url = self::MODULE_PATH . '/public/index.php';
+                        $child->target = 'adm0';
                         $event->setMenu($menu);
                         return $event;
                     }
                 }
 
-                $menuItem->children[] = $subscriptionItem;
+                $children = is_array($menuItem->children ?? null) ? $menuItem->children : [];
+                $inserted = false;
+                foreach ($children as $index => $child) {
+                    $label = strtolower(trim((string) ($child->label ?? '')));
+                    if ($label === 'address book' || ($child->menu_id ?? '') === 'adb0') {
+                        array_splice($children, $index + 1, 0, [$subscriptionItem]);
+                        $inserted = true;
+                        break;
+                    }
+                }
+
+                if (!$inserted) {
+                    $children[] = $subscriptionItem;
+                }
+
+                $menuItem->children = $children;
                 break;
             }
         }

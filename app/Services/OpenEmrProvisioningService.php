@@ -628,25 +628,9 @@ class OpenEmrProvisioningService
 
     protected function internalAdministratorCredentialRecipients(): array
     {
-        $configured = config('mail.internal_admin_credential_emails');
-        if (is_string($configured)) {
-            $configured = array_map('trim', explode(',', $configured));
-        }
+        $recipient = config('mail.carelio_internal_admin_email', 'nilesh.hake@nbhhealthsoft.com');
 
-        $recipients = array_values(array_filter((array) $configured));
-
-        if (empty($recipients)) {
-            $fallback = config('mail.admin_notification_email');
-            if (!empty($fallback)) {
-                $recipients[] = $fallback;
-            }
-        }
-
-        if (empty($recipients)) {
-            $recipients = config('auth.admin_emails', []);
-        }
-
-        return array_values(array_unique(array_filter($recipients)));
+        return array_values(array_filter([$recipient]));
     }
 
     protected function ensureSiteAdminInstallerLoaded(): void
