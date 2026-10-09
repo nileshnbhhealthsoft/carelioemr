@@ -8,6 +8,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MenuSubscriber implements EventSubscriberInterface
 {
+    private const SUBSCRIPTION_MENU_ID = 'carelio_subscription_management';
+    private const SUBSCRIPTION_URL = '/interface/modules/custom_modules/carelio_subscription/public/index.php';
+
     /**
      * Subscribe to OpenEMR's native MenuEvent::MENU_RESTRICT event
      */
@@ -28,21 +31,24 @@ class MenuSubscriber implements EventSubscriberInterface
     {
         $menu = $event->getMenu();
 
-        if ($this->containsMenuId($menu, 'carelio_subscription_management')) {
+        if ($this->containsMenuId($menu, self::SUBSCRIPTION_MENU_ID) || $this->containsMenuId($menu, 'carelio_subscription0')) {
             return;
         }
 
         $item = new \stdClass();
         $item->requirement = 0;
-        $item->target = 'mod';
-        $item->menu_id = 'carelio_subscription_management';
-        $item->label = function_exists('xlt') ? xlt('Carelio Subscription Management') : 'Carelio Subscription Management';
-        $item->url = '/interface/modules/custom_modules/site_admin_config/public/address_book.php';
+        $item->target = 'adm0';
+        $item->menu_id = self::SUBSCRIPTION_MENU_ID;
+        $item->label = function_exists('xlt') ? xlt('Carelio Subscription') : 'Carelio Subscription';
+        $item->url = self::SUBSCRIPTION_URL;
         $item->children = [];
         $item->acl_req = ['admin', 'practice'];
         $item->global_req = [];
 
-        $menu[] = $item;
+        if (!$this->insertAfterAddressBook($menu, $item)) {
+            $menu[] = $item;
+        }
+
         $event->setMenu($menu);
     }
 
@@ -90,6 +96,10 @@ class MenuSubscriber implements EventSubscriberInterface
                 $item->url = '/interface/modules/custom_modules/site_admin_config/public/address_book.php';
             }
 
+            if (($item->menu_id ?? null) === self::SUBSCRIPTION_MENU_ID) {
+                $item->url = self::SUBSCRIPTION_URL;
+            }
+
             // Recurse into children if present
             if (!empty($item->children) && is_array($item->children)) {
                 $this->filterMenuRecursive($item->children);
@@ -116,6 +126,34 @@ class MenuSubscriber implements EventSubscriberInterface
             }
 
             if (!empty($item->children) && is_array($item->children) && $this->containsMenuId($item->children, $menuId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function insertAfterAddressBook(array &$menu, \stdClass $newItem): bool
+    {
+        foreach ($menu as $menuItem) {
+            if (!is_object($menuItem)) {
+                continue;
+            }
+
+            if (($menuItem->menu_id ?? null) === 'admimg' || strtolower((string) ($menuItem->label ?? '')) === 'admin') {
+                $children = is_array($menuItem->children ?? null) ? $menuItem->children : [];
+
+                foreach ($children as $index => $child) {
+                    $label = strtolower(trim((string) ($child->label ?? '')));
+                    if ($label === 'address book' || ($child->menu_id ?? null) === 'adb0') {
+                        array_splice($children, $index + 1, 0, [$newItem]);
+                        $menuItem->children = $children;
+                        return true;
+                    }
+                }
+
+                $children[] = $newItem;
+                $menuItem->children = $children;
                 return true;
             }
         }

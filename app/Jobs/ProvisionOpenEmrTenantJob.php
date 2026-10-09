@@ -51,7 +51,7 @@ class ProvisionOpenEmrTenantJob implements ShouldQueue
             ]);
 
             if (!$alreadyPendingOrReviewed) {
-                $adminEmail = config('mail.admin_notification_email') ?: env('ADMIN_NOTIFICATION_EMAIL');
+                $adminEmail = config('mail.carelio_internal_admin_email', 'nilesh.hake@nbhhealthsoft.com');
                 if (!empty($adminEmail)) {
                     try {
                         \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminTenantReadyForReviewMail($this->subscription));

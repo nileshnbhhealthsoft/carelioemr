@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Carelio Subscription Management Module Dashboard
+ * Subscription Management Module Dashboard
  */
 
 require_once(__DIR__ . "/../../../../globals.php");
@@ -79,7 +79,7 @@ try {
 <html>
 <head>
     <?php Header::setupHeader(); ?>
-    <title><?php echo xlt('Carelio Subscription Management'); ?></title>
+    <title><?php echo xlt('Subscription Management'); ?></title>
     <style>
         body { background: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1e293b; }
         .carelio-wrap { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
@@ -115,7 +115,7 @@ try {
     <!-- Header -->
     <div class="carelio-header">
         <div>
-            <h1 class="carelio-title"><?php echo xlt('Carelio Subscription Management'); ?></h1>
+            <h1 class="carelio-title"><?php echo xlt('Subscription Management'); ?></h1>
             <div class="carelio-subtitle">
                 <?php echo xlt('Tenant Site:'); ?> <strong><?php echo htmlspecialchars($sub['site_id'] ?? 'default'); ?></strong>
                 &bull; <?php echo xlt('Customer:'); ?> <strong><?php echo htmlspecialchars($sub['customer_name'] ?? 'Site Administrator'); ?></strong>

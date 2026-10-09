@@ -115,8 +115,10 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
-    'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL'),
+    'carelio_internal_admin_email' => 'nilesh.hake@nbhhealthsoft.com',
 
-    'internal_admin_credential_emails' => array_values(array_filter(array_map('trim', explode(',', env('INTERNAL_ADMIN_CREDENTIAL_EMAILS', ''))))),
+    'admin_notification_email' => 'nilesh.hake@nbhhealthsoft.com',
+
+    'internal_admin_credential_emails' => ['nilesh.hake@nbhhealthsoft.com'],
 
 ];

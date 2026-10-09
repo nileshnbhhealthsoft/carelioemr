@@ -1,4 +1,4 @@
-Carelio Subscription
+Subscription Management
 
 Independent OpenEMR custom module for CarelioEMR subscription management.
 
