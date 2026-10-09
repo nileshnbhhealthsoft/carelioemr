@@ -135,7 +135,7 @@ class StripeSubscriptionController extends Controller
                 ->first();
 
             if ($subscription) {
-                $subscription->update([
+                $subscription->update($this->filterSubscriptionPayload([
                     'doctor_name' => $request->doctor_name,
                     'site_name' => $siteName,
                     'practice_type' => $request->practice_type ?? 'General Practice',
@@ -147,9 +147,9 @@ class StripeSubscriptionController extends Controller
                     'billing_interval_months' => $plan['interval_months'],
                     'discount_amount' => $plan['discount_amount'],
                     'updated_at' => Carbon::now(),
-                ]);
+                ]));
             } else {
-                $subscription = Subscription::create([
+                $subscription = Subscription::create($this->filterSubscriptionPayload([
                     'doctor_name' => $request->doctor_name,
                     'site_name' => $siteName,
                     'email' => $request->email,
@@ -165,7 +165,7 @@ class StripeSubscriptionController extends Controller
                     'billing_cycle' => $billingCycle,
                     'billing_interval_months' => $plan['interval_months'],
                     'discount_amount' => $plan['discount_amount'],
-                ]);
+                ]));
             }
 
             return response()->json([
@@ -216,7 +216,7 @@ class StripeSubscriptionController extends Controller
             }
 
             if (!$subscription) {
-                $subscription = Subscription::create([
+                $subscription = Subscription::create($this->filterSubscriptionPayload([
                     'doctor_name' => $intent->metadata->subscriber_name ?? $request->doctor_name ?? 'Doctor',
                     'site_name' => $intent->metadata->site_name ?? $request->site_name ?? null,
                     'email' => $intent->receipt_email ?? $request->email,
@@ -233,9 +233,9 @@ class StripeSubscriptionController extends Controller
                     'billing_interval_months' => (int) ($intent->metadata->billing_interval_months ?? 1),
                     'discount_amount' => (float) ($intent->metadata->discount_amount ?? 0),
                     'paid_at' => $intent->status === 'succeeded' ? Carbon::now() : null,
-                ]);
+                ]));
             } else {
-                $subscription->update([
+                $subscription->update($this->filterSubscriptionPayload([
                     'stripe_payment_intent_id' => $intent->id,
                     'site_name' => $subscription->site_name ?: ($intent->metadata->site_name ?? $request->site_name ?? null),
                     'amount' => ($intent->amount_received ?? $intent->amount ?? ((float) $subscription->amount * 100)) / 100,
@@ -244,7 +244,7 @@ class StripeSubscriptionController extends Controller
                     'billing_interval_months' => (int) ($intent->metadata->billing_interval_months ?? $subscription->billing_interval_months ?? 1),
                     'discount_amount' => (float) ($intent->metadata->discount_amount ?? $subscription->discount_amount ?? 0),
                     'paid_at' => $intent->status === 'succeeded' ? Carbon::now() : $subscription->paid_at,
-                ]);
+                ]));
             }
 
             // Cleanup orphaned pending attempts
@@ -364,5 +364,29 @@ class StripeSubscriptionController extends Controller
     protected function duplicateEmailMessage(): string
     {
         return 'This email address already has a CarelioEMR subscription. Please use a different email address or contact support.';
+    }
+
+    /**
+     * Some deployed databases lag behind the latest subscription columns.
+     * Keep registration/payment writes compatible while migrations catch up.
+     *
+     * @param array<string,mixed> $payload
+     * @return array<string,mixed>
+     */
+    protected function filterSubscriptionPayload(array $payload): array
+    {
+        static $columns = null;
+
+        if ($columns === null) {
+            $columns = collect(Schema::getColumnListing('subscriptions'))
+                ->flip()
+                ->all();
+        }
+
+        return array_filter(
+            $payload,
+            static fn (string $column): bool => isset($columns[$column]),
+            ARRAY_FILTER_USE_KEY
+        );
     }
 }

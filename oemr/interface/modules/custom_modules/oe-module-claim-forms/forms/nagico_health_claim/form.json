@@ -1,0 +1,788 @@
+{
+  "id": "nagico_health_claim",
+  "title": "NAGICO Health Claim Form",
+  "insurer": "NAGICO Insurances",
+  "version": 1,
+  "documentCategory": "Insurance",
+  "maxLineItems": 3,
+  "sections": [
+    {
+      "title": "Claim type",
+      "fields": [
+        {
+          "key": "coverage",
+          "label": "Coverage",
+          "control": "radio",
+          "options": [
+            [
+              "health",
+              "Health"
+            ],
+            [
+              "vision",
+              "Vision"
+            ],
+            [
+              "dental",
+              "Dental"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1. Policyholder",
+      "fields": [
+        {
+          "key": "policy_no",
+          "label": "Policy No.",
+          "control": "text"
+        },
+        {
+          "key": "policy_holder",
+          "label": "Policy holder",
+          "control": "text"
+        },
+        {
+          "key": "member_id",
+          "label": "ID #",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "2. Employee / insured",
+      "fields": [
+        {
+          "key": "insured_name",
+          "label": "Employee's / insured's name",
+          "control": "text"
+        },
+        {
+          "key": "patient_name",
+          "label": "Patient's name",
+          "control": "text"
+        },
+        {
+          "key": "patient_dob",
+          "label": "Date of birth",
+          "control": "date"
+        },
+        {
+          "key": "spouse_employer",
+          "label": "Name of spouse's employer",
+          "control": "text"
+        },
+        {
+          "key": "address",
+          "label": "Address",
+          "control": "textarea",
+          "rows": 2,
+          "hint": "Two lines print on the form."
+        },
+        {
+          "key": "telephone",
+          "label": "Telephone",
+          "control": "text"
+        },
+        {
+          "key": "related_employment",
+          "label": "Condition related to employment",
+          "control": "yesno"
+        },
+        {
+          "key": "related_auto",
+          "label": "Condition related to auto accident",
+          "control": "yesno"
+        },
+        {
+          "key": "related_other",
+          "label": "Condition related to other accident",
+          "control": "yesno"
+        },
+        {
+          "key": "condition_details",
+          "label": "If yes, details",
+          "control": "text",
+          "showIfAny": [
+            [
+              "related_employment",
+              "yes"
+            ],
+            [
+              "related_auto",
+              "yes"
+            ],
+            [
+              "related_other",
+              "yes"
+            ]
+          ]
+        },
+        {
+          "key": "other_plan",
+          "label": "Covered through any other plan",
+          "control": "yesno"
+        },
+        {
+          "key": "other_plan_company",
+          "label": "Other plan: insurance company",
+          "control": "select",
+          "showIf": [
+            "other_plan",
+            "yes"
+          ],
+          "sets": [
+            {
+              "placeholder": "- Insurance company -",
+              "options": [
+                "Beacon",
+                "CG",
+                "Guardian Life",
+                "GTM",
+                "Med-Access",
+                "NAGICO",
+                "Pan-American Life",
+                "Sagicor",
+                "Surgico"
+              ]
+            }
+          ],
+          "other": true
+        },
+        {
+          "key": "other_plan_group",
+          "label": "Other plan: group or company insured under",
+          "control": "text",
+          "showIf": [
+            "other_plan",
+            "yes"
+          ]
+        },
+        {
+          "key": "pay_to",
+          "label": "Authorize payment to",
+          "control": "text",
+          "hint": "Printed on the \"I hereby authorize and direct you to pay to\" line."
+        }
+      ],
+      "note": "The insured's and patient's signatures are not stamped. They are signed by hand on the printed form."
+    },
+    {
+      "title": "3. Doctor / health provider",
+      "fields": [
+        {
+          "key": "icd",
+          "label": "Diagnosis (ICD code)",
+          "control": "icd",
+          "count": 4
+        },
+        {
+          "key": "provider_block",
+          "label": "Name and address of doctor / health provider",
+          "control": "textarea",
+          "rows": 2,
+          "hint": "Two lines print: facility and address, then telephone."
+        },
+        {
+          "key": "referring_physician",
+          "label": "Referring physician",
+          "control": "referrer",
+          "idKey": "referring_physician_id"
+        },
+        {
+          "key": "pregnancy",
+          "label": "Condition due to pregnancy",
+          "control": "yesno"
+        },
+        {
+          "key": "last_period",
+          "label": "Approximate date of last monthly period",
+          "control": "date",
+          "showIf": [
+            "pregnancy",
+            "yes"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "4. Medical / surgical treatment",
+      "fields": [
+        {
+          "key": "first_symptoms",
+          "label": "Date of first symptoms",
+          "control": "date"
+        },
+        {
+          "key": "first_consult",
+          "label": "Date of first consultation for this condition",
+          "control": "date"
+        },
+        {
+          "key": "prev_treated",
+          "label": "Previously treated for this condition",
+          "control": "yesno"
+        },
+        {
+          "key": "prev_treated_date",
+          "label": "If yes, date",
+          "control": "date",
+          "showIf": [
+            "prev_treated",
+            "yes"
+          ]
+        },
+        {
+          "key": "lines",
+          "label": "Services",
+          "control": "lines"
+        },
+        {
+          "key": "further_services",
+          "label": "Further services recommended",
+          "control": "textarea",
+          "rows": 3,
+          "hint": "Up to 5 lines print."
+        },
+        {
+          "key": "further_services_amount",
+          "label": "Further services charge",
+          "control": "money"
+        },
+        {
+          "key": "has_surgery",
+          "label": "Surgical procedure",
+          "control": "yesno",
+          "noprint": true
+        },
+        {
+          "key": "op_date",
+          "label": "Date of operation",
+          "control": "date",
+          "showIf": [
+            "has_surgery",
+            "yes"
+          ]
+        },
+        {
+          "key": "op_type",
+          "label": "Type of operation",
+          "control": "cpt",
+          "showIf": [
+            "has_surgery",
+            "yes"
+          ]
+        },
+        {
+          "key": "op_surgeon",
+          "label": "Name of surgeon",
+          "control": "text",
+          "showIf": [
+            "has_surgery",
+            "yes"
+          ]
+        },
+        {
+          "key": "op_assistant",
+          "label": "Name of assistant surgeon",
+          "control": "text",
+          "showIf": [
+            "has_surgery",
+            "yes"
+          ]
+        },
+        {
+          "key": "op_anesthetist",
+          "label": "Name of anesthetist",
+          "control": "text",
+          "showIf": [
+            "has_surgery",
+            "yes"
+          ]
+        },
+        {
+          "key": "surgical_amount",
+          "label": "Surgical procedure charge",
+          "control": "money",
+          "showIf": [
+            "has_surgery",
+            "yes"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "5. Hospital (page 2)",
+      "toggle": {
+        "key": "use_hospital",
+        "label": "This claim has a hospital stay"
+      },
+      "fields": [
+        {
+          "key": "hosp_days",
+          "label": "Number of days confined",
+          "control": "text"
+        },
+        {
+          "key": "hosp_ward",
+          "label": "Ward type",
+          "control": "radio",
+          "options": [
+            [
+              "private",
+              "Private"
+            ],
+            [
+              "semi_private",
+              "Semi-private"
+            ],
+            [
+              "ward",
+              "Ward"
+            ]
+          ]
+        },
+        {
+          "key": "hosp_daily_amount",
+          "label": "Daily hospital charge for patient",
+          "control": "money"
+        },
+        {
+          "key": "hosp_from",
+          "label": "From",
+          "control": "date"
+        },
+        {
+          "key": "hosp_to",
+          "label": "To",
+          "control": "date"
+        },
+        {
+          "key": "hosp_room_amount",
+          "label": "Room charges",
+          "control": "money"
+        },
+        {
+          "key": "hosp_operation",
+          "label": "Operation or delivery room (type of operation)",
+          "control": "cpt"
+        },
+        {
+          "key": "hosp_operation_amount",
+          "label": "Operation or delivery room charge",
+          "control": "money"
+        },
+        {
+          "key": "hosp_services",
+          "label": "Hospital services",
+          "control": "text"
+        },
+        {
+          "key": "hosp_services_amount",
+          "label": "Hospital services charge",
+          "control": "money"
+        },
+        {
+          "key": "hosp_doctor",
+          "label": "Name of admitting doctor",
+          "control": "referrer",
+          "idKey": "hosp_doctor_id"
+        }
+      ]
+    },
+    {
+      "title": "6. Laboratory / X-ray (page 2)",
+      "toggle": {
+        "key": "use_lab",
+        "label": "This claim has laboratory or X-ray tests"
+      },
+      "fields": [
+        {
+          "key": "lab_rows",
+          "label": "Date and type(s) of test(s)",
+          "control": "rows",
+          "max": 2,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date",
+              "type": "date"
+            },
+            {
+              "key": "test",
+              "label": "Type of test",
+              "type": "select",
+              "other": true,
+              "sets": [
+                {
+                  "placeholder": "- X-ray / ultrasound -",
+                  "groups": [
+                    {
+                      "label": "X-ray",
+                      "options": [
+                        "Chest X-ray",
+                        "Abdominal X-ray"
+                      ]
+                    },
+                    {
+                      "label": "Ultrasound",
+                      "options": [
+                        "Ultrasound - Prostate",
+                        "Ultrasound - Abdomen",
+                        "Ultrasound - Breast",
+                        "Ultrasound - Gynaecological (pelvic)"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "placeholder": "- Blood test -",
+                  "options": [
+                    "Complete blood count (CBC)",
+                    "Renal profile (urea, creatinine, electrolytes)",
+                    "Liver profile (LFTs)",
+                    "Glucose - fasting",
+                    "Glucose - random",
+                    "HbA1c",
+                    "Lipid profile",
+                    "Thyroid profile (TSH, T4)",
+                    "Electrolytes",
+                    "Urea and creatinine",
+                    "Uric acid",
+                    "PSA (prostate-specific antigen)",
+                    "Serology - HIV",
+                    "Serology - Hepatitis B",
+                    "Serology - Hepatitis C",
+                    "Serology - Syphilis (VDRL)",
+                    "CRP",
+                    "ESR",
+                    "Coagulation profile (PT/INR)",
+                    "Cardiac enzymes (troponin)",
+                    "Iron studies",
+                    "Vitamin D",
+                    "Blood culture",
+                    "Blood group and crossmatch",
+                    "Pregnancy test (beta-hCG)",
+                    "Other blood test"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "lab_amount",
+          "label": "Charge",
+          "control": "money"
+        }
+      ]
+    },
+    {
+      "title": "7. Dentist (page 2)",
+      "toggle": {
+        "key": "use_dentist",
+        "label": "This claim has dental treatment"
+      },
+      "fields": [
+        {
+          "key": "dent_name",
+          "label": "Dentist",
+          "control": "text"
+        },
+        {
+          "key": "dent_address",
+          "label": "Address",
+          "control": "textarea"
+        },
+        {
+          "key": "dent_phone",
+          "label": "Telephone No.",
+          "control": "text"
+        },
+        {
+          "key": "dent_first_visit",
+          "label": "First visit date",
+          "control": "date"
+        },
+        {
+          "key": "dent_place",
+          "label": "Place of treatment",
+          "control": "radio",
+          "options": [
+            [
+              "hospital",
+              "Hospital"
+            ],
+            [
+              "office",
+              "Office"
+            ],
+            [
+              "other",
+              "Other"
+            ]
+          ]
+        },
+        {
+          "key": "dent_crown",
+          "label": "If crown, was tooth badly broken down?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_crown_note",
+          "label": "Brief description and dates (crown)",
+          "control": "text"
+        },
+        {
+          "key": "dent_occ",
+          "label": "Is treatment the result of occupational illness or injury?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_occ_note",
+          "label": "Brief description and dates (occupational)",
+          "control": "text"
+        },
+        {
+          "key": "dent_auto",
+          "label": "Is treatment the result of an auto or other accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_auto_note",
+          "label": "Brief description and dates (accident)",
+          "control": "text"
+        },
+        {
+          "key": "dent_xrays",
+          "label": "X-rays or models enclosed?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_xray_count",
+          "label": "How many?",
+          "control": "text"
+        },
+        {
+          "key": "dent_initial",
+          "label": "Is the prosthesis an initial placement?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_extraction",
+          "label": "If yes, date of extractions of teeth being replaced",
+          "control": "text"
+        },
+        {
+          "key": "dent_replace_reason",
+          "label": "If no, reason for replacement and date of prior placement",
+          "control": "text"
+        },
+        {
+          "key": "dent_rows",
+          "label": "Examination and treatment plan (in order)",
+          "control": "rows",
+          "max": 7,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date of service",
+              "type": "date"
+            },
+            {
+              "key": "tooth",
+              "label": "Tooth # or letter",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- Tooth # -",
+                  "options": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32"
+                  ]
+                }
+              ],
+              "other": true
+            },
+            {
+              "key": "surface",
+              "label": "Surface",
+              "type": "surfaces"
+            },
+            {
+              "key": "desc",
+              "label": "Description of service",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- Service -",
+                  "options": [
+                    "Dental examination",
+                    "Dental cleaning (prophylaxis)",
+                    "X-ray",
+                    "Filling",
+                    "Extraction",
+                    "Root canal",
+                    "Crown",
+                    "Bridge",
+                    "Denture",
+                    "Scaling and root planing",
+                    "Fluoride treatment",
+                    "Sealant",
+                    "Dental implant",
+                    "Orthodontic treatment"
+                  ]
+                }
+              ],
+              "other": true
+            },
+            {
+              "key": "amount",
+              "label": "Charge",
+              "type": "money"
+            }
+          ]
+        },
+        {
+          "key": "dent_plan",
+          "label": "Type",
+          "control": "radio",
+          "options": [
+            [
+              "predetermination",
+              "Predetermination"
+            ],
+            [
+              "actual",
+              "Actual"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "8. Optometrist / ophthalmologist (page 2)",
+      "toggle": {
+        "key": "use_optometry",
+        "label": "This claim has optometry or ophthalmology services"
+      },
+      "fields": [
+        {
+          "key": "opt_rows",
+          "label": "Services",
+          "control": "rows",
+          "fixed": [
+            "(A) Examination",
+            "(B) Frames",
+            "(C) Lenses (specify type below)",
+            "(D) Tinting"
+          ],
+          "columns": [
+            {
+              "key": "dx",
+              "label": "Diagnosis (ICD-10)",
+              "type": "icd_eye"
+            },
+            {
+              "key": "date",
+              "label": "Date of service",
+              "type": "date"
+            },
+            {
+              "key": "amount",
+              "label": "Charge",
+              "type": "money"
+            }
+          ]
+        },
+        {
+          "key": "opt_lens",
+          "label": "Lens type",
+          "control": "radio",
+          "options": [
+            [
+              "single",
+              "Single"
+            ],
+            [
+              "bifocal",
+              "Bi-focal"
+            ],
+            [
+              "lenticular",
+              "Lenticular"
+            ],
+            [
+              "contact",
+              "Contact lenses"
+            ]
+          ]
+        },
+        {
+          "key": "opt_q_a1",
+          "label": "(a) If contact lenses, were they prescribed for severe corneal astigmatism, corneal scarring, keratoconus or aphakia?",
+          "control": "yesno"
+        },
+        {
+          "key": "opt_q_a2",
+          "label": "Can visual acuity be improved to at least 20/70 by spectacle lenses?",
+          "control": "yesno"
+        },
+        {
+          "key": "opt_q_a3",
+          "label": "Can visual acuity be improved to at least 20/70 by contact lenses?",
+          "control": "yesno"
+        },
+        {
+          "key": "opt_q_b1",
+          "label": "(b) Are these prescription sun glasses?",
+          "control": "yesno"
+        },
+        {
+          "key": "opt_q_b2",
+          "label": "Replacement of LOST or DAMAGED glasses?",
+          "control": "yesno"
+        }
+      ]
+    },
+    {
+      "title": "9. Signed by dentist / optometrist / authorised person (page 2)",
+      "toggle": {
+        "key": "sign_page2",
+        "label": "Stamp and sign section 9 with my saved signature and stamp"
+      },
+      "fields": []
+    }
+  ]
+}
