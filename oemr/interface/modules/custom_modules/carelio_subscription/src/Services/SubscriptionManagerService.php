@@ -4,6 +4,7 @@ namespace OpenEMR\Modules\CarelioSubscription\Services;
 
 use OpenEMR\Common\Session\SessionWrapperFactory;
 use OpenEMR\Core\OEGlobalsBag;
+use OpenEMR\Modules\CarelioSubscription\Installer\SubscriptionInstaller;
 
 class SubscriptionManagerService
 {
@@ -20,6 +21,8 @@ class SubscriptionManagerService
         if (!function_exists('sqlQuery')) {
             return [];
         }
+
+        self::ensureSubscriptionSchema();
 
         $siteId = self::resolveCurrentSiteId();
 
@@ -47,6 +50,8 @@ class SubscriptionManagerService
         if (!function_exists('sqlStatement')) {
             return;
         }
+
+        self::ensureSubscriptionSchema();
 
         $now = date('Y-m-d H:i:s');
         $periodStart = $now;
@@ -312,6 +317,8 @@ class SubscriptionManagerService
             return [];
         }
 
+        self::ensureSubscriptionSchema();
+
         $res = sqlStatement("SELECT * FROM `mod_carelio_subscription_history` WHERE `subscription_id` = ? ORDER BY `id` DESC LIMIT ?", [$subId, $limit]);
         $rows = [];
         while ($row = sqlFetchArray($res)) {
@@ -336,6 +343,8 @@ class SubscriptionManagerService
         if (!function_exists('sqlStatement')) {
             return;
         }
+
+        self::ensureSubscriptionSchema();
 
         sqlStatement(
             "INSERT INTO `mod_carelio_subscription_history`
@@ -378,5 +387,32 @@ class SubscriptionManagerService
 
         return 'default';
     }
-}
 
+    private static function ensureSubscriptionSchema(): void
+    {
+        static $checked = false;
+
+        if ($checked) {
+            return;
+        }
+
+        $checked = true;
+
+        if (!class_exists(SubscriptionInstaller::class)) {
+            $installerPath = dirname(__DIR__) . '/Installer/SubscriptionInstaller.php';
+            if (is_file($installerPath)) {
+                require_once $installerPath;
+            }
+        }
+
+        if (!class_exists(SubscriptionInstaller::class)) {
+            return;
+        }
+
+        try {
+            SubscriptionInstaller::ensureSchema(SubscriptionInstaller::resolvePdo());
+        } catch (\Throwable $e) {
+            error_log('Carelio Subscription schema ensure warning: ' . $e->getMessage());
+        }
+    }
+}
