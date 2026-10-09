@@ -1,0 +1,790 @@
+{
+  "id": "guardian_life_health_claim_form",
+  "title": "Guardian Life Health Insurance Claim Form",
+  "insurer": "Guardian Life of the Caribbean",
+  "version": 1,
+  "documentCategory": "Insurance",
+  "maxLineItems": 0,
+  "showTotal": false,
+  "sections": [
+    {
+      "title": "1. Employee / insured",
+      "fields": [
+        {
+          "key": "insured_surname",
+          "label": "Surname",
+          "control": "text"
+        },
+        {
+          "key": "insured_first_name",
+          "label": "First name",
+          "control": "text"
+        },
+        {
+          "key": "insured_dob",
+          "label": "Date of birth",
+          "control": "date"
+        },
+        {
+          "key": "address",
+          "label": "Address",
+          "control": "text"
+        },
+        {
+          "key": "member_id",
+          "label": "ID No.",
+          "control": "text"
+        },
+        {
+          "key": "phone_home",
+          "label": "Telephone no. 1",
+          "control": "text"
+        },
+        {
+          "key": "phone_work",
+          "label": "Telephone no. 2",
+          "control": "text"
+        },
+        {
+          "key": "patient_name",
+          "label": "Patient's name",
+          "control": "text"
+        },
+        {
+          "key": "relationship_text",
+          "label": "Relationship",
+          "control": "text"
+        },
+        {
+          "key": "patient_dob",
+          "label": "Patient's date of birth",
+          "control": "date"
+        },
+        {
+          "key": "first_symptoms",
+          "label": "When did symptoms of the ailment first appear?",
+          "control": "date"
+        },
+        {
+          "key": "prior_ailment",
+          "label": "Have you ever had this ailment before? If yes, when and describe",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "Cause of condition / co-ordination of benefits",
+      "fields": [
+        {
+          "key": "related_employment",
+          "label": "Is the condition related to (a) employment?",
+          "control": "yesno"
+        },
+        {
+          "key": "related_auto",
+          "label": "(b) auto accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "related_other",
+          "label": "(c) other accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "condition_details",
+          "label": "Details",
+          "control": "text"
+        },
+        {
+          "key": "employer_insurer",
+          "label": "If yes, name of employer's insurer",
+          "control": "text"
+        },
+        {
+          "key": "other_plan",
+          "label": "Is the patient covered by any other plan for this injury or sickness?",
+          "control": "yesno"
+        },
+        {
+          "key": "other_plan_company",
+          "label": "Other plan: name of insurance company",
+          "control": "select",
+          "sets": [
+            {
+              "placeholder": "- Insurance company -",
+              "options": [
+                "Beacon",
+                "CG",
+                "Guardian Life",
+                "GTM",
+                "Med-Access",
+                "NAGICO",
+                "Pan-American Life",
+                "Sagicor",
+                "Surgico"
+              ]
+            }
+          ],
+          "other": true
+        },
+        {
+          "key": "other_plan_insured",
+          "label": "Other plan: insured's name",
+          "control": "text"
+        },
+        {
+          "key": "other_plan_group",
+          "label": "Other plan: group or company insured under",
+          "control": "text"
+        },
+        {
+          "key": "pay_to",
+          "label": "Authorize payment to",
+          "control": "text"
+        }
+      ]
+    },
+    {
+      "title": "2. Employer / policyholder",
+      "fields": [
+        {
+          "key": "policy_holder",
+          "label": "Policy holder",
+          "control": "text"
+        },
+        {
+          "key": "policy_no",
+          "label": "Policy No.",
+          "control": "text"
+        },
+        {
+          "key": "certificate_no",
+          "label": "Employee certificate No.",
+          "control": "text"
+        },
+        {
+          "key": "effective_date",
+          "label": "Effective date",
+          "control": "date"
+        },
+        {
+          "key": "workmens_claim",
+          "label": "Has the employee made a claim for Workmen's Compensation?",
+          "control": "yesno"
+        },
+        {
+          "key": "workmens_entitled",
+          "label": "Is he/she entitled to such benefits?",
+          "control": "yesno"
+        }
+      ]
+    },
+    {
+      "title": "3. Optician / ophthalmologist / optometrist",
+      "fields": [
+        {
+          "key": "optician_rows",
+          "label": "Services",
+          "control": "rows",
+          "max": 5,
+          "columns": [
+            {
+              "key": "dx",
+              "label": "Diagnosis",
+              "type": "icd"
+            },
+            {
+              "key": "date",
+              "label": "Date of service",
+              "type": "date"
+            },
+            {
+              "key": "desc",
+              "label": "Description of service",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- Service -",
+                  "options": [
+                    "Comprehensive eye examination",
+                    "Vision assessment",
+                    "Refraction assessment",
+                    "Contact lens fitting",
+                    "Eyeglass prescription",
+                    "Eyeglass frame selection",
+                    "Lens dispensing",
+                    "Lens adjustment and repair",
+                    "Low-vision assessment",
+                    "Glaucoma screening",
+                    "Cataract evaluation",
+                    "Diabetic eye examination",
+                    "Retinal examination",
+                    "Dry-eye evaluation and treatment",
+                    "Eye infection treatment",
+                    "Minor eye procedure",
+                    "Ophthalmic surgery consultation",
+                    "Post-operative eye-care follow-up"
+                  ]
+                }
+              ],
+              "other": true
+            },
+            {
+              "key": "amount",
+              "label": "Charge",
+              "type": "money"
+            }
+          ]
+        },
+        {
+          "key": "opt_lens",
+          "label": "Lens type",
+          "control": "radio",
+          "options": [
+            [
+              "single",
+              "Single"
+            ],
+            [
+              "bifocal",
+              "Bi-focal"
+            ],
+            [
+              "multifocal",
+              "Multi-focal"
+            ],
+            [
+              "lenticular",
+              "Lenticular"
+            ],
+            [
+              "contact",
+              "Contact lenses"
+            ]
+          ]
+        },
+        {
+          "key": "opt_sunglasses",
+          "label": "Sunglasses",
+          "control": "yesno"
+        }
+      ]
+    },
+    {
+      "title": "4. Doctor / health provider",
+      "fields": [
+        {
+          "key": "doc_rows",
+          "label": "Visits and services",
+          "control": "rows",
+          "max": 4,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date of visit",
+              "type": "date"
+            },
+            {
+              "key": "icd",
+              "label": "Diagnosis / ICD code",
+              "type": "icd"
+            },
+            {
+              "key": "fee",
+              "label": "Visit fee",
+              "type": "money"
+            },
+            {
+              "key": "visit_type",
+              "label": "Type of visit",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- Type -",
+                  "options": [
+                    [
+                      "New patient",
+                      "New-patient consultation"
+                    ],
+                    [
+                      "Follow-up",
+                      "Established-patient follow-up"
+                    ],
+                    [
+                      "Acute/sick",
+                      "Acute/sick visit"
+                    ],
+                    [
+                      "Chronic care",
+                      "Chronic-care visit"
+                    ],
+                    [
+                      "Preventive",
+                      "Preventive/wellness visit"
+                    ],
+                    [
+                      "Med mgmt",
+                      "Medication-management visit"
+                    ],
+                    [
+                      "Pre-op",
+                      "Pre-operative/clearance visit"
+                    ],
+                    [
+                      "Post-op",
+                      "Post-operative visit"
+                    ],
+                    [
+                      "Specialist",
+                      "Specialist consultation"
+                    ],
+                    [
+                      "Urgent care",
+                      "Urgent-care/same-day visit"
+                    ],
+                    [
+                      "Telehealth",
+                      "Telehealth visit"
+                    ],
+                    [
+                      "Mental health",
+                      "Mental-health visit"
+                    ],
+                    [
+                      "Palliative",
+                      "Palliative/goals-of-care visit"
+                    ],
+                    [
+                      "Procedure",
+                      "Procedure"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "key": "desc",
+              "label": "Service rendered",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- Service -",
+                  "options": [
+                    "Consultation/evaluation",
+                    "Physical examination",
+                    "Diagnosis",
+                    "Treatment planning",
+                    "Medication prescribing or management",
+                    "Laboratory testing",
+                    "Imaging/diagnostic testing",
+                    "Procedures",
+                    "Preventive screening",
+                    "Vaccination/immunization",
+                    "Chronic-disease management",
+                    "Counseling/education",
+                    "Referrals",
+                    "Follow-up care",
+                    "Telehealth services"
+                  ]
+                }
+              ],
+              "other": true
+            },
+            {
+              "key": "amount",
+              "label": "Cost",
+              "type": "money"
+            },
+            {
+              "key": "further",
+              "label": "Further services recommended",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- Further -",
+                  "options": [
+                    [
+                      "Specialist referral",
+                      "Specialist referral"
+                    ],
+                    [
+                      "Lab testing",
+                      "Laboratory testing"
+                    ],
+                    [
+                      "Diagnostic imaging",
+                      "Diagnostic imaging"
+                    ],
+                    [
+                      "More diagnostics",
+                      "Additional diagnostic evaluation"
+                    ],
+                    [
+                      "Med review",
+                      "Medication review or adjustment"
+                    ],
+                    [
+                      "Physical therapy",
+                      "Physical therapy"
+                    ],
+                    [
+                      "Occup. therapy",
+                      "Occupational therapy"
+                    ],
+                    [
+                      "MH counseling",
+                      "Mental-health counseling"
+                    ],
+                    [
+                      "Nutrition couns.",
+                      "Nutritional counseling"
+                    ],
+                    [
+                      "Prev. screening",
+                      "Preventive screening"
+                    ],
+                    [
+                      "Vaccination",
+                      "Vaccination"
+                    ],
+                    [
+                      "Home health",
+                      "Home-health services"
+                    ],
+                    [
+                      "Med. equipment",
+                      "Durable medical equipment"
+                    ],
+                    [
+                      "Follow-up appt",
+                      "Follow-up appointment"
+                    ],
+                    [
+                      "ED evaluation",
+                      "Emergency department evaluation"
+                    ],
+                    [
+                      "Hospital admission",
+                      "Hospital admission"
+                    ],
+                    [
+                      "Surgical consult",
+                      "Surgical consultation"
+                    ],
+                    [
+                      "Care mgmt",
+                      "Care-management services"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "prev_treated",
+          "label": "Has the patient been previously treated for this condition?",
+          "control": "yesno"
+        },
+        {
+          "key": "first_consult",
+          "label": "Date of first consultation for this condition",
+          "control": "date"
+        },
+        {
+          "key": "prev_treated_date",
+          "label": "If yes, give date",
+          "control": "date"
+        },
+        {
+          "key": "referring_physician",
+          "label": "Was the patient referred? If yes, name of referring doctor",
+          "control": "referrer",
+          "idKey": "referring_physician_id"
+        }
+      ]
+    },
+    {
+      "title": "Surgical procedures",
+      "fields": [
+        {
+          "key": "op_date",
+          "label": "Date of surgery",
+          "control": "date"
+        },
+        {
+          "key": "op_type",
+          "label": "Describe procedure(s) performed",
+          "control": "cpt"
+        },
+        {
+          "key": "op_surgeon_fee_amount",
+          "label": "Surgeon's fee",
+          "control": "money"
+        },
+        {
+          "key": "op_assistant_fee_amount",
+          "label": "Assistant surgeon's fee",
+          "control": "money"
+        },
+        {
+          "key": "op_anesthetist_fee_amount",
+          "label": "Anaesthetist's fee",
+          "control": "money"
+        }
+      ]
+    },
+    {
+      "title": "Maternity",
+      "fields": [
+        {
+          "key": "lmp_date",
+          "label": "Date pregnancy commenced / LMP",
+          "control": "date"
+        },
+        {
+          "key": "delivery_date",
+          "label": "Date of delivery or termination",
+          "control": "date"
+        },
+        {
+          "key": "delivery_type",
+          "label": "Type of delivery",
+          "control": "select",
+          "sets": [
+            {
+              "placeholder": "- Type of delivery -",
+              "options": [
+                "Spontaneous vaginal delivery",
+                "Induced vaginal delivery",
+                "Assisted vaginal delivery",
+                "Forceps delivery",
+                "Vacuum-assisted delivery",
+                "Vaginal birth after cesarean (VBAC)",
+                "Cesarean delivery",
+                "Planned cesarean delivery",
+                "Emergency cesarean delivery",
+                "Breech vaginal delivery",
+                "Water birth",
+                "Home birth",
+                "Preterm delivery",
+                "Multiple birth delivery"
+              ]
+            }
+          ],
+          "other": true
+        },
+        {
+          "key": "obstetrical_fee_amount",
+          "label": "Obstetrical fee",
+          "control": "money"
+        }
+      ]
+    },
+    {
+      "title": "5. Dentist",
+      "fields": [
+        {
+          "key": "dentist_name",
+          "label": "Dentist",
+          "control": "text"
+        },
+        {
+          "key": "dentist_phone",
+          "label": "Tel. No.",
+          "control": "text"
+        },
+        {
+          "key": "dent_occ",
+          "label": "(a) Is treatment a result of occupational illness or injury?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_auto",
+          "label": "(b) Is treatment a result of auto accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_other_accident",
+          "label": "(c) Other accident?",
+          "control": "yesno"
+        },
+        {
+          "key": "dent_details_ml",
+          "label": "Details (if yes)",
+          "control": "textarea"
+        },
+        {
+          "key": "dent_rows",
+          "label": "List of services",
+          "control": "rows",
+          "max": 6,
+          "columns": [
+            {
+              "key": "date",
+              "label": "Date of service",
+              "type": "date"
+            },
+            {
+              "key": "tooth",
+              "label": "Tooth # or letter",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- Tooth # -",
+                  "options": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32"
+                  ]
+                }
+              ],
+              "other": true
+            },
+            {
+              "key": "surface",
+              "label": "Surface(s)",
+              "type": "surfaces"
+            },
+            {
+              "key": "desc",
+              "label": "Description of service",
+              "type": "select",
+              "sets": [
+                {
+                  "placeholder": "- Service -",
+                  "options": [
+                    "Dental examination",
+                    "Dental cleaning (prophylaxis)",
+                    "X-ray",
+                    "Filling",
+                    "Extraction",
+                    "Root canal",
+                    "Crown",
+                    "Bridge",
+                    "Denture",
+                    "Scaling and root planing",
+                    "Fluoride treatment",
+                    "Sealant",
+                    "Dental implant",
+                    "Orthodontic treatment"
+                  ]
+                }
+              ],
+              "other": true
+            },
+            {
+              "key": "amount",
+              "label": "Charge",
+              "type": "money"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Orthodontic treatment / crowns / initial dentures or bridges",
+      "fields": [
+        {
+          "key": "ortho_first_appliance",
+          "label": "(a) Date of first appliance",
+          "control": "date"
+        },
+        {
+          "key": "ortho_last_appliance",
+          "label": "(b) Date of last appliance",
+          "control": "date"
+        },
+        {
+          "key": "ortho_months",
+          "label": "(c) Treatment period (no. of months)",
+          "control": "text"
+        },
+        {
+          "key": "ortho_monthly_fee_amount",
+          "label": "(d) Monthly treatment fee",
+          "control": "money"
+        },
+        {
+          "key": "crown_initial",
+          "label": "Crowns (a) Is this an initial placement?",
+          "control": "text"
+        },
+        {
+          "key": "crown_reason",
+          "label": "Crowns (b) Reason",
+          "control": "text"
+        },
+        {
+          "key": "crown_prior_date",
+          "label": "Crowns (c) Date of prior placement",
+          "control": "date"
+        },
+        {
+          "key": "crown_root_canal",
+          "label": "Crowns (d) Was root canal treatment performed?",
+          "control": "text"
+        },
+        {
+          "key": "den_initial",
+          "label": "Dentures (a) Is this an initial placement?",
+          "control": "text"
+        },
+        {
+          "key": "den_prior_date",
+          "label": "Dentures (b) Date of prior placement",
+          "control": "date"
+        },
+        {
+          "key": "den_reason",
+          "label": "Dentures (c) Reason for replacement",
+          "control": "text"
+        },
+        {
+          "key": "den_extracted",
+          "label": "Dentures (d) Were teeth extracted for the appliance?",
+          "control": "text"
+        },
+        {
+          "key": "den_extraction_date",
+          "label": "Dentures (e) Date of extraction",
+          "control": "date"
+        },
+        {
+          "key": "den_teeth_replaced",
+          "label": "Dentures (f) Teeth replaced by this appliance",
+          "control": "text"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2568 @@
+{
+  "formId": "sagicor_health_claim",
+  "version": 1,
+  "title": "Sagicor Health Claim Form (GI40007)",
+  "source_pdf": "Health Claim Form  St Lucia.pdf",
+  "coordinate_system": {
+    "origin": "top-left of page",
+    "unit": "pt (1/72 in)",
+    "page_width": 612,
+    "page_height": 792,
+    "text_xy": "x = left edge (or right edge when align is right, centre when align is center); y = text BASELINE",
+    "checkbox_xy": "cx, cy = centre of the printed box"
+  },
+  "defaults": {
+    "font": "Helvetica",
+    "size": 9,
+    "colour": "#000000"
+  },
+  "max_line_items": 3,
+  "currency_note": "Sagicor's Charges column is a single column, so amounts print whole (150.00) in the first Charges column.",
+  "pages": {
+    "1": {
+      "fields": {
+        "policy_no": {
+          "type": "text",
+          "x": 78,
+          "y": 99.5,
+          "w": 128,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "policy_no"
+        },
+        "member_id": {
+          "type": "text",
+          "x": 48,
+          "y": 119.5,
+          "w": 158,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "member_id"
+        },
+        "policy_holder": {
+          "type": "text",
+          "x": 218,
+          "y": 112,
+          "w": 180,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "policy_holder"
+        },
+        "_admin_signature": {
+          "type": "reserved",
+          "note": "Administrator's signature is signed by hand. Never stamp.",
+          "boxes": [
+            {
+              "x": 400,
+              "y": 100,
+              "w": 185,
+              "h": 25
+            }
+          ]
+        },
+        "insured_name": {
+          "type": "text",
+          "x": 27,
+          "y": 164,
+          "w": 180,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "insured_name"
+        },
+        "address": {
+          "type": "multiline",
+          "x": 72,
+          "y": 183.5,
+          "w": 135,
+          "maxLines": 2,
+          "size": 8,
+          "lineBaselines": [
+            183.5,
+            193.5
+          ],
+          "source": "address",
+          "min_size": 5
+        },
+        "telephone": {
+          "type": "text",
+          "x": 96,
+          "y": 209,
+          "w": 110,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "telephone"
+        },
+        "patient_name": {
+          "type": "text",
+          "x": 288,
+          "y": 155,
+          "w": 145,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "patient_name"
+        },
+        "patient_dob": {
+          "type": "text",
+          "x": 282,
+          "y": 171.0,
+          "w": 100,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "patient_dob",
+          "format": "DD/MM/YYYY"
+        },
+        "spouse_employer": {
+          "type": "text",
+          "x": 440,
+          "y": 165,
+          "w": 148,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "spouse_employer"
+        },
+        "related_employment_yes": {
+          "type": "checkbox",
+          "cx": 505.0,
+          "cy": 178.1,
+          "mark": "X",
+          "size": 9,
+          "source": "related_employment",
+          "equals": "yes"
+        },
+        "related_employment_no": {
+          "type": "checkbox",
+          "cx": 543.1,
+          "cy": 178.1,
+          "mark": "X",
+          "size": 9,
+          "source": "related_employment",
+          "equals": "no"
+        },
+        "related_auto_yes": {
+          "type": "checkbox",
+          "cx": 307.5,
+          "cy": 187.4,
+          "mark": "X",
+          "size": 9,
+          "source": "related_auto",
+          "equals": "yes"
+        },
+        "related_auto_no": {
+          "type": "checkbox",
+          "cx": 346.9,
+          "cy": 187.4,
+          "mark": "X",
+          "size": 9,
+          "source": "related_auto",
+          "equals": "no"
+        },
+        "related_other_yes": {
+          "type": "checkbox",
+          "cx": 505.0,
+          "cy": 187.4,
+          "mark": "X",
+          "size": 9,
+          "source": "related_other",
+          "equals": "yes"
+        },
+        "related_other_no": {
+          "type": "checkbox",
+          "cx": 543.1,
+          "cy": 187.4,
+          "mark": "X",
+          "size": 9,
+          "source": "related_other",
+          "equals": "no"
+        },
+        "condition_details": {
+          "type": "text",
+          "x": 310,
+          "y": 209,
+          "w": 275,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "condition_details"
+        },
+        "other_plan_yes": {
+          "type": "checkbox",
+          "cx": 499.5,
+          "cy": 215.4,
+          "mark": "X",
+          "size": 9,
+          "source": "other_plan",
+          "equals": "yes"
+        },
+        "other_plan_no": {
+          "type": "checkbox",
+          "cx": 535.5,
+          "cy": 215.4,
+          "mark": "X",
+          "size": 9,
+          "source": "other_plan",
+          "equals": "no"
+        },
+        "other_plan_company": {
+          "type": "text",
+          "x": 207,
+          "y": 237.5,
+          "w": 228,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "other_plan_company"
+        },
+        "other_plan_group": {
+          "type": "text",
+          "x": 254,
+          "y": 253.5,
+          "w": 180,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "other_plan_group"
+        },
+        "pay_to": {
+          "type": "text",
+          "x": 180,
+          "y": 267.5,
+          "w": 232,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "pay_to"
+        },
+        "_do_not_fill_signatures_s2": {
+          "type": "reserved",
+          "note": "Insured signature, patient signature and date are signed by hand. Never stamp.",
+          "boxes": [
+            {
+              "x": 97,
+              "y": 336,
+              "w": 142,
+              "h": 14
+            },
+            {
+              "x": 326,
+              "y": 336,
+              "w": 134,
+              "h": 14
+            },
+            {
+              "x": 497,
+              "y": 336,
+              "w": 81,
+              "h": 14
+            }
+          ]
+        },
+        "patient_name_s3": {
+          "type": "text",
+          "x": 88,
+          "y": 385.5,
+          "w": 200,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "patient_name"
+        },
+        "icd1": {
+          "type": "text",
+          "x": 38,
+          "y": 418,
+          "w": 135,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "icd.0"
+        },
+        "icd2": {
+          "type": "text",
+          "x": 188,
+          "y": 418,
+          "w": 110,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "icd.1"
+        },
+        "icd3": {
+          "type": "text",
+          "x": 38,
+          "y": 432,
+          "w": 135,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "icd.2"
+        },
+        "icd4": {
+          "type": "text",
+          "x": 188,
+          "y": 432,
+          "w": 110,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "icd.3"
+        },
+        "provider_block": {
+          "type": "multiline",
+          "x": 310,
+          "y": 396,
+          "w": 275,
+          "maxLines": 2,
+          "size": 7,
+          "lineBaselines": [
+            396,
+            405
+          ],
+          "source": "provider_block",
+          "min_size": 5
+        },
+        "referring_physician": {
+          "type": "text",
+          "x": 310,
+          "y": 432.5,
+          "w": 275,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "referring_physician"
+        },
+        "pregnancy_yes": {
+          "type": "checkbox",
+          "cx": 176.1,
+          "cy": 444.9,
+          "mark": "X",
+          "size": 9,
+          "source": "pregnancy",
+          "equals": "yes"
+        },
+        "pregnancy_no": {
+          "type": "checkbox",
+          "cx": 221.0,
+          "cy": 444.9,
+          "mark": "X",
+          "size": 9,
+          "source": "pregnancy",
+          "equals": "no"
+        },
+        "last_period": {
+          "type": "text",
+          "x": 458,
+          "y": 449.5,
+          "w": 128,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "last_period",
+          "format": "DD/MM/YYYY"
+        },
+        "first_symptoms": {
+          "type": "text",
+          "x": 114,
+          "y": 478.5,
+          "w": 148,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "first_symptoms",
+          "format": "DD/MM/YYYY"
+        },
+        "prev_treated_yes": {
+          "type": "checkbox",
+          "cx": 488.4,
+          "cy": 474.1,
+          "mark": "X",
+          "size": 9,
+          "source": "prev_treated",
+          "equals": "yes"
+        },
+        "prev_treated_no": {
+          "type": "checkbox",
+          "cx": 531.8,
+          "cy": 474.1,
+          "mark": "X",
+          "size": 9,
+          "source": "prev_treated",
+          "equals": "no"
+        },
+        "first_consult": {
+          "type": "text",
+          "x": 180,
+          "y": 493.5,
+          "w": 85,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "first_consult",
+          "format": "DD/MM/YYYY"
+        },
+        "prev_treated_date": {
+          "type": "text",
+          "x": 338,
+          "y": 505,
+          "w": 120,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "prev_treated_date",
+          "format": "DD/MM/YYYY"
+        },
+        "line1_day": {
+          "type": "text",
+          "x": 35,
+          "y": 549.8,
+          "w": 26,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.0.date",
+          "format": "DD"
+        },
+        "line1_month": {
+          "type": "text",
+          "x": 66,
+          "y": 549.8,
+          "w": 26,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.0.date",
+          "format": "MM"
+        },
+        "line1_year": {
+          "type": "text",
+          "x": 96,
+          "y": 549.8,
+          "w": 26,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.0.date",
+          "format": "YY"
+        },
+        "line1_place": {
+          "type": "text",
+          "x": 112,
+          "y": 549.8,
+          "w": 78,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.0.place"
+        },
+        "line1_desc": {
+          "type": "text",
+          "x": 195,
+          "y": 549.8,
+          "w": 213,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.0.desc"
+        },
+        "line1_dx": {
+          "type": "text",
+          "x": 445,
+          "y": 549.8,
+          "w": 60,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.0.dx"
+        },
+        "line1_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 549.8,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.0.amount",
+          "format": "money"
+        },
+        "line2_day": {
+          "type": "text",
+          "x": 35,
+          "y": 566.8,
+          "w": 26,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.1.date",
+          "format": "DD"
+        },
+        "line2_month": {
+          "type": "text",
+          "x": 66,
+          "y": 566.8,
+          "w": 26,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.1.date",
+          "format": "MM"
+        },
+        "line2_year": {
+          "type": "text",
+          "x": 96,
+          "y": 566.8,
+          "w": 26,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.1.date",
+          "format": "YY"
+        },
+        "line2_place": {
+          "type": "text",
+          "x": 112,
+          "y": 566.8,
+          "w": 78,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.1.place"
+        },
+        "line2_desc": {
+          "type": "text",
+          "x": 195,
+          "y": 566.8,
+          "w": 213,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.1.desc"
+        },
+        "line2_dx": {
+          "type": "text",
+          "x": 445,
+          "y": 566.8,
+          "w": 60,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.1.dx"
+        },
+        "line2_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 566.8,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.1.amount",
+          "format": "money"
+        },
+        "line3_day": {
+          "type": "text",
+          "x": 35,
+          "y": 583.8,
+          "w": 26,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.2.date",
+          "format": "DD"
+        },
+        "line3_month": {
+          "type": "text",
+          "x": 66,
+          "y": 583.8,
+          "w": 26,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.2.date",
+          "format": "MM"
+        },
+        "line3_year": {
+          "type": "text",
+          "x": 96,
+          "y": 583.8,
+          "w": 26,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.2.date",
+          "format": "YY"
+        },
+        "line3_place": {
+          "type": "text",
+          "x": 112,
+          "y": 583.8,
+          "w": 78,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.2.place"
+        },
+        "line3_desc": {
+          "type": "text",
+          "x": 195,
+          "y": 583.8,
+          "w": 213,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.2.desc"
+        },
+        "line3_dx": {
+          "type": "text",
+          "x": 445,
+          "y": 583.8,
+          "w": 60,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.2.dx"
+        },
+        "line3_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 583.8,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lines.2.amount",
+          "format": "money"
+        },
+        "further_services": {
+          "type": "multiline",
+          "x": 24,
+          "y": 617,
+          "w": 165,
+          "maxLines": 5,
+          "size": 8,
+          "lineBaselines": [
+            617,
+            634,
+            651,
+            668,
+            685
+          ],
+          "source": "further_services",
+          "min_size": 5
+        },
+        "further_services_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 617,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "further_services_amount",
+          "format": "money"
+        },
+        "op_date": {
+          "type": "text",
+          "x": 300,
+          "y": 617.8,
+          "w": 175,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "op_date",
+          "format": "DD/MM/YYYY"
+        },
+        "op_type": {
+          "type": "text",
+          "x": 300,
+          "y": 634.8,
+          "w": 175,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "op_type"
+        },
+        "op_surgeon": {
+          "type": "text",
+          "x": 300,
+          "y": 651.8,
+          "w": 175,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "op_surgeon"
+        },
+        "op_assistant": {
+          "type": "text",
+          "x": 300,
+          "y": 668.8,
+          "w": 175,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "op_assistant"
+        },
+        "op_anesthetist": {
+          "type": "text",
+          "x": 300,
+          "y": 685.8,
+          "w": 175,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "op_anesthetist"
+        },
+        "surgical_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 634.8,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "surgical_amount",
+          "format": "money"
+        },
+        "total_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 703.5,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "total_amount",
+          "format": "money",
+          "bold": true,
+          "computed": true
+        },
+        "doctor_stamp": {
+          "type": "image",
+          "x": 30,
+          "y": 705,
+          "w": 194,
+          "h": 36,
+          "source": "user_stamp",
+          "fit": "contain"
+        },
+        "doctor_signature": {
+          "type": "image",
+          "x": 230,
+          "y": 705,
+          "w": 370,
+          "h": 36,
+          "source": "user_signature",
+          "fit": "contain",
+          "required": true
+        },
+        "doctor_sign_date": {
+          "type": "text",
+          "x": 474,
+          "y": 740,
+          "w": 107,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "generation_date",
+          "format": "DD/MM/YYYY"
+        }
+      }
+    },
+    "2": {
+      "note": "Sections 5 to 8 print unless their switch is \"no\"; section 9 prints only when sign_page2 is \"yes\".",
+      "fields": {
+        "hosp_days": {
+          "type": "text",
+          "x": 106,
+          "y": 49.5,
+          "w": 80,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_days",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_ward_private": {
+          "type": "checkbox",
+          "cx": 212.0,
+          "cy": 45.6,
+          "mark": "X",
+          "size": 9,
+          "source": "hosp_ward",
+          "equals": "private",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_ward_semi": {
+          "type": "checkbox",
+          "cx": 283.6,
+          "cy": 45.6,
+          "mark": "X",
+          "size": 9,
+          "source": "hosp_ward",
+          "equals": "semi_private",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_ward_ward": {
+          "type": "checkbox",
+          "cx": 355.9,
+          "cy": 45.6,
+          "mark": "X",
+          "size": 9,
+          "source": "hosp_ward",
+          "equals": "ward",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_daily_charge": {
+          "type": "text",
+          "x": 154,
+          "y": 64.5,
+          "w": 42,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_daily_amount",
+          "format": "money",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_from": {
+          "type": "text",
+          "x": 224,
+          "y": 64.5,
+          "w": 95,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_from",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_to": {
+          "type": "text",
+          "x": 332,
+          "y": 64.5,
+          "w": 90,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_to",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_operation": {
+          "type": "text",
+          "x": 214,
+          "y": 80.5,
+          "w": 207,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_operation",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_services": {
+          "type": "text",
+          "x": 96,
+          "y": 96.5,
+          "w": 325,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_services",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_doctor": {
+          "type": "text",
+          "x": 126,
+          "y": 111.5,
+          "w": 295,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_doctor",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_room": {
+          "type": "text",
+          "x": 541,
+          "y": 60.0,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_room_amount",
+          "format": "money",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_operation_charge": {
+          "type": "text",
+          "x": 541,
+          "y": 75.0,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_operation_amount",
+          "format": "money",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "hosp_services_charge": {
+          "type": "text",
+          "x": 541,
+          "y": 90.0,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "hosp_services_amount",
+          "format": "money",
+          "unless": [
+            "use_hospital",
+            "no"
+          ]
+        },
+        "lab1_date": {
+          "type": "text",
+          "x": 27,
+          "y": 150.0,
+          "w": 52,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lab_rows.0.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_lab",
+            "no"
+          ]
+        },
+        "lab1_test": {
+          "type": "text",
+          "x": 82,
+          "y": 150.0,
+          "w": 395,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lab_rows.0.test",
+          "unless": [
+            "use_lab",
+            "no"
+          ]
+        },
+        "lab2_date": {
+          "type": "text",
+          "x": 27,
+          "y": 162.0,
+          "w": 52,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lab_rows.1.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_lab",
+            "no"
+          ]
+        },
+        "lab2_test": {
+          "type": "text",
+          "x": 82,
+          "y": 162.0,
+          "w": 395,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lab_rows.1.test",
+          "unless": [
+            "use_lab",
+            "no"
+          ]
+        },
+        "lab_charge": {
+          "type": "text",
+          "x": 541,
+          "y": 160.0,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "lab_amount",
+          "format": "money",
+          "unless": [
+            "use_lab",
+            "no"
+          ]
+        },
+        "dent_name": {
+          "type": "text",
+          "x": 66,
+          "y": 194,
+          "w": 298,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_name",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_address": {
+          "type": "multiline",
+          "x": 70,
+          "y": 229,
+          "w": 295,
+          "maxLines": 2,
+          "size": 8.5,
+          "lineBaselines": [
+            229,
+            265
+          ],
+          "source": "dent_address",
+          "min_size": 5,
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_phone": {
+          "type": "text",
+          "x": 98,
+          "y": 299,
+          "w": 262,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_phone",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_crown_yes": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 204.0,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_crown",
+          "equals": "yes",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_crown_no": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 213.1,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_crown",
+          "equals": "no",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_occ_yes": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 231.8,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_occ",
+          "equals": "yes",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_occ_no": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 240.0,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_occ",
+          "equals": "no",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_auto_yes": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 257.1,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_auto",
+          "equals": "yes",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_auto_no": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 266.1,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_auto",
+          "equals": "no",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_other_plan_yes": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 274.9,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_other_plan",
+          "equals": "yes",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_other_plan_no": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 284.1,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_other_plan",
+          "equals": "no",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_ortho_yes": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 301.4,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_ortho",
+          "equals": "yes",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_ortho_no": {
+          "type": "checkbox",
+          "cx": 476.2,
+          "cy": 309.6,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_ortho",
+          "equals": "no",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_crown_note": {
+          "type": "text",
+          "x": 506,
+          "y": 212.0,
+          "w": 82,
+          "size": 6.5,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_crown_note",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_occ_note": {
+          "type": "text",
+          "x": 506,
+          "y": 236.0,
+          "w": 82,
+          "size": 6.5,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_occ_note",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_auto_note": {
+          "type": "text",
+          "x": 506,
+          "y": 262.0,
+          "w": 82,
+          "size": 6.5,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_auto_note",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_other_plan_note": {
+          "type": "text",
+          "x": 506,
+          "y": 284.0,
+          "w": 82,
+          "size": 6.5,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_other_plan_note",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_ortho_note": {
+          "type": "text",
+          "x": 506,
+          "y": 308.0,
+          "w": 82,
+          "size": 6.5,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_ortho_note",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_first_day": {
+          "type": "text",
+          "x": 31.5,
+          "y": 332,
+          "w": 18,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_first_visit",
+          "format": "DD",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_first_month": {
+          "type": "text",
+          "x": 61.5,
+          "y": 332,
+          "w": 34,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_first_visit",
+          "format": "MM",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_first_year": {
+          "type": "text",
+          "x": 94.5,
+          "y": 332,
+          "w": 24,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_first_visit",
+          "format": "YY",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_place_office": {
+          "type": "checkbox",
+          "cx": 188.8,
+          "cy": 333.1,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_place",
+          "equals": "office",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_place_hospital": {
+          "type": "checkbox",
+          "cx": 237.8,
+          "cy": 333.1,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_place",
+          "equals": "hospital",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_place_other": {
+          "type": "checkbox",
+          "cx": 282.9,
+          "cy": 333.1,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_place",
+          "equals": "other",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_xrays_yes": {
+          "type": "checkbox",
+          "cx": 407.8,
+          "cy": 333.1,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_xrays",
+          "equals": "yes",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_xrays_no": {
+          "type": "checkbox",
+          "cx": 444.0,
+          "cy": 333.1,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_xrays",
+          "equals": "no",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_xray_count": {
+          "type": "text",
+          "x": 535,
+          "y": 337,
+          "w": 50,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_xray_count",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_initial_yes": {
+          "type": "checkbox",
+          "cx": 128.5,
+          "cy": 346.9,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_initial",
+          "equals": "yes",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_initial_no": {
+          "type": "checkbox",
+          "cx": 128.5,
+          "cy": 356.0,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_initial",
+          "equals": "no",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_extraction": {
+          "type": "text",
+          "x": 272,
+          "y": 359,
+          "w": 88,
+          "size": 8,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_extraction",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_replace_reason": {
+          "type": "text",
+          "x": 465,
+          "y": 359.5,
+          "w": 122,
+          "size": 7.5,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_replace_reason",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent1_date": {
+          "type": "text",
+          "x": 174,
+          "y": 410.5,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.0.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent1_tooth": {
+          "type": "text",
+          "x": 224,
+          "y": 410.5,
+          "w": 34,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.0.tooth",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent1_surface": {
+          "type": "text",
+          "x": 263,
+          "y": 410.5,
+          "w": 33,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.0.surface",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent1_desc": {
+          "type": "text",
+          "x": 301,
+          "y": 410.5,
+          "w": 177,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.0.desc",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent1_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 410.5,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.0.amount",
+          "format": "money",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent2_date": {
+          "type": "text",
+          "x": 174,
+          "y": 425.3,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.1.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent2_tooth": {
+          "type": "text",
+          "x": 224,
+          "y": 425.3,
+          "w": 34,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.1.tooth",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent2_surface": {
+          "type": "text",
+          "x": 263,
+          "y": 425.3,
+          "w": 33,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.1.surface",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent2_desc": {
+          "type": "text",
+          "x": 301,
+          "y": 425.3,
+          "w": 177,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.1.desc",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent2_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 425.3,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.1.amount",
+          "format": "money",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent3_date": {
+          "type": "text",
+          "x": 174,
+          "y": 440.3,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.2.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent3_tooth": {
+          "type": "text",
+          "x": 224,
+          "y": 440.3,
+          "w": 34,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.2.tooth",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent3_surface": {
+          "type": "text",
+          "x": 263,
+          "y": 440.3,
+          "w": 33,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.2.surface",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent3_desc": {
+          "type": "text",
+          "x": 301,
+          "y": 440.3,
+          "w": 177,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.2.desc",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent3_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 440.3,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.2.amount",
+          "format": "money",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent4_date": {
+          "type": "text",
+          "x": 174,
+          "y": 455.3,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.3.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent4_tooth": {
+          "type": "text",
+          "x": 224,
+          "y": 455.3,
+          "w": 34,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.3.tooth",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent4_surface": {
+          "type": "text",
+          "x": 263,
+          "y": 455.3,
+          "w": 33,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.3.surface",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent4_desc": {
+          "type": "text",
+          "x": 301,
+          "y": 455.3,
+          "w": 177,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.3.desc",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent4_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 455.3,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.3.amount",
+          "format": "money",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent5_date": {
+          "type": "text",
+          "x": 174,
+          "y": 470.0,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.4.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent5_tooth": {
+          "type": "text",
+          "x": 224,
+          "y": 470.0,
+          "w": 34,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.4.tooth",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent5_surface": {
+          "type": "text",
+          "x": 263,
+          "y": 470.0,
+          "w": 33,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.4.surface",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent5_desc": {
+          "type": "text",
+          "x": 301,
+          "y": 470.0,
+          "w": 177,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.4.desc",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent5_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 470.0,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.4.amount",
+          "format": "money",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent6_date": {
+          "type": "text",
+          "x": 174,
+          "y": 485.0,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.5.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent6_tooth": {
+          "type": "text",
+          "x": 224,
+          "y": 485.0,
+          "w": 34,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.5.tooth",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent6_surface": {
+          "type": "text",
+          "x": 263,
+          "y": 485.0,
+          "w": 33,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.5.surface",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent6_desc": {
+          "type": "text",
+          "x": 301,
+          "y": 485.0,
+          "w": 177,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.5.desc",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent6_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 485.0,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.5.amount",
+          "format": "money",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent7_date": {
+          "type": "text",
+          "x": 174,
+          "y": 499.7,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.6.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent7_tooth": {
+          "type": "text",
+          "x": 224,
+          "y": 499.7,
+          "w": 34,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.6.tooth",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent7_surface": {
+          "type": "text",
+          "x": 263,
+          "y": 499.7,
+          "w": 33,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.6.surface",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent7_desc": {
+          "type": "text",
+          "x": 301,
+          "y": 499.7,
+          "w": 177,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.6.desc",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent7_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 499.7,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_rows.6.amount",
+          "format": "money",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_total": {
+          "type": "text",
+          "x": 541,
+          "y": 518,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "dent_total",
+          "format": "money",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_plan_pre": {
+          "type": "checkbox",
+          "cx": 181.2,
+          "cy": 512.9,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_plan",
+          "equals": "predetermination",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "dent_plan_actual": {
+          "type": "checkbox",
+          "cx": 300.2,
+          "cy": 512.9,
+          "mark": "X",
+          "size": 9,
+          "source": "dent_plan",
+          "equals": "actual",
+          "unless": [
+            "use_dentist",
+            "no"
+          ]
+        },
+        "optA_dx": {
+          "type": "text",
+          "x": 24,
+          "y": 578.8,
+          "w": 145,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.0.dx",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optA_date": {
+          "type": "text",
+          "x": 174,
+          "y": 578.8,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.0.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optA_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 578.8,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.0.amount",
+          "format": "money",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optB_dx": {
+          "type": "text",
+          "x": 24,
+          "y": 593.5,
+          "w": 145,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.1.dx",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optB_date": {
+          "type": "text",
+          "x": 174,
+          "y": 593.5,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.1.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optB_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 593.5,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.1.amount",
+          "format": "money",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optC_dx": {
+          "type": "text",
+          "x": 24,
+          "y": 608.5,
+          "w": 145,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.2.dx",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optC_date": {
+          "type": "text",
+          "x": 174,
+          "y": 608.5,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.2.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optC_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 608.5,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.2.amount",
+          "format": "money",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optD_dx": {
+          "type": "text",
+          "x": 24,
+          "y": 623.5,
+          "w": 145,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.3.dx",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optD_date": {
+          "type": "text",
+          "x": 174,
+          "y": 623.5,
+          "w": 45,
+          "size": 9,
+          "align": "left",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.3.date",
+          "format": "DD/MM/YY",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "optD_amount": {
+          "type": "text",
+          "x": 541,
+          "y": 623.5,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_rows.3.amount",
+          "format": "money",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_lens_single": {
+          "type": "checkbox",
+          "cx": 31.5,
+          "cy": 633.9,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_lens",
+          "equals": "single",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_lens_bifocal": {
+          "type": "checkbox",
+          "cx": 83.5,
+          "cy": 633.9,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_lens",
+          "equals": "bifocal",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_lens_multifocal": {
+          "type": "checkbox",
+          "cx": 140.5,
+          "cy": 633.9,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_lens",
+          "equals": "multifocal",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_lens_lenticular": {
+          "type": "checkbox",
+          "cx": 216.6,
+          "cy": 633.9,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_lens",
+          "equals": "lenticular",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_lens_contact": {
+          "type": "checkbox",
+          "cx": 289.0,
+          "cy": 633.9,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_lens",
+          "equals": "contact",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_a1_yes": {
+          "type": "checkbox",
+          "cx": 492.0,
+          "cy": 652.1,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_a1",
+          "equals": "yes",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_a1_no": {
+          "type": "checkbox",
+          "cx": 528.2,
+          "cy": 652.1,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_a1",
+          "equals": "no",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_a2_yes": {
+          "type": "checkbox",
+          "cx": 492.0,
+          "cy": 661.4,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_a2",
+          "equals": "yes",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_a2_no": {
+          "type": "checkbox",
+          "cx": 528.2,
+          "cy": 661.4,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_a2",
+          "equals": "no",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_a3_yes": {
+          "type": "checkbox",
+          "cx": 492.0,
+          "cy": 670.6,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_a3",
+          "equals": "yes",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_a3_no": {
+          "type": "checkbox",
+          "cx": 528.2,
+          "cy": 670.6,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_a3",
+          "equals": "no",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_b1_yes": {
+          "type": "checkbox",
+          "cx": 492.0,
+          "cy": 679.8,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_b1",
+          "equals": "yes",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_b1_no": {
+          "type": "checkbox",
+          "cx": 528.2,
+          "cy": 679.8,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_b1",
+          "equals": "no",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_b2_yes": {
+          "type": "checkbox",
+          "cx": 492.0,
+          "cy": 689.0,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_b2",
+          "equals": "yes",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_q_b2_no": {
+          "type": "checkbox",
+          "cx": 528.2,
+          "cy": 689.0,
+          "mark": "X",
+          "size": 9,
+          "source": "opt_q_b2",
+          "equals": "no",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "opt_total": {
+          "type": "text",
+          "x": 541,
+          "y": 705,
+          "w": 58,
+          "size": 9,
+          "align": "right",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "opt_total",
+          "format": "money",
+          "unless": [
+            "use_optometry",
+            "no"
+          ]
+        },
+        "sec9_stamp": {
+          "type": "image",
+          "x": 30,
+          "y": 721,
+          "w": 204,
+          "h": 40,
+          "source": "user_stamp",
+          "fit": "contain",
+          "only_if": [
+            "sign_page2",
+            "yes"
+          ]
+        },
+        "sec9_signature": {
+          "type": "image",
+          "x": 240,
+          "y": 721,
+          "w": 300,
+          "h": 40,
+          "source": "user_signature",
+          "fit": "contain",
+          "only_if": [
+            "sign_page2",
+            "yes"
+          ]
+        },
+        "sec9_date": {
+          "type": "text",
+          "x": 443,
+          "y": 760,
+          "w": 138,
+          "size": 9,
+          "align": "center",
+          "shrink_to_fit": true,
+          "min_size": 5,
+          "source": "generation_date",
+          "format": "DD/MM/YY",
+          "only_if": [
+            "sign_page2",
+            "yes"
+          ]
+        }
+      }
+    }
+  }
+}
