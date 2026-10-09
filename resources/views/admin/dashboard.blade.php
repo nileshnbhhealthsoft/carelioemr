@@ -228,6 +228,11 @@
                                         <i data-lucide="{{ $sub->provision_status == 'completed' ? 'check-circle-2' : 'refresh-cw' }}" class="w-3.5 h-3.5"></i>
                                         <span>{{ ucfirst($sub->provision_status ?? 'completed') }}</span>
                                     </span>
+                                    @if($sub->provision_status == 'failed' && $sub->provision_error)
+                                        <div class="mt-2 max-w-[260px] whitespace-normal rounded-md border border-rose-200 bg-rose-50 px-2.5 py-2 text-[11px] font-semibold leading-snug text-rose-700" title="{{ $sub->provision_error }}">
+                                            {{ \Illuminate\Support\Str::limit($sub->provision_error, 160) }}
+                                        </div>
+                                    @endif
                                 </td>
 
                                 <td class="px-6 py-4.5 whitespace-nowrap">
