@@ -6,6 +6,10 @@
 
 require_once(__DIR__ . "/../../../../globals.php");
 
+if (!class_exists(\OpenEMR\Modules\CarelioSubscription\Services\SubscriptionManagerService::class)) {
+    require_once dirname(__DIR__) . '/src/Services/SubscriptionManagerService.php';
+}
+
 use OpenEMR\Common\Acl\AclMain;
 use OpenEMR\Common\Csrf\CsrfUtils;
 use OpenEMR\Common\Session\SessionWrapperFactory;
