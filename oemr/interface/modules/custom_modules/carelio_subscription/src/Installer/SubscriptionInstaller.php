@@ -8,7 +8,7 @@ use RuntimeException;
 class SubscriptionInstaller
 {
     public const MODULE_DIR = 'carelio_subscription';
-    public const MODULE_NAME = 'Carelio Subscription';
+    public const MODULE_NAME = 'Subscription Management';
 
     public static function install(?PDO $pdo = null): array
     {
@@ -20,7 +20,7 @@ class SubscriptionInstaller
 
         return [
             'status' => 'success',
-            'message' => 'Carelio Subscription module installed successfully.',
+            'message' => 'Subscription Management module installed successfully.',
         ];
     }
 
@@ -31,7 +31,7 @@ class SubscriptionInstaller
 
         return [
             'status' => 'success',
-            'message' => 'Carelio Subscription module disabled successfully.',
+            'message' => 'Subscription Management module disabled successfully.',
         ];
     }
 
@@ -226,7 +226,7 @@ class SubscriptionInstaller
             $active ? 1 : 0,
             self::MODULE_NAME,
             'interface/modules/custom_modules/' . self::MODULE_DIR . '/',
-            'CarelioEMR subscription management module',
+            'Subscription management module',
             'CarelioSubscription',
             self::MODULE_DIR,
         ]);
@@ -245,7 +245,7 @@ class SubscriptionInstaller
             self::MODULE_NAME,
             self::MODULE_NAME,
             'interface/modules/custom_modules/' . self::MODULE_DIR . '/',
-            'CarelioEMR subscription management module',
+            'Subscription management module',
             'CarelioSubscription',
             self::MODULE_DIR,
         ]);
