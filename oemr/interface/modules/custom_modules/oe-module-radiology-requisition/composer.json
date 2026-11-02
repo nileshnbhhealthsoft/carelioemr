@@ -1,0 +1,14 @@
+{
+  "name": "carelio/oe-module-radiology-requisition",
+  "description": "Radiology (diagnostic imaging) requisition for OpenEMR: multiple studies per order, modality safety screening, pre-fills from the chart, prints on A4.",
+  "type": "openemr-module",
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "OpenEMR\\Modules\\RadiologyRequisition\\": "src/"
+    }
+  }
+}
