@@ -1,0 +1,75 @@
+/* Radiology requisition: ported from radiology_requisition.html, scoped so it cannot touch the OpenEMR frame. */
+.radreq { --navy: #12304c; --teal: #087e88; --border: #d7e1e8; --ink: #213547; color: var(--ink); max-width: 1220px; margin: 0 auto; padding: 0 18px 30px; }
+.radreq *, .radreq *::before, .radreq *::after { box-sizing: border-box; }
+.radreq-head { display: flex; align-items: center; gap: 18px; background: var(--navy); color: #fff; padding: 18px 24px; border-radius: 0 0 10px 10px; margin-bottom: 8px; }
+.radreq-head img { display: block; width: 46mm; height: 17mm; object-fit: contain; background: #fff; border-radius: 5px; padding: 4px; flex: none; }
+.radreq-head h1 { margin: 0; font-size: 23px; color: #fff; }
+.radreq-head p { margin: 4px 0 0; color: #cce0eb; font-size: 13px; }
+.radreq .card2 { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 9px #16344b0b; }
+.radreq h2 { font-size: 17px; color: var(--navy); margin: 0 0 14px; border-bottom: 1px solid var(--border); padding-bottom: 9px; font-weight: 600; }
+.radreq .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.radreq .span2 { grid-column: span 2; }
+.radreq .span4 { grid-column: span 4; }
+.radreq label { display: block; font-size: 12px; font-weight: 650; color: #3e586b; margin-bottom: 4px; }
+.radreq input[type=text], .radreq input[type=date], .radreq input[type=datetime-local], .radreq select, .radreq textarea {
+  width: 100%; font: inherit; color: var(--ink); padding: 8px 10px; border: 1px solid #bdcbd5; border-radius: 7px; background: #fff; height: auto;
+}
+.radreq textarea { min-height: 74px; resize: vertical; }
+.radreq .study { border: 1px solid #cbdce3; border-radius: 10px; padding: 15px; margin-bottom: 12px; background: #fbfdfe; }
+.radreq .studyhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.radreq .studyhead h3 { margin: 0; color: var(--navy); font-size: 15px; }
+.radreq .safety { margin-top: 12px; padding: 13px; background: #f2f8fa; border-left: 4px solid var(--teal); border-radius: 6px; }
+.radreq .safety h4 { margin: 0 0 10px; font-size: 14px; }
+.radreq .question { display: grid; grid-template-columns: minmax(180px, 1fr) 240px; gap: 12px; align-items: center; margin: 8px 0; }
+.radreq .question label { font-size: 13px; margin: 0; font-weight: 500; }
+.radreq .study > .grid:last-child { margin-top: 12px; }
+.radreq .hint { color: #637b8b; font-size: 12px; margin: 5px 0; }
+.radreq .notice { background: #fff7e6; border: 1px solid #f1d5a0; border-radius: 8px; padding: 12px; color: #6d521b; margin: 15px 0; font-size: 13px; }
+.radreq .alert { margin: 12px 0; }
+.radreq .actions { display: flex; gap: 9px; flex-wrap: wrap; margin: 15px 0; }
+.radreq .ack { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; margin-top: 10px; }
+.radreq .ack input { margin-top: 3px; }
+.radreq .ack label { font-weight: 500; font-size: 13px; margin: 0; }
+@media (max-width: 800px) { .radreq .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .radreq .span4 { grid-column: span 2; } }
+@media (max-width: 500px) { .radreq .grid { grid-template-columns: 1fr; } .radreq .span2, .radreq .span4 { grid-column: span 1; } .radreq .question { grid-template-columns: 1fr; } }
+
+/* Printable document (print.php) */
+.radreq-doc { background: #fff; }
+.radreq-doc .kv { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 14px; }
+.radreq-doc .kv .k { font-size: 11px; font-weight: 650; color: #3e586b; }
+.radreq-doc .kv .v { font-size: 14px; border-bottom: 1px solid #cfd9e0; min-height: 20px; padding-bottom: 1px; word-break: break-word; }
+.radreq-doc .block { white-space: pre-wrap; border: 1px solid var(--border); border-radius: 6px; padding: 7px 9px; min-height: 36px; font-size: 14px; }
+.radreq-doc .study { background: #fff; }
+.radreq-doc table.sq { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 13px; }
+.radreq-doc table.sq td { border-bottom: 1px solid #e3eaef; padding: 3px 4px; }
+.radreq-doc table.sq td:last-child { width: 200px; font-weight: 600; }
+.radreq-doc .answer-unknown { color: #9c2932; }
+.radreq-doc .badge2 { display: inline-block; background: #e0f3f2; color: #086b72; border-radius: 99px; padding: 2px 10px; font-size: 12px; font-weight: 700; }
+.radreq-doc .badge2.warn { background: #fde8e8; color: #9c2932; }
+.radreq-doc .sigline { margin-top: 10px; font-size: 13px; }
+
+@page { size: A4 portrait; margin: 10mm; }
+@media print {
+  body { background: #fff !important; }
+  .radreq { max-width: none; padding: 0; font-size: 8pt; line-height: 1.25; }
+  .radreq .noprint, .radreq .notice, .radreq .alert, .radreq .actions { display: none !important; }
+  .radreq-head { background: #fff; color: var(--navy); border-bottom: 1.5pt solid var(--navy); padding: 0 0 3mm; margin-bottom: 3mm; border-radius: 0; }
+  .radreq-head h1 { color: var(--navy); font-size: 14pt; }
+  .radreq-head img { width: 38mm; height: 13mm; padding: 1mm; }
+  .radreq-head p { color: #456276; font-size: 7pt; margin-top: 1mm; }
+  .radreq .card2 { box-shadow: none; border: 1px solid #ccc; border-radius: 2mm; break-inside: avoid-page; margin: 0 0 3mm; padding: 2.5mm; }
+  .radreq h2 { font-size: 10pt; margin: 0 0 2mm; padding-bottom: 1mm; }
+  .radreq-doc .kv { gap: 1.5mm 2mm; }
+  .radreq-doc .kv .k { font-size: 6.5pt; }
+  .radreq-doc .kv .v, .radreq-doc .block { font-size: 8pt; }
+  .radreq-doc .study { border-radius: 2mm; padding: 2mm; margin-bottom: 2mm; break-inside: avoid-page; }
+  .radreq-doc .studyhead h3 { font-size: 9pt; }
+  .radreq-doc .safety { padding: 2mm; margin-top: 2mm; background: #f7f7f7 !important; print-color-adjust: exact; }
+  .radreq-doc table.sq { font-size: 7pt; }
+  .radreq-doc .sigline { font-size: 8pt; }
+  .radreq .hint { font-size: 7pt; margin: 1mm 0; }
+}
+
+.radreq-doc .kv .span2 { grid-column: span 2; }
+.radreq-doc .kv .span4 { grid-column: span 4; }
+@media (max-width: 800px) { .radreq-doc .kv { grid-template-columns: repeat(2, minmax(0, 1fr)); } .radreq-doc .kv .span4 { grid-column: span 2; } }

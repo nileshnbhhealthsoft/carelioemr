@@ -1,0 +1,1069 @@
+{
+  "fields": {
+    "visitDate": {
+      "type": "date",
+      "required": true,
+      "label": "Date of visit"
+    },
+    "visitTime": {
+      "type": "time",
+      "label": "Time of visit"
+    },
+    "encounterId": {
+      "type": "text",
+      "label": "Encounter ID"
+    },
+    "chartNo": {
+      "type": "text",
+      "label": "Chart / Patient ID"
+    },
+    "provider": {
+      "type": "text",
+      "required": true,
+      "label": "Provider / Dentist"
+    },
+    "assistant": {
+      "type": "text",
+      "label": "Hygienist / Assistant"
+    },
+    "room": {
+      "type": "text",
+      "label": "Room / Operatory"
+    },
+    "referralSource": {
+      "type": "select",
+      "options": [
+        "",
+        "Self",
+        "Physician",
+        "Dentist",
+        "Family / friend",
+        "Insurance",
+        "Other"
+      ],
+      "label": "Referral source"
+    },
+    "visitType": {
+      "type": "radio",
+      "options": [
+        "General consultation",
+        "Emergency",
+        "Hygiene",
+        "Oral surgery consult",
+        "Oral surgery procedure",
+        "Follow-up",
+        "Cosmetic consult",
+        "Orthodontic consult",
+        "Pediatric dental",
+        "Denture / prosthodontic",
+        "Implant consult",
+        "Other"
+      ],
+      "label": "Visit type"
+    },
+    "priority": {
+      "type": "radio",
+      "options": [
+        "Routine",
+        "Urgent",
+        "Emergency"
+      ],
+      "label": "Priority"
+    },
+    "ccMain": {
+      "type": "select",
+      "options": [
+        "",
+        "Tooth pain or sensitivity",
+        "Cavities or broken teeth",
+        "Gum bleeding, swelling, or recession",
+        "Bad breath",
+        "Loose or missing teeth",
+        "Difficulty chewing",
+        "Jaw pain, clicking, or clenching",
+        "Wisdom tooth concerns",
+        "Dry mouth",
+        "Cosmetic concerns (staining, alignment, chips)"
+      ],
+      "label": "Main dental concern"
+    },
+    "ccDuration": {
+      "type": "text",
+      "label": "Duration of symptoms"
+    },
+    "ccLocation": {
+      "type": "select",
+      "options": [
+        "",
+        "Upper right teeth",
+        "Upper front teeth",
+        "Upper left teeth",
+        "Lower right teeth",
+        "Lower front teeth",
+        "Lower left teeth",
+        "Entire upper jaw",
+        "Entire lower jaw",
+        "Both sides of mouth",
+        "Single tooth",
+        "Multiple teeth",
+        "Gums",
+        "Jaw / temporomandibular joint (TMJ)",
+        "Unable to identify exact location"
+      ],
+      "label": "Pain location"
+    },
+    "painScore": {
+      "type": "range",
+      "label": "Pain score (0\u201310)"
+    },
+    "ccRelieving": {
+      "type": "text",
+      "label": "Relieving factors"
+    },
+    "ccNotes": {
+      "type": "text",
+      "label": "Free-text notes"
+    },
+    "lastVisit": {
+      "type": "date",
+      "label": "Last dental visit"
+    },
+    "lastCleaning": {
+      "type": "date",
+      "label": "Last cleaning"
+    },
+    "lastXray": {
+      "type": "date",
+      "label": "Last dental X-rays"
+    },
+    "brushFreq": {
+      "type": "select",
+      "options": [
+        "",
+        "Once daily",
+        "Twice daily",
+        "After every meal",
+        "Irregular"
+      ],
+      "label": "Brushing frequency"
+    },
+    "flossFreq": {
+      "type": "select",
+      "options": [
+        "",
+        "Daily",
+        "Few times/week",
+        "Occasionally",
+        "Never"
+      ],
+      "label": "Flossing frequency"
+    },
+    "fluoride": {
+      "type": "select",
+      "options": [
+        "",
+        "Fluoridated toothpaste",
+        "Fluoride rinse",
+        "Professional fluoride",
+        "None"
+      ],
+      "label": "Fluoride exposure"
+    },
+    "dhGoals": {
+      "type": "textarea",
+      "label": "Dental concerns / goals"
+    },
+    "dhNotes": {
+      "type": "textarea",
+      "label": "Dental history notes"
+    },
+    "allergyStatus": {
+      "type": "radio",
+      "options": [
+        "NKDA \u2014 No Known Drug Allergies",
+        "Drug allergies present",
+        "Unknown"
+      ],
+      "label": "Allergy status"
+    },
+    "mhConditions": {
+      "type": "textarea",
+      "label": "Current medical conditions"
+    },
+    "mhMeds": {
+      "type": "textarea",
+      "label": "Current medications"
+    },
+    "mhAllergies": {
+      "type": "textarea",
+      "label": "Allergy detail"
+    },
+    "mhPregnancy": {
+      "type": "select",
+      "options": [
+        "",
+        "Not pregnant",
+        "Pregnant \u2014 1st trimester",
+        "Pregnant \u2014 2nd trimester",
+        "Pregnant \u2014 3rd trimester",
+        "Unknown"
+      ],
+      "label": "Pregnancy status"
+    },
+    "mhBreastfeeding": {
+      "type": "select",
+      "options": [
+        "",
+        "No",
+        "Yes"
+      ],
+      "label": "Breastfeeding"
+    },
+    "mhHosp": {
+      "type": "text",
+      "label": "Hospitalisations / surgeries"
+    },
+    "mhClearance": {
+      "type": "radio",
+      "options": [
+        "No",
+        "Yes",
+        "Already obtained"
+      ],
+      "label": "Mh clearance"
+    },
+    "mhNotes": {
+      "type": "textarea",
+      "label": "Medical risk notes"
+    },
+    "vBP": {
+      "type": "text",
+      "label": "Blood pressure"
+    },
+    "vPulse": {
+      "type": "number",
+      "label": "Pulse (bpm)"
+    },
+    "vRR": {
+      "type": "number",
+      "label": "Respiratory rate"
+    },
+    "vTemp": {
+      "type": "number",
+      "label": "Temperature (\u00b0C)"
+    },
+    "vSpO2": {
+      "type": "number",
+      "label": "Oxygen saturation (%)"
+    },
+    "vGlucose": {
+      "type": "text",
+      "label": "Blood glucose (if diabetic)"
+    },
+    "vWeight": {
+      "type": "number",
+      "label": "Weight (kg, if needed)"
+    },
+    "asa": {
+      "type": "radio",
+      "options": [
+        "ASA I",
+        "ASA II",
+        "ASA III",
+        "ASA IV",
+        "ASA V"
+      ],
+      "label": "Asa"
+    },
+    "anxiety": {
+      "type": "radio",
+      "options": [
+        "None",
+        "Mild",
+        "Moderate",
+        "Severe"
+      ],
+      "label": "Anxiety"
+    },
+    "sedationNotes": {
+      "type": "textarea",
+      "label": "Sedation risk notes"
+    },
+    "riskNotes": {
+      "type": "textarea",
+      "label": "Medical risk notes"
+    },
+    "extraoralNotes": {
+      "type": "textarea",
+      "label": "Extraoral examination notes"
+    },
+    "perioScreen": {
+      "type": "radio",
+      "options": [
+        "Yes",
+        "No",
+        "Deferred"
+      ],
+      "label": "Perio screen"
+    },
+    "pdDepths": {
+      "type": "text",
+      "label": "Pocket depths"
+    },
+    "pdBleeding": {
+      "type": "text",
+      "label": "Bleeding points"
+    },
+    "pdRecession": {
+      "type": "text",
+      "label": "Recession"
+    },
+    "pdMobility": {
+      "type": "text",
+      "label": "Mobility"
+    },
+    "pdFurcation": {
+      "type": "text",
+      "label": "Furcation involvement"
+    },
+    "pdPlaqueScore": {
+      "type": "number",
+      "label": "Plaque score (%)"
+    },
+    "pdCalcScore": {
+      "type": "text",
+      "label": "Calculus score"
+    },
+    "perioDx": {
+      "type": "select",
+      "options": [
+        "",
+        "Healthy",
+        "Gingivitis",
+        "Localized periodontitis",
+        "Generalized periodontitis",
+        "Peri-implant mucositis",
+        "Peri-implantitis"
+      ],
+      "label": "Gingival / periodontal diagnosis"
+    },
+    "perioStage": {
+      "type": "select",
+      "options": [
+        "",
+        "Stage I",
+        "Stage II",
+        "Stage III",
+        "Stage IV",
+        "Not applicable"
+      ],
+      "label": "Staging"
+    },
+    "perioGrade": {
+      "type": "select",
+      "options": [
+        "",
+        "Grade A",
+        "Grade B",
+        "Grade C",
+        "Not applicable"
+      ],
+      "label": "Grading"
+    },
+    "perioNotes": {
+      "type": "textarea",
+      "label": "Periodontal chart notes"
+    },
+    "adultDentitionStage": {
+      "type": "select",
+      "options": [
+        "",
+        "Primary dentition",
+        "Mixed dentition",
+        "Permanent dentition"
+      ],
+      "label": "Eruption / dentition stage"
+    },
+    "adultChartNotes": {
+      "type": "text",
+      "label": "General adult charting notes"
+    },
+    "pedStage": {
+      "type": "select",
+      "options": [
+        "",
+        "Primary dentition",
+        "Mixed dentition",
+        "Permanent dentition"
+      ],
+      "label": "Eruption / dentition stage"
+    },
+    "pedBehavior": {
+      "type": "select",
+      "options": [
+        "",
+        "Excellent",
+        "Good",
+        "Fair",
+        "Poor",
+        "Unable to complete exam"
+      ],
+      "label": "Behavior rating"
+    },
+    "pedCariesRisk": {
+      "type": "select",
+      "options": [
+        "",
+        "Low",
+        "Moderate",
+        "High",
+        "Extreme"
+      ],
+      "label": "Caries risk"
+    },
+    "pedChartNotes": {
+      "type": "text",
+      "label": "Pediatric charting notes"
+    },
+    "imgCompare": {
+      "type": "textarea",
+      "label": "Comparison with previous imaging"
+    },
+    "imgNotes": {
+      "type": "textarea",
+      "label": "Radiology / imaging notes"
+    },
+    "dxDefinitive": {
+      "type": "textarea",
+      "label": "Definitive diagnosis"
+    },
+    "dxDifferential": {
+      "type": "textarea",
+      "label": "Differential diagnosis"
+    },
+    "urgentTx": {
+      "type": "radio",
+      "options": [
+        "No",
+        "Yes"
+      ],
+      "label": "Urgent tx"
+    },
+    "prognosis": {
+      "type": "select",
+      "options": [
+        "",
+        "Good",
+        "Fair",
+        "Guarded",
+        "Poor",
+        "Hopeless"
+      ],
+      "label": "Overall prognosis"
+    },
+    "txDiscussed": {
+      "type": "textarea",
+      "label": "Treatment options discussed"
+    },
+    "txRecommended": {
+      "type": "textarea",
+      "label": "Recommended treatment"
+    },
+    "txAlternative": {
+      "type": "textarea",
+      "label": "Alternative treatment"
+    },
+    "txNoTreatment": {
+      "type": "textarea",
+      "label": "No-treatment option discussed"
+    },
+    "txRisksExplained": {
+      "type": "checkbox",
+      "label": "Tx risks explained"
+    },
+    "procSite": {
+      "type": "text",
+      "label": "Tooth / site"
+    },
+    "procAnesthetic": {
+      "type": "select",
+      "options": [
+        "",
+        "Lidocaine 2% with epinephrine 1:100,000",
+        "Lidocaine 2% with epinephrine 1:50,000",
+        "Articaine 4% with epinephrine 1:100,000",
+        "Articaine 4% with epinephrine 1:200,000",
+        "Mepivacaine 3% plain",
+        "Mepivacaine 2% with levonordefrin 1:20,000",
+        "Prilocaine 4% plain",
+        "Prilocaine 4% with epinephrine 1:200,000",
+        "Bupivacaine 0.5% with epinephrine 1:200,000",
+        "Topical benzocaine 20%",
+        "Topical lidocaine",
+        "Nitrous oxide/oxygen sedation",
+        "No local anesthetic used"
+      ],
+      "label": "Anesthetic used"
+    },
+    "procCarpules": {
+      "type": "number",
+      "label": "Number of carpules"
+    },
+    "procNeedle": {
+      "type": "select",
+      "options": [
+        "",
+        "25-gauge long needle",
+        "25-gauge short needle",
+        "27-gauge long needle",
+        "27-gauge short needle",
+        "30-gauge short needle",
+        "30-gauge extra-short needle",
+        "No needle used"
+      ],
+      "label": "Needle type"
+    },
+    "procIsolation": {
+      "type": "select",
+      "options": [
+        "",
+        "Cotton rolls",
+        "Rubber dam",
+        "Isolite / dry shield",
+        "High-volume suction",
+        "None"
+      ],
+      "label": "Isolation method"
+    },
+    "procMaterials": {
+      "type": "text",
+      "label": "Materials used"
+    },
+    "procTolerated": {
+      "type": "radio",
+      "options": [
+        "Yes",
+        "No",
+        "N/A"
+      ],
+      "label": "Proc tolerated"
+    },
+    "procNotes": {
+      "type": "textarea",
+      "label": "Procedure notes"
+    },
+    "procComplications": {
+      "type": "textarea",
+      "label": "Complications"
+    },
+    "anesAgent": {
+      "type": "select",
+      "options": [
+        "",
+        "Lidocaine with epinephrine",
+        "Articaine with epinephrine",
+        "Mepivacaine",
+        "Bupivacaine",
+        "Other"
+      ],
+      "label": "Anesthetic agent"
+    },
+    "anesCarpules": {
+      "type": "number",
+      "label": "Number of carpules"
+    },
+    "anesEpi": {
+      "type": "select",
+      "options": [
+        "",
+        "1:50,000",
+        "1:80,000",
+        "1:100,000",
+        "1:200,000",
+        "None"
+      ],
+      "label": "Epinephrine concentration"
+    },
+    "anesBatch": {
+      "type": "text",
+      "label": "Batch / lot number"
+    },
+    "anesAdverse": {
+      "type": "radio",
+      "options": [
+        "No",
+        "Yes"
+      ],
+      "label": "Anes adverse"
+    },
+    "anesPostInstr": {
+      "type": "checkbox",
+      "label": "Anes post instr"
+    },
+    "anesNotes": {
+      "type": "textarea",
+      "label": "Sedation notes"
+    },
+    "consentNotes": {
+      "type": "textarea",
+      "label": "Consent notes"
+    },
+    "postOpNotes": {
+      "type": "textarea",
+      "label": "Post-operative instruction notes"
+    },
+    "referralReason": {
+      "type": "text",
+      "label": "Reason for referral"
+    },
+    "referralUrgency": {
+      "type": "radio",
+      "options": [
+        "Routine",
+        "Urgent",
+        "Emergency"
+      ],
+      "label": "Referral urgency"
+    },
+    "referralNotes": {
+      "type": "textarea",
+      "label": "Referral notes"
+    },
+    "fuRequired": {
+      "type": "radio",
+      "options": [
+        "No",
+        "Yes"
+      ],
+      "label": "Fu required"
+    },
+    "fuReview": {
+      "type": "select",
+      "options": [
+        "",
+        "24\u201348 hours",
+        "1 week",
+        "2 weeks",
+        "1 month",
+        "3 months",
+        "6 months",
+        "Other"
+      ],
+      "label": "Review in"
+    },
+    "fuType": {
+      "type": "select",
+      "options": [
+        "",
+        "Review",
+        "Hygiene",
+        "Restoration",
+        "Extraction",
+        "Root canal",
+        "Crown / bridge",
+        "Denture",
+        "Implant",
+        "Orthodontic review",
+        "Pediatric recall",
+        "Other"
+      ],
+      "label": "Next appointment type"
+    },
+    "fuRecall": {
+      "type": "select",
+      "options": [
+        "",
+        "3 months",
+        "6 months",
+        "12 months",
+        "Other"
+      ],
+      "label": "Recall interval"
+    },
+    "fuInvestigations": {
+      "type": "text",
+      "label": "Pending investigations"
+    },
+    "fuPendingTx": {
+      "type": "text",
+      "label": "Pending treatment"
+    },
+    "fuNotes": {
+      "type": "text",
+      "label": "Follow-up notes"
+    },
+    "billDiscount": {
+      "type": "number",
+      "label": "Discount (XCD)"
+    },
+    "billTax": {
+      "type": "number",
+      "label": "Tax / fees (XCD)"
+    },
+    "billPaid": {
+      "type": "number",
+      "label": "Amount paid (XCD)"
+    },
+    "billDeposit": {
+      "type": "number",
+      "label": "Deposit required (XCD)"
+    },
+    "insInvolved": {
+      "type": "radio",
+      "options": [
+        "No",
+        "Yes"
+      ],
+      "label": "Ins involved"
+    },
+    "insPreauth": {
+      "type": "select",
+      "options": [
+        "",
+        "Not required",
+        "Required",
+        "Submitted",
+        "Approved",
+        "Denied"
+      ],
+      "label": "Preauthorization status"
+    },
+    "payMethod": {
+      "type": "select",
+      "options": [
+        "",
+        "Cash",
+        "Card",
+        "Bank transfer",
+        "Insurance",
+        "Mixed payment",
+        "Other"
+      ],
+      "label": "Payment method"
+    },
+    "insNotes": {
+      "type": "textarea",
+      "label": "Insurance notes"
+    },
+    "finNotes": {
+      "type": "textarea",
+      "label": "Financial notes"
+    },
+    "finConsent": {
+      "type": "checkbox",
+      "label": "Fin consent"
+    },
+    "signProvider": {
+      "type": "text",
+      "label": "Dentist / provider name"
+    },
+    "signAssistant": {
+      "type": "text",
+      "label": "Hygienist / assistant name"
+    },
+    "signDateTime": {
+      "type": "datetime-local",
+      "label": "Date & time completed"
+    },
+    "finalNotes": {
+      "type": "textarea",
+      "label": "Final clinical notes"
+    },
+    "declaration": {
+      "type": "checkbox",
+      "label": "Declaration"
+    }
+  },
+  "groups": {
+    "painChar": [
+      "Sharp",
+      "Dull",
+      "Throbbing",
+      "Burning",
+      "Pressure",
+      "Intermittent",
+      "Constant"
+    ],
+    "trigger": [
+      "Cold",
+      "Heat",
+      "Sweet foods",
+      "Chewing",
+      "Biting",
+      "Spontaneous",
+      "Night pain"
+    ],
+    "ccAssoc": [
+      "Swelling present",
+      "Bleeding present",
+      "Bad taste / discharge",
+      "Dental trauma history",
+      "Lost filling / crown",
+      "Broken tooth",
+      "Loose tooth",
+      "Cosmetic concern",
+      "Functional concern",
+      "Denture concern",
+      "Orthodontic concern"
+    ],
+    "dhPrev": [
+      "Extractions",
+      "Root canal treatment",
+      "Crowns / bridges",
+      "Dentures / partials",
+      "Implants",
+      "Orthodontic treatment"
+    ],
+    "dhHx": [
+      "Gum disease",
+      "Dental abscess",
+      "Oral surgery",
+      "Dental anxiety",
+      "Difficult local anesthesia",
+      "Post-op complications",
+      "Bruxism / clenching",
+      "TMJ symptoms"
+    ],
+    "dhHabit": [
+      "Nail biting",
+      "Pen biting",
+      "Mouth breathing",
+      "Thumb sucking",
+      "Tobacco use",
+      "Vaping",
+      "Betel nut",
+      "High sugar diet"
+    ],
+    "dhAids": [
+      "Mouthwash",
+      "Electric toothbrush",
+      "Interdental brush"
+    ],
+    "mhAllergy": [
+      "Latex allergy",
+      "Local anesthetic allergy",
+      "Antibiotic allergy"
+    ],
+    "mhCond": [
+      "Bleeding disorder",
+      "Heart disease",
+      "Hypertension",
+      "Diabetes",
+      "Asthma / COPD",
+      "Kidney disease",
+      "Liver disease",
+      "Epilepsy / seizures",
+      "Stroke / TIA",
+      "Cancer history",
+      "Radiation therapy",
+      "Chemotherapy",
+      "Osteoporosis / bisphosphonates",
+      "Blood thinners / anticoagulants",
+      "Immunosuppression",
+      "HIV / hepatitis / TB"
+    ],
+    "mhCardiac": [
+      "Artificial heart valve",
+      "Pacemaker",
+      "Joint replacement",
+      "History of infective endocarditis",
+      "Antibiotic prophylaxis required"
+    ],
+    "extraoral": [
+      "Facial asymmetry",
+      "Facial swelling",
+      "Facial tenderness",
+      "Lymph node enlargement",
+      "TMJ tenderness",
+      "TMJ clicking / popping",
+      "Limited mouth opening",
+      "Muscle tenderness",
+      "Lip abnormality",
+      "Skin lesions",
+      "Sinus tract",
+      "Trauma / bruising"
+    ],
+    "perioTx": [
+      "Oral hygiene instruction",
+      "Prophylaxis",
+      "Scaling and root planing",
+      "Periodontal maintenance",
+      "Periodontal referral",
+      "Surgical periodontal treatment",
+      "Other"
+    ],
+    "imgTaken": [
+      "Bitewings",
+      "Periapical",
+      "Panoramic",
+      "CBCT",
+      "Intraoral photos",
+      "Extraoral photos",
+      "Occlusal radiograph",
+      "Cephalometric",
+      "None"
+    ],
+    "radFind": [
+      "Caries",
+      "Bone loss",
+      "Periapical radiolucency",
+      "Impacted teeth",
+      "Calculus",
+      "Root resorption",
+      "Cysts / lesions",
+      "Sinus findings",
+      "Implant assessment",
+      "Fracture",
+      "Retained root",
+      "Other"
+    ],
+    "dx": [
+      "Dental caries",
+      "Reversible pulpitis",
+      "Irreversible pulpitis",
+      "Pulp necrosis",
+      "Symptomatic apical periodontitis",
+      "Asymptomatic apical periodontitis",
+      "Acute apical abscess",
+      "Chronic apical abscess",
+      "Cracked tooth",
+      "Fractured tooth",
+      "Fractured restoration",
+      "Failed restoration",
+      "Periodontal disease",
+      "Gingivitis",
+      "Pericoronitis",
+      "Impacted tooth",
+      "Malocclusion",
+      "Bruxism",
+      "TMJ disorder",
+      "Edentulism",
+      "Denture stomatitis",
+      "Implant complication",
+      "Peri-implantitis",
+      "Oral soft tissue lesion",
+      "Oral infection",
+      "Oral ulceration",
+      "Cosmetic concern",
+      "Dental trauma",
+      "Other"
+    ],
+    "txCat": [
+      "Preventive care",
+      "Oral hygiene instruction",
+      "Scaling / prophylaxis",
+      "Periodontal therapy",
+      "Fillings / restorations",
+      "Root canal treatment",
+      "Crown / onlay / inlay",
+      "Bridge",
+      "Complete denture",
+      "Partial denture",
+      "Denture repair",
+      "Implant",
+      "Extraction",
+      "Surgical extraction",
+      "Oral surgery",
+      "Orthodontics",
+      "Whitening",
+      "Veneers / cosmetic",
+      "Night guard",
+      "Pediatric preventive care",
+      "Pulpotomy / pulpectomy",
+      "Stainless steel crown",
+      "Space maintainer",
+      "Referral"
+    ],
+    "proc": [
+      "No treatment performed",
+      "Examination only",
+      "Cleaning / prophylaxis",
+      "Scaling / root planing",
+      "Fluoride",
+      "Sealants",
+      "Filling / restoration",
+      "Temporary filling",
+      "Extraction",
+      "Surgical extraction",
+      "Incision and drainage",
+      "Root canal treatment",
+      "Pulpotomy",
+      "Pulpectomy",
+      "Stainless steel crown",
+      "Crown preparation",
+      "Crown cementation",
+      "Impression / scan",
+      "Denture adjustment",
+      "Denture repair",
+      "Implant procedure",
+      "Suture removal",
+      "Emergency treatment",
+      "Prescription only",
+      "Other"
+    ],
+    "anesTech": [
+      "No anesthesia used",
+      "Topical anesthesia",
+      "Local infiltration",
+      "Nerve block",
+      "Nitrous oxide",
+      "Oral sedation",
+      "IV sedation",
+      "General anesthesia referral"
+    ],
+    "consent": [
+      "Diagnosis explained",
+      "Treatment options explained",
+      "Risks and benefits explained",
+      "Alternatives explained",
+      "No treatment option explained",
+      "Costs discussed",
+      "Post-operative instructions given",
+      "Oral hygiene instructions given",
+      "Diet advice given",
+      "Smoking cessation advice given",
+      "Consent obtained",
+      "Patient questions answered",
+      "Written instructions provided",
+      "Referral letter provided",
+      "Medical clearance discussed",
+      "Emergency warning signs explained"
+    ],
+    "referral": [
+      "No referral",
+      "Oral surgeon",
+      "Endodontist",
+      "Periodontist",
+      "Orthodontist",
+      "Prosthodontist",
+      "Pediatric dentist",
+      "Oral medicine / pathology",
+      "Medical physician",
+      "Radiology / CBCT",
+      "Hospital / emergency department",
+      "Other"
+    ]
+  },
+  "groupLabels": {
+    "painChar": "Pain characteristics",
+    "trigger": "Pain triggers",
+    "ccAssoc": "Associated symptoms",
+    "dhPrev": "Previous dental treatment",
+    "dhHx": "Dental history",
+    "dhHabit": "Oral habits",
+    "dhAids": "Oral hygiene aids",
+    "mhAllergy": "Allergy categories",
+    "mhCond": "Medical conditions",
+    "mhCardiac": "Cardiac and prophylaxis history",
+    "extraoral": "Extraoral findings",
+    "perioTx": "Periodontal treatment",
+    "imgTaken": "Imaging taken",
+    "radFind": "Radiographic findings",
+    "dx": "Diagnoses",
+    "txCat": "Treatment categories",
+    "proc": "Procedures performed",
+    "anesTech": "Anesthesia techniques",
+    "consent": "Consent discussion",
+    "referral": "Referrals"
+  }
+}

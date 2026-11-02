@@ -1,0 +1,3 @@
+Carelio Dental Encounter
+Version 1.0.2
+Dental encounter charting, documentation and reports for OpenEMR 7.0.3+.

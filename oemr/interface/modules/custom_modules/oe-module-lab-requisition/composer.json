@@ -1,0 +1,14 @@
+{
+  "name": "carelio/oe-module-lab-requisition",
+  "description": "Laboratory requisition form for OpenEMR: pre-fills from the chart, saves orders per patient, prints the paper requisition on A4.",
+  "type": "openemr-module",
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "OpenEMR\\Modules\\LabRequisition\\": "src/"
+    }
+  }
+}

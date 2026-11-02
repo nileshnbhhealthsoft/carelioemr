@@ -1,0 +1,97 @@
+/* Lab requisition: ported from lscl_lab_requisition.html, scoped so it cannot touch the OpenEMR frame. */
+.labreq-page { background: #e9ecef; min-height: 100vh; padding-bottom: 20px; }
+.labreq-toolbar { max-width: 210mm; margin: 0 auto; padding: 12px 0 0; text-align: center; }
+.labreq-toolbar .btn { margin: 0 3px; }
+.labreq-toolbar .note { font-size: 12px; color: #444; margin: 7px 0 0; }
+.labreq-alert { max-width: 210mm; margin: 10px auto 0; }
+
+.labreq-sheet, .labreq-sheet * { box-sizing: border-box; }
+.labreq-sheet {
+  --ink: #000; --muted: #444; --accent: #0f5d6b;
+  font-family: "Helvetica Neue", Arial, sans-serif; color: #000; font-size: 9px; line-height: 1.25;
+  width: 210mm; min-height: 297mm; margin: 12px auto; background: #fff; padding: 0.4in 0.45in;
+  box-shadow: 0 2px 14px rgba(0,0,0,.2);
+}
+.labreq-sheet .brand-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 8px; }
+.labreq-sheet .brand-header img { display: block; width: 280px; max-width: 100%; height: auto; }
+.labreq-sheet .form-title { margin: 0; font-size: 24px; line-height: 1.1; text-align: right; font-weight: 700; }
+
+.labreq-sheet .patient { display: flex; gap: 18px; margin-bottom: 8px; }
+.labreq-sheet .pat-left { flex: 1.4; }
+.labreq-sheet .pat-right { flex: 1; }
+.labreq-sheet .fld { display: flex; align-items: flex-end; margin-bottom: 6px; gap: 4px; }
+.labreq-sheet label { font-weight: 700; white-space: nowrap; margin: 0; font-size: inherit; }
+.labreq-sheet .sub { font-size: 7px; color: #444; font-weight: 400; }
+.labreq-sheet input[type=text] {
+  border: none; border-bottom: 1px dotted #000; border-radius: 0; flex: 1; font: inherit; padding: 0 2px 1px;
+  background: transparent; min-width: 20px; height: auto; box-shadow: none; color: #000;
+}
+.labreq-sheet input[type=text]:focus { outline: none; border-bottom: 1.5px solid var(--accent); }
+.labreq-sheet .pv { flex: 1; border-bottom: 1px dotted #000; min-height: 13px; padding: 0 2px 1px; display: inline-block; }
+.labreq-sheet .dob-wrap { position: relative; flex: 1; display: flex; }
+.labreq-sheet .dob-wrap .sub { position: absolute; left: 24px; top: 11px; }
+
+.labreq-sheet .priority { display: flex; gap: 18px; justify-content: flex-end; margin-bottom: 6px; }
+.labreq-sheet .pbox { display: flex; align-items: center; gap: 5px; font-weight: 800; font-size: 11px; }
+.labreq-sheet input[type=checkbox] {
+  -webkit-appearance: none; appearance: none; width: 11px; height: 11px; border: 1.2px solid #000; margin: 0;
+  flex: none; cursor: pointer; position: relative; background: #fff; border-radius: 0;
+}
+.labreq-sheet input[type=checkbox]:checked::after { content: "\2713"; position: absolute; top: -3px; left: 0; font-size: 11px; font-weight: 700; line-height: 1; color: #000; }
+.labreq-sheet input[type=checkbox]:disabled { opacity: 1; cursor: default; }
+
+.labreq-sheet .clinical { margin-bottom: 8px; }
+.labreq-sheet .clinical textarea { display: block; width: 100%; border: none; border-bottom: 1px dotted #000; font: inherit; resize: vertical; padding: 2px; margin-top: 3px; background: transparent; min-height: 26px; }
+.labreq-sheet .clinical textarea:focus { outline: none; border-bottom: 1.5px solid var(--accent); }
+.labreq-sheet .ta-print { border-bottom: 1px dotted #000; min-height: 26px; margin-top: 3px; padding: 2px; }
+
+.labreq-sheet .spec-row { display: flex; align-items: center; gap: 16px; border-top: 2px solid #000; padding-top: 6px; margin-bottom: 5px; flex-wrap: wrap; }
+.labreq-sheet .spec-row b { font-weight: 800; }
+.labreq-sheet .opt { display: flex; align-items: center; gap: 4px; }
+.labreq-sheet .opt label { font-weight: 600; }
+.labreq-sheet .fill { border-bottom: 1px solid #000; min-width: 90px; display: inline-block; }
+.labreq-sheet .fill input[type=text] { border-bottom: none; }
+.labreq-sheet .fill .pv { border-bottom: none; }
+.labreq-sheet .hist-row { display: flex; gap: 24px; margin-bottom: 5px; align-items: center; flex-wrap: wrap; }
+
+.labreq-sheet .panels { border-top: 2px solid #000; padding-top: 6px; }
+.labreq-sheet .grp-title { font-weight: 800; font-size: 9px; text-transform: uppercase; margin: 6px 0 2px; }
+.labreq-sheet .cols { display: flex; gap: 10px; }
+.labreq-sheet .col { flex: 1; min-width: 0; }
+.labreq-sheet .tline { display: flex; align-items: center; gap: 5px; margin-bottom: 2.5px; }
+.labreq-sheet .tline label { font-weight: 500; line-height: 1.1; white-space: normal; }
+.labreq-sheet .inl { border-bottom: 1px solid #000; flex: 1; min-width: 24px; height: 11px; display: inline-block; }
+.labreq-sheet .inl input[type=text] { border-bottom: none; width: 100%; height: 11px; padding: 0 2px; font-size: 9px; }
+.labreq-sheet .inl .pv { border-bottom: none; min-height: 0; }
+.labreq-sheet .section { border-top: 1px solid #000; padding-top: 5px; margin-top: 5px; }
+.labreq-sheet .panel-grid { display: flex; gap: 6px; flex-wrap: wrap; }
+.labreq-sheet .panels .panel-grid .tline { flex: 1 1 30%; min-width: 150px; }
+.labreq-sheet .panel-grid.cancer .tline { flex: 0 0 auto; min-width: 70px; }
+.labreq-sheet .panel-grid.cancer .tline:last-child { flex: 1; min-width: 160px; }
+
+.labreq-sheet .labuse { border: 1.4px solid #000; margin-top: 8px; }
+.labreq-sheet .labuse .r { display: flex; border-bottom: 1px solid #000; }
+.labreq-sheet .labuse .r:last-child { border-bottom: none; }
+.labreq-sheet .labuse .c { flex: 1; padding: 5px 6px; font-weight: 700; border-right: 1px solid #000; font-size: 8.5px; }
+.labreq-sheet .labuse .c:last-child { border-right: none; }
+
+@page { size: A4; margin: 7.5mm; }
+@media print {
+  .labreq-page { background: #fff; padding: 0; }
+  .labreq-toolbar, .labreq-alert { display: none !important; }
+  .labreq-sheet { margin: 0; box-shadow: none; width: auto; min-height: auto; padding: 2mm 6mm; font-size: 8.6px; }
+  .labreq-sheet .brand-header { padding-bottom: 4px; margin-bottom: 4px; }
+  .labreq-sheet .brand-header img { width: 190px; }
+  .labreq-sheet .form-title { font-size: 18px; }
+  .labreq-sheet .patient { margin-bottom: 5px; }
+  .labreq-sheet .fld { margin-bottom: 3px; }
+  .labreq-sheet .clinical { margin-bottom: 5px; }
+  .labreq-sheet .spec-row { padding-top: 4px; margin-bottom: 3px; }
+  .labreq-sheet .hist-row { margin-bottom: 3px; }
+  .labreq-sheet .panels { padding-top: 4px; }
+  .labreq-sheet .grp-title { margin: 3px 0 1px; }
+  .labreq-sheet .section { margin-top: 2px; padding-top: 3px; }
+  .labreq-sheet .labuse { margin-top: 5px; }
+  .labreq-sheet .labuse .c { padding: 3px 5px; }
+  .labreq-sheet, .labreq-sheet * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
