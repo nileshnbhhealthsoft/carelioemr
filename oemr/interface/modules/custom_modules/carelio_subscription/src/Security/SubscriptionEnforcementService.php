@@ -51,6 +51,9 @@ class SubscriptionEnforcementService
         $isSiteAdmin = AclMain::aclCheckCore('admin', 'users');
 
         if ($isSiteAdmin) {
+            if (empty($session->get('session_database_uuid')) && class_exists(\OpenEMR\Common\Session\SessionTracker::class)) {
+                \OpenEMR\Common\Session\SessionTracker::setupSessionDatabaseTracker();
+            }
             // Site Admin must be redirected to renewal screen
             $target = OEGlobalsBag::getInstance()->getWebRoot() . self::SUBSCRIPTION_MODULE_PATH;
             if (!headers_sent()) {
@@ -69,6 +72,14 @@ class SubscriptionEnforcementService
     private static function isExemptRequest(): bool
     {
         $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+
+        if (
+            str_ends_with($script, '/interface/main/main_screen.php')
+            && ($_GET['auth'] ?? '') === 'login'
+            && isset($_POST['new_login_session_management'])
+        ) {
+            return true;
+        }
 
         if (str_contains($script, '/interface/login/login.php')
             || str_contains($script, '/interface/logout.php')

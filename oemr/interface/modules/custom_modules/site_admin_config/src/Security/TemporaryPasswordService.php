@@ -160,6 +160,10 @@ class TemporaryPasswordService
             return;
         }
 
+        if (empty($session->get('session_database_uuid')) && class_exists(\OpenEMR\Common\Session\SessionTracker::class)) {
+            \OpenEMR\Common\Session\SessionTracker::setupSessionDatabaseTracker();
+        }
+
         $target = OEGlobalsBag::getInstance()->getWebRoot() . self::CHANGE_PATH;
 
         if (!headers_sent()) {
