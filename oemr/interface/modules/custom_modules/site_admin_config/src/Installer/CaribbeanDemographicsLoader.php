@@ -503,7 +503,9 @@ class CaribbeanDemographicsLoader
             $allStates[] = ['id' => $s['option_id'], 'title' => $s['title']];
         }
 
-        // Fetch counties grouped by state
+        // Fetch counties for priority Caribbean countries (Saint Lucia + core Caribbean)
+        // This keeps the cascading script lightweight (~110 KB instead of 2.5 MB) preventing memory exhaustion
+        $priorityPrefixes = ['LC_', 'BB_', 'BS_', 'TT_', 'GD_', 'AG_', 'VC_', 'KN_', 'DM_', 'KY_', 'AI_', 'MS_', 'BZ_', 'TC_', 'VG_', 'VI_', 'CW_', 'SX_'];
         $counties = $pdo->query("
             SELECT list_id, option_id, title, mapping 
             FROM list_options 
@@ -516,8 +518,18 @@ class CaribbeanDemographicsLoader
         foreach ($counties as $co) {
             $st = $co['mapping'];
             if ($st) {
-                $stateCounties[$st][] = ['id' => $co['option_id'], 'title' => $co['title']];
-                $countyToState[$co['option_id']] = $st;
+                // Ensure Saint Lucia and core Caribbean are prioritized and included
+                $match = false;
+                foreach ($priorityPrefixes as $prefix) {
+                    if (str_starts_with($st, $prefix) || str_starts_with($co['option_id'], $prefix)) {
+                        $match = true;
+                        break;
+                    }
+                }
+                if ($match) {
+                    $stateCounties[$st][] = ['id' => $co['option_id'], 'title' => $co['title']];
+                    $countyToState[$co['option_id']] = $st;
+                }
             }
         }
 
@@ -635,8 +647,8 @@ class CaribbeanDemographicsLoader
                 optCustom.selected = true;
                 selectEl.appendChild(optCustom);
             }
-            if (window.jQuery && window.jQuery(selectEl).data("select2")) {
-                window.jQuery(selectEl).trigger("change.select2");
+            if (window.jQuery) {
+                window.jQuery(selectEl).trigger("change");
             }
         }
 
@@ -665,8 +677,8 @@ class CaribbeanDemographicsLoader
         if (!initC && initS && stateToCountry[initS]) {
             initC = stateToCountry[initS];
             countryEl.value = initC;
-            if (window.jQuery && window.jQuery(countryEl).data("select2")) {
-                window.jQuery(countryEl).trigger("change.select2");
+            if (window.jQuery) {
+                window.jQuery(countryEl).trigger("change");
             }
         }
         if (!initS && initCo && countyToState[initCo]) {
@@ -675,8 +687,8 @@ class CaribbeanDemographicsLoader
             if (!initC && stateToCountry[initS]) {
                 initC = stateToCountry[initS];
                 countryEl.value = initC;
-                if (window.jQuery && window.jQuery(countryEl).data("select2")) {
-                    window.jQuery(countryEl).trigger("change.select2");
+                if (window.jQuery) {
+                    window.jQuery(countryEl).trigger("change");
                 }
             }
         }
@@ -685,22 +697,31 @@ class CaribbeanDemographicsLoader
         if (initC) syncStates(initC, true);
         else if (initS) syncCounties(initS, true);
 
-        countryEl.addEventListener("change", function() {
-            updateTerminology(this.value);
-            syncStates(this.value, false);
-        });
+        var onCountryChange = function() {
+            var val = countryEl.value;
+            updateTerminology(val);
+            syncStates(val, false);
+        };
 
-        stateEl.addEventListener("change", function() {
-            var stVal = this.value;
+        var onStateChange = function() {
+            var stVal = stateEl.value;
             if (stVal && stateToCountry[stVal] && countryEl.value !== stateToCountry[stVal]) {
                 countryEl.value = stateToCountry[stVal];
-                if (window.jQuery && window.jQuery(countryEl).data("select2")) {
-                    window.jQuery(countryEl).trigger("change.select2");
+                if (window.jQuery) {
+                    window.jQuery(countryEl).trigger("change");
                 }
                 updateTerminology(countryEl.value);
             }
             syncCounties(stVal, false);
-        });
+        };
+
+        countryEl.addEventListener("change", onCountryChange);
+        stateEl.addEventListener("change", onStateChange);
+
+        if (window.jQuery) {
+            window.jQuery(countryEl).on("change select2:select", onCountryChange);
+            window.jQuery(stateEl).on("change select2:select", onStateChange);
+        }
     }
 
     if (document.readyState === "loading") {

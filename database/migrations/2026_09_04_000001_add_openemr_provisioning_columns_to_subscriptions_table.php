@@ -12,11 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('subscriptions', function (Blueprint $table) {
-            $table->string('tenant_slug')->nullable()->after('region');
-            $table->string('openemr_database')->nullable()->after('tenant_slug');
-            $table->string('openemr_site_url')->nullable()->after('openemr_database');
-            $table->string('provision_status')->default('pending')->after('openemr_site_url'); // pending, provisioning, completed, failed
-            $table->text('provision_error')->nullable()->after('provision_status');
+            if (!Schema::hasColumn('subscriptions', 'tenant_slug')) {
+                $table->string('tenant_slug')->nullable()->after('region');
+            }
+            if (!Schema::hasColumn('subscriptions', 'openemr_database')) {
+                $table->string('openemr_database')->nullable()->after('tenant_slug');
+            }
+            if (!Schema::hasColumn('subscriptions', 'openemr_site_url')) {
+                $table->string('openemr_site_url')->nullable()->after('openemr_database');
+            }
+            if (!Schema::hasColumn('subscriptions', 'provision_status')) {
+                $table->string('provision_status')->default('pending')->after('openemr_site_url'); // pending, provisioning, completed, failed
+            }
+            if (!Schema::hasColumn('subscriptions', 'provision_error')) {
+                $table->text('provision_error')->nullable()->after('provision_status');
+            }
         });
     }
 
