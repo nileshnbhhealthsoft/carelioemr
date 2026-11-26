@@ -48,23 +48,16 @@ class SubscriptionEnforcementService
         }
 
         // Status is DEACTIVATED!
-        $isSiteAdmin = AclMain::aclCheckCore('admin', 'users');
+        // Only the root Super Administrator (admin) is allowed to log in when subscription is expired.
+        // All other users (including Site Admin, Clinicians, etc.) are blocked.
+        $authUser = strtolower(trim((string) ($session->get('authUser') ?? '')));
+        $isSuperAdmin = ($authUser === 'admin') || AclMain::aclCheckCore('admin', 'super');
 
-        if ($isSiteAdmin) {
-            if (empty($session->get('session_database_uuid')) && class_exists(\OpenEMR\Common\Session\SessionTracker::class)) {
-                \OpenEMR\Common\Session\SessionTracker::setupSessionDatabaseTracker();
-            }
-            // Site Admin must be redirected to renewal screen
-            $target = OEGlobalsBag::getInstance()->getWebRoot() . self::SUBSCRIPTION_MODULE_PATH;
-            if (!headers_sent()) {
-                header('Location: ' . $target);
-                exit;
-            }
-            echo '<script>top.location.href=' . json_encode($target) . ';</script>';
-            exit;
+        if ($isSuperAdmin) {
+            return;
         }
 
-        // Regular users get blocked screen
+        // All non-admin users (Site Admin, Clinician, Staff) get the blocked screen
         self::renderBlockedScreen();
         exit;
     }
@@ -73,18 +66,9 @@ class SubscriptionEnforcementService
     {
         $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
 
-        if (
-            str_ends_with($script, '/interface/main/main_screen.php')
-            && ($_GET['auth'] ?? '') === 'login'
-            && isset($_POST['new_login_session_management'])
-        ) {
-            return true;
-        }
-
         if (str_contains($script, '/interface/login/login.php')
             || str_contains($script, '/interface/logout.php')
             || str_contains($script, '/interface/login_screen.php')
-            || str_contains($script, self::SUBSCRIPTION_MODULE_PATH)
             || str_contains($script, '/public/assets/')
             || str_contains($script, '/images/')
         ) {
