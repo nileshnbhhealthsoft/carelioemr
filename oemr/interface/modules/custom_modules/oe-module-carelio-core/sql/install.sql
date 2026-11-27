@@ -2,8 +2,6 @@
 -- Strict adherence to specification: prefix all new tables with hms_
 -- Zero modification to OpenEMR core tables.
 
-USE `openemr`;
-
 -- 1. Location & Bed Hierarchy (Site -> Building -> Floor -> Ward -> Room -> Bed)
 CREATE TABLE IF NOT EXISTS `hms_location` (
     `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
