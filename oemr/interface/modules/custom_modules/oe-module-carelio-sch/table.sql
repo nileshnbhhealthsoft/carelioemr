@@ -1,5 +1,4 @@
 -- Carelio Hospital EHR - Module 3: SCH Tables
-USE `openemr`;
 
 CREATE TABLE IF NOT EXISTS `hms_resource` (
     `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

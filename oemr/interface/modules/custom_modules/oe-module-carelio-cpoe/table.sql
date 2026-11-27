@@ -1,6 +1,5 @@
 -- Carelio Hospital EHR - Module 5: CPOE (Orders & Results)
 -- Conforming to Specification Section 18.5 (Pages 39-40)
-USE `openemr`;
 
 CREATE TABLE IF NOT EXISTS `hms_order_set` (
     `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
