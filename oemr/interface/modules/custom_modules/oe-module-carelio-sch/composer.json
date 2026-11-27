@@ -1,0 +1,17 @@
+{
+    "name": "carelio/oe-module-carelio-sch",
+    "description": "Carelio Hospital EHR - Module 3: Scheduling & Resource Calendars (SCH)",
+    "type": "openemr-module",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Carelio Health",
+            "email": "support@carelioemr.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "OpenEMR\\Modules\\CarelioSch\\": "src/"
+        }
+    }
+}

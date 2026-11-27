@@ -1,0 +1,17 @@
+{
+    "name": "carelio/oe-module-carelio-cln",
+    "description": "Carelio Hospital EHR - Module 4: Clinical Documentation (CLN)",
+    "type": "openemr-module",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Carelio Health",
+            "email": "support@carelioemr.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "OpenEMR\\Modules\\CarelioCln\\": "src/"
+        }
+    }
+}

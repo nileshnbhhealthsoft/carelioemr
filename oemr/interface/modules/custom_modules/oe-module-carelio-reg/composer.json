@@ -1,0 +1,17 @@
+{
+    "name": "carelio/oe-module-carelio-reg",
+    "description": "Carelio Hospital EHR - Module 2: Registration & Master Patient Index (REG)",
+    "type": "openemr-module",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Carelio Health",
+            "email": "support@carelioemr.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "OpenEMR\\Modules\\CarelioReg\\": "src/"
+        }
+    }
+}
