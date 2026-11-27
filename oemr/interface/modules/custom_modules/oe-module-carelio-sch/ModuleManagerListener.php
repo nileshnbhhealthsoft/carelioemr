@@ -12,7 +12,7 @@ class ModuleManagerListener extends AbstractModuleActionListener
     public function moduleManagerAction($methodName, $modId, string $currentActionStatus = 'Success'): string
     {
         if (method_exists($this, $methodName)) {
-            return $this->{$methodName}($modId, $currentActionStatus);
+            return (string)$this->$methodName($modId, $currentActionStatus);
         }
         return $currentActionStatus;
     }
@@ -29,19 +29,31 @@ class ModuleManagerListener extends AbstractModuleActionListener
 
     private function install($modId, $currentActionStatus): mixed
     {
-        self::setModuleActiveState($modId, '0', '0');
         return $currentActionStatus;
     }
 
     private function enable($modId, $currentActionStatus): mixed
     {
-        self::setModuleActiveState($modId, '1', '0');
         return $currentActionStatus;
     }
 
     private function disable($modId, $currentActionStatus): mixed
     {
-        self::setModuleActiveState($modId, '0', '0');
+        return $currentActionStatus;
+    }
+
+    private function unregister($modId, $currentActionStatus): mixed
+    {
+        return $currentActionStatus;
+    }
+
+    private function install_sql($modId, $currentActionStatus): mixed
+    {
+        return $currentActionStatus;
+    }
+
+    private function upgrade_sql($modId, $currentActionStatus): mixed
+    {
         return $currentActionStatus;
     }
 }

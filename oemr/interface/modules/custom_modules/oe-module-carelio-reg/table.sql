@@ -1,5 +1,4 @@
 -- Carelio Hospital EHR - Module 2: REG Tables
-USE `openemr`;
 
 CREATE TABLE IF NOT EXISTS `hms_temp_identity` (
     `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
